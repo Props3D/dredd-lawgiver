@@ -46,8 +46,6 @@ class EasyCounter
     EasyCounter(const char *label) : _name(label) {}
 
     void begin(int lowNumber, int highNumber, int increment, bool resetOnEmpty) {
-      Serial.print("Initialing counter: ");
-      Serial.println(_name);
       setLow(lowNumber);
       setHigh(highNumber);
       setIncrement(increment);
@@ -83,14 +81,10 @@ class EasyCounter
     }
 
     int resetCount() {
-      Serial.print(" counter increment: ");
-      Serial.println(_increment);
       if (_increment == COUNTER_MODE_UP)
         setCount(_low);
       if (_increment == COUNTER_MODE_DOWN)
         setCount(_high);
-      Serial.print(" reset counter: ");
-      Serial.println(_currentCounter);
       return this->_currentCounter;
     }
 

@@ -16,9 +16,9 @@
 #define ENABLE_DEBUG                 1
 
 // Comment out if you want to disable any component
-#define ENABLE_EASY_AUDIO            1 //Enable all audio 
-#define ENABLE_EASY_BUTTON           1 //Enable all buttons
-#define ENABLE_EASY_LED              1 //Enable LEDs
+//#define ENABLE_EASY_AUDIO            1 //Enable all audio 
+//#define ENABLE_EASY_BUTTON           1 //Enable all buttons
+//#define ENABLE_EASY_LED              1 //Enable LEDs
 #define ENABLE_EASY_OLED             1 //Enable OLED Display
 #define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
 #define ENABLE_EASY_VOICE_AUTOLOAD   1 //Enable OLED Display
