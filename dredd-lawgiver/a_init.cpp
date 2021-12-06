@@ -27,7 +27,7 @@ EasyCounter hiexCounter("highex");
 EasyCounter stunCounter("stun");
 
 EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
-EasyButton trigger(TRIGGER_PIN);
+//EasyButton trigger(TRIGGER_PIN);
 
 EasyLedv3<FIRE_LED_CNT, FIRE_LED_PIN> fireLed;
 ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4);  // initialize colors to starting fire mode
@@ -47,16 +47,19 @@ void handleSelectorMode(void);
 void sendBlasterPulse(EasyCounter &counter);
 EasyCounter& getTriggerCounter(void);
 uint8_t getSelectedTrack(uint8_t idx);
+void ammoDown(void);
 
 // trigger mode status
 volatile uint8_t selectedTriggerMode   = SELECTOR_ARMOR_MODE;   // sets the fire mode to blaster to start
+long lastTriggerTimeDebounce = 0;
+const static long debounceTriggerTimeField = 30;
 
 void setup() {
   Serial.begin (115200);
   debugLog("Starting setup");
 
   // set up the fire trigger and the debounce threshold
-  trigger.begin(25);
+  //trigger.begin(25);
 
   //initializes the audio player and sets the volume
   audio.begin(20);
@@ -80,8 +83,12 @@ void setup() {
   voice.begin();
 
   // attach the interrupts
+#ifndef ENABLE_EASY_BUTTON
   debugLog("Attach Interrupts");
-  attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), handleFireTrigger, CHANGE);
+  noInterrupts();
+  attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), ammoDown, RISING);
+  interrupts();
+#endif
 }
 
 void initLedIndicators(void) {
@@ -197,11 +204,20 @@ void runOledDisplay() {
   oled.updateDisplay(selectedTriggerMode, getTriggerCounter().getCount());
 }
 
+void ammoDown(void) {
+    if ((millis() - lastTriggerTimeDebounce) > debounceTriggerTimeField) {
+    if (digitalRead(TRIGGER_PIN) == HIGH) {
+      sendBlasterPulse(getTriggerCounter());
+    }
+    lastTriggerTimeDebounce = millis();
+  }
+}
 /**
    Checks the fire trigger momentary switch.
    Short press should send an alternating blaster pulse
    Long press should change modes between A/B and C/D
 */
+/*
 void handleFireTrigger(void) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
@@ -213,6 +229,7 @@ void handleFireTrigger(void) {
     // ignore
   }
 }
+*/
 
 /**
    Sends a blaster pulse.

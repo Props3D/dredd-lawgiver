@@ -5,9 +5,9 @@
 #include <U8g2lib.h>
 #include "debug.h"
 
-#ifdef U8X8_HAVE_HW_SPI
-#include <SPI.h>
-#endif
+//#ifdef U8X8_HAVE_HW_SPI
+//#include <SPI.h>
+//#endif
 
 
 /**
@@ -137,7 +137,7 @@ class EasyOLED
     void drawLogo() {
 #ifdef ENABLE_EASY_OLED
       u8g2.setFont(u8g2_font_helvB18_tr);
-      u8g2.setCursor(42, 42);
+      u8g2.setCursor(40, 42);
       u8g2.print(F("3DProps Pro"));
 #endif
     }
@@ -357,7 +357,7 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB18_tr);
       if (ammoCount < 4 && ammoCount > 0) {
         u8g2.setCursor(0, 42);
-        u8g2.print(F("LOW AMMO"));
+        u8g2.print(F("Low Ammo"));
       } else if (ammoCount == 0 ) {
       // Gun Empty - blink
         _blink = (millis() % (500 + 500) < 500);
@@ -366,7 +366,7 @@ class EasyOLED
             u8g2.print(F(""));
         } else {
             u8g2.setCursor(0, 42);
-            u8g2.print(F("EMPTY"));
+            u8g2.print(F("Empty"));
         }
       }
       else
@@ -374,19 +374,19 @@ class EasyOLED
         switch (_ammoSelection) {
           case 0:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("ARMOR PIER."));
+            u8g2.print(F("Armor Pier."));
             break;
           case 1:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("INCENDIARY"));
+            u8g2.print(F("Hotshot"));
             break;
           case 2:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("HIGH EX"));
+            u8g2.print(F("HighEx"));
             break;
           case 3:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("STUN"));
+            u8g2.print(F("Stun"));
             break;
         }
       }
