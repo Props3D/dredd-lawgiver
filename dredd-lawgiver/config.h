@@ -18,6 +18,7 @@
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO            1 //Enable all audio 
 #define ENABLE_EASY_BUTTON           1 //Enable all buttons
+#define ENABLE_EASY_LED              1 //Enable LEDs
 #define ENABLE_EASY_OLED             1 //Enable OLED Display
 #define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
 #define ENABLE_EASY_VOICE_AUTOLOAD   1 //Enable OLED Display
@@ -37,6 +38,7 @@
 #define TRIGGER_PIN         2
 
 // Pin configuration for front barrel WS2812B LED
+// set these to 0 if you want to disable the component
 #define FIRE_LED_PIN        7
 #define FIRE_LED_CNT        7
 
@@ -45,8 +47,8 @@
 #define GREEN_LED_PIN       15
 
 // Pin configuration for oled display
-#define OLED_CL_PIN         13
-#define OLED_DC_PIN         11
+#define OLED_SCL_PIN        13
+#define OLED_SDA_PIN        11
 #define OLED_CS_PIN         10
 #define OLED_DC_PIN         9
 #define OLED_RESET_PIN      8

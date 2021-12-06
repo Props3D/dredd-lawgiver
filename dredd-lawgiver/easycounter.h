@@ -1,15 +1,15 @@
 #ifndef easycounter_h
 #define easycounter_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include "debug.h"
 
 const static uint8_t STATE_ACTIVE      = 0;
 const static uint8_t STATE_EMPTY       = 1;
 const static uint8_t STATE_FULL        = 2;
 
-const static uint8_t COUNTER_MODE_UP = 1;
-const static uint8_t COUNTER_MODE_DOWN = -1;
+const static int COUNTER_MODE_UP    =  1;
+const static int COUNTER_MODE_DOWN  = -1;
 
 /**
  * Simple class for tracking counts up or down.
@@ -30,15 +30,11 @@ class EasyCounter
 {
   private:
     String _name;
-    int8_t _increment = COUNTER_MODE_DOWN;
-    uint8_t _low;
-    uint8_t _high;
+    int _increment = COUNTER_MODE_DOWN;
+    int _low;
+    int _high;
     bool _resetOnEmpty;
-    volatile uint8_t _currentCounter;
-    // file indexes for different states
-    //uint8_t _activeTrackIdx;
-    //uint8_t _emptyTrackIdx;
-    //uint8_t _resetTrackIdx;
+    volatile int _currentCounter;
  
     // helper functions
     void setLow(int number) { this->_low = number; }
@@ -48,26 +44,15 @@ class EasyCounter
     void setResetOnEmpty(bool value) { this->_resetOnEmpty = value; }
   public:
     EasyCounter(const char *label) : _name(label) {}
-    //EasyCounter(const char *label, uint8_t activeTrack, uint8_t emptyTrack, uint8_t resetTrack) : _name(label) {
-    //  this->_activeTrackIdx = activeTrack;
-    //  this->_emptyTrackIdx = emptyTrack;
-    //  this->_resetTrackIdx = resetTrack;
-    //}
 
-    void begin(uint8_t lowNumber, uint8_t highNumber, int8_t increment, bool resetOnEmpty) {
-      //Serial.print("Initialing counter: ");
-      //Serial.println(_name);
+    void begin(int lowNumber, int highNumber, int increment, bool resetOnEmpty) {
+      Serial.print("Initialing counter: ");
+      Serial.println(_name);
       setLow(lowNumber);
       setHigh(highNumber);
       setIncrement(increment);
       resetCount();
     }
-
-//    void setTracks(uint8_t activeTrack, uint8_t emptyTrack, uint8_t resetTrack) {
-//      this->_activeTrackIdx = activeTrack;
-//      this->_emptyTrackIdx = emptyTrack;
-//      this->_resetTrackIdx = resetTrack;
-//    }
 
     EasyCounter* EasyCounter::tick() {
       if (isEmpty()) {
@@ -97,18 +82,19 @@ class EasyCounter
       return false;
     }
 
-    uint8_t resetCount() {
+    int resetCount() {
+      Serial.print(" counter increment: ");
+      Serial.println(_increment);
       if (_increment == COUNTER_MODE_UP)
         setCount(_low);
       if (_increment == COUNTER_MODE_DOWN)
         setCount(_high);
-      //Serial.print(_name);
-      //Serial.print(" reset counter: ");
-      //Serial.println(_currentCounter);
+      Serial.print(" reset counter: ");
+      Serial.println(_currentCounter);
       return this->_currentCounter;
     }
 
-    uint8_t getCount() {
+    int getCount() {
       return this->_currentCounter;
     }
 

@@ -1,7 +1,7 @@
 #ifndef easyaudio_h
 #define easyaudio_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <DFPlayerMini_Fast.h>
 #include "easyqueue.h"

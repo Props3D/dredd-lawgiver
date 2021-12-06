@@ -1,7 +1,7 @@
 #ifndef easyledv3_h
 #define easyledv3_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <FastLED.h>
 #include "ezPattern.h"
 #include "debug.h"
@@ -53,37 +53,47 @@ class EasyLedv3
     EasyLedv3() {};
     
     void begin(int brightness) {
+#ifdef ENABLE_EASY_LED
       if (LED_COUNT > 0 && LED_PIN_IN > 0) {
         FastLED.addLeds<WS2812, LED_PIN_IN, GRB>(leds, LED_COUNT);
         FastLED.setBrightness(brightness);
         FastLED.setMaxPowerInVoltsAndMilliamps(5, 450); //5v and 450mA
         clear();
       }
+#endif
     }
 
     //===============================================================
     // Apply LED color changes
     void clear() {
+#ifdef ENABLE_EASY_LED
         FastLED.clear();
         FastLED.show();
+#endif
     }
 
     void show() {
+#ifdef ENABLE_EASY_LED
       FastLED.show();
+#endif
     }
 
     // fill all leds with solid color
     void fill(CRGB color) {
+#ifdef ENABLE_EASY_LED
         fill_solid(leds, LED_COUNT, color);
+#endif
     }
 
     // Set a LED color (not yet visible)
     void setPixel(int Pixel, byte red, byte green, byte blue) {
+#ifdef ENABLE_EASY_LED
       if (Pixel < LED_COUNT) {
         leds[Pixel].r = red;
         leds[Pixel].g = green;
         leds[Pixel].b = blue;
       }
+#endif
     }
 
     /**
@@ -91,10 +101,12 @@ class EasyLedv3
      * See ezPattern for classes.
      */
     void activate(ezPattern &ptn) {
+#ifdef ENABLE_EASY_LED
       debugLog("activating led pattern");
       pattern = &ptn;
       if (pattern)
         pattern->activate(leds, LED_COUNT);
+#endif
     }
 
     /**
@@ -102,10 +114,12 @@ class EasyLedv3
      * The call is a proxy to the ezPattern, if one has been provided.
      */
     void updateDisplay() {
+#ifdef ENABLE_EASY_LED
       if(LED_COUNT > 0 && LED_PIN_IN > 0) {
         if (pattern)
           pattern->updateDisplay(leds, LED_COUNT);
       }
+#endif
     }
 };
 

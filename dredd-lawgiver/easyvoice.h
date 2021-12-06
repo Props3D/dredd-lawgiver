@@ -1,7 +1,7 @@
 #ifndef easyvoice_h
 #define easyvoice_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include "VoiceRecognitionV3.h"
 
 

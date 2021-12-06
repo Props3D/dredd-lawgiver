@@ -20,17 +20,18 @@
 
    There's no need to change any of the following code or functions.
 */
+// Counters for each firing mode
+EasyCounter fireCounter("fire");
+EasyCounter incdCounter("incend");
+EasyCounter hiexCounter("highex");
+EasyCounter stunCounter("stun");
+
 EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 EasyButton trigger(TRIGGER_PIN);
 
 EasyLedv3<FIRE_LED_CNT, FIRE_LED_PIN> fireLed;
 ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4);  // initialize colors to starting fire mode
 
-// Counters for each firing mode
-EasyCounter fireCounter("fire");
-EasyCounter incdCounter("incend");
-EasyCounter hiexCounter("highex");
-EasyCounter stunCounter("stun");
 
 EasyOLED<OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled(DISPLAY_USER_ID);
 EasyVoice<VOICE_RECORDS_ARR, VOICE_RECORDS_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
@@ -48,19 +49,11 @@ EasyCounter& getTriggerCounter(void);
 uint8_t getSelectedTrack(uint8_t idx);
 
 // trigger mode status
-uint8_t selectedTriggerMode   = SELECTOR_ARMOR_MODE;   // sets the fire mode to blaster to start
+volatile uint8_t selectedTriggerMode   = SELECTOR_ARMOR_MODE;   // sets the fire mode to blaster to start
 
 void setup() {
   Serial.begin (115200);
   debugLog("Starting setup");
-
-  // Initialize the clip counters for different modes
-  fireCounter.begin(0, 10, COUNTER_MODE_DOWN, false);
-  stunCounter.begin(0, 10, COUNTER_MODE_DOWN, false);
-  fireCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  incdCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  hiexCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  stunCounter.begin(0, 10, COUNTER_MODE_DOWN, false);
 
   // set up the fire trigger and the debounce threshold
   trigger.begin(25);
@@ -75,12 +68,18 @@ void setup() {
 
   // init the display
   selectedTriggerMode = SELECTOR_ARMOR_MODE;
-  int counters[4] = {fireCounter.getCount(), incdCounter.getCount(), hiexCounter.getCount(), stunCounter.getCount()};
+  // Initialize the clip counters for different modes
+  fireCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  incdCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  hiexCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  stunCounter.begin(0, 10, COUNTER_MODE_DOWN, false);
+  uint8_t counters[4] = {fireCounter.getCount(), incdCounter.getCount(), hiexCounter.getCount(), stunCounter.getCount()};
   oled.begin(selectedTriggerMode, counters);
 
   // init the voice module
   voice.begin();
 
+  // attach the interrupts
   debugLog("Attach Interrupts");
   attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), handleFireTrigger, CHANGE);
 }
@@ -108,7 +107,7 @@ void ammoIndicators(void) {
  */
 void loop () {
   // run the start up sequence first
-  if (millis() < 9000) {
+  if (millis() < 9200) {
     startUpSequence();
     runOledDisplay();
     runAudioPlayback();
@@ -118,7 +117,6 @@ void loop () {
     runAudioPlayback();
     runLedDisplay();
     // check for new inputs
-    handleFireTrigger();
     handleSelectorMode();
   }
 }
@@ -204,7 +202,7 @@ void runOledDisplay() {
    Short press should send an alternating blaster pulse
    Long press should change modes between A/B and C/D
 */
-void handleFireTrigger() {
+void handleFireTrigger(void) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
   // check if a trigger is pressed.
@@ -235,6 +233,8 @@ void sendBlasterPulse(EasyCounter &counter) {
   if (trackIdx != counter.getState())
     trackIdx = counter.getState();   // We redo this when the clip is full to get the reload track
 
+  // trigger the low-ammo indicators
+  ammoIndicators();
   //queue the track
   audio.queuePlayback(getSelectedTrack(trackIdx));
   if (emptyClip == false) {

@@ -1,7 +1,7 @@
 #ifndef easyqueue_h
 #define easyqueue_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 
 /**
  * A templated class for a FIFO queue, with a maximum size.

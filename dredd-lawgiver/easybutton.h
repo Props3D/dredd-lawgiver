@@ -1,7 +1,7 @@
 #ifndef easybutton_h
 #define easybutton_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <ezButton.h>
 #include "debug.h"
 

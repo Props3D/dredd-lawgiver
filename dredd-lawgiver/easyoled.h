@@ -1,13 +1,13 @@
 #ifndef easyoled_h
 #define easyoled_h
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <U8g2lib.h>
 #include "debug.h"
 
-//#ifdef U8X8_HAVE_HW_SPI
-//#include <SPI.h>
-//#endif
+#ifdef U8X8_HAVE_HW_SPI
+#include <SPI.h>
+#endif
 
 
 /**
@@ -25,7 +25,6 @@
 
    REQUIRED LIBRARY: U8g2lib
 */
-//const char semi[] PROGMEM = "SEMI";
 
 template <int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED
@@ -43,7 +42,7 @@ class EasyOLED
     long _lastProgressBarUpdate = 0;
     uint8_t _ammoSelection = 0;
     bool _blink = false;
-    int _ammoCounts[4];
+    uint8_t _ammoCounts[4];
     char _buf[10];
 
   public:
@@ -63,7 +62,7 @@ class EasyOLED
     /**
        In the setup, initialize the display count and brightness.
     */
-    void begin(int ammoSelection, int ammoCounts[]) {
+    void begin(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
       debugLog("Initialing OLED display");
       u8g2.begin();
@@ -138,7 +137,7 @@ class EasyOLED
     void drawLogo() {
 #ifdef ENABLE_EASY_OLED
       u8g2.setFont(u8g2_font_helvB18_tr);
-      u8g2.setCursor(50, 42);
+      u8g2.setCursor(42, 42);
       u8g2.print(F("3DProps Pro"));
 #endif
     }

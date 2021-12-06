@@ -3,7 +3,7 @@
 #ifndef debuglog_h
 #define debuglog_h
 
-#include <Arduino.h>
+//#include <Arduino.h> 
 
 /**
  * Debug logging that can be disabled, See config.h to disable.
@@ -41,7 +41,7 @@ class DebugLog
 };
 
 
-#ifdef ENABLE_DEBUG==1
+#ifdef ENABLE_DEBUG == 1
 static DebugLog<true> debug;
 #else
 static DebugLog<false> debug;
