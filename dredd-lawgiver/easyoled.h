@@ -169,7 +169,12 @@ class EasyOLED
       u8g2.drawDisc(progress, 3, 3);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      u8g2.print(F("I.D. OK"));
+      _blink = (millis() % (500 + 500) < 500);
+      if (_blink) {
+          u8g2.print(F(""));
+      } else {
+          u8g2.print(F("I.D. OK"));
+      }
       drawAmmoMode();
       drawGrid();
 #endif
@@ -193,14 +198,9 @@ class EasyOLED
 
     void drawIDName(void) {
 #ifdef ENABLE_EASY_OLED
-      _blink = (millis() % (500 + 500) < 500);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      if (_blink) {
-          u8g2.print(F(""));
-      } else {
-          u8g2.print(_name);
-      }
+      u8g2.print(_name);
       drawAmmoMode();
       drawGrid();
 #endif
@@ -396,7 +396,7 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB14_tr);
       if (ammoCount < 4 && ammoCount > 0) {
         u8g2.setCursor(0, 42);
-        u8g2.print(F("LOW AMMO"));
+        u8g2.print(F("AMMUNITION LOW"));
       } else if (ammoCount == 0 ) {
       // Gun Empty - blink
         _blink = (millis() % (500 + 500) < 500);
@@ -413,7 +413,7 @@ class EasyOLED
         switch (_ammoSelection) {
           case 0:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("ARMOR PIER."));
+            u8g2.print(F("ARMOR PIERCING"));
             break;
           case 1:
             u8g2.setCursor(0, 42);
