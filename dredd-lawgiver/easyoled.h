@@ -305,7 +305,7 @@ class EasyOLED
       u8g2.setCursor(196, 61);
       u8g2.print(_buf);
       switch (_ammoSelection) {
-        case 0:
+        case 0: // armor piercing
           u8g2.setDrawColor(1);
           u8g2.drawBox(47, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -315,7 +315,8 @@ class EasyOLED
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
-        case 1:
+        case 1: // incendiary
+        case 3: // hotshot
           u8g2.setDrawColor(1);
           u8g2.drawBox(95, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -325,7 +326,7 @@ class EasyOLED
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
-        case 2:
+        case 2: // high explosive
           u8g2.setDrawColor(1);
           u8g2.drawBox(143, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -335,17 +336,7 @@ class EasyOLED
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
-        case 3:
-          u8g2.setDrawColor(1);
-          u8g2.drawBox(191, 46, 48, 20);
-          u8g2.setDrawColor(0);
-          u8g2.setCursor(196, 61);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%dfmj", _ammoCounts[3]);
-          u8g2.print(_buf);
-          u8g2.setDrawColor(1);
-          break;
-        default:
+        default: // FMJ / STUN / RAPID
           u8g2.setDrawColor(1);
           u8g2.drawBox(191, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -382,29 +373,15 @@ class EasyOLED
         else
         {
           switch (_ammoSelection) {
-            case 0:
-              // armor p
-              u8g2.print(F("SEMI"));
+            case 1: // incendiary
+            case 3: // hotshot
+              u8g2.print(F(""));
               break;
-            case 2:
-              // high ex
-              u8g2.print(F("SEMI"));
-              break;
-            case 3:
-              // stun
-              u8g2.print(F("SEMI"));
-              break;
-            case 5:
-              // FMJ
-              u8g2.print(F("SEMI"));
-              break;
-            case 6:
-              // FMJ
+            case 6: // FMJ
               u8g2.print(F("RAPID"));
               break;
-            default:
-              // Incendiary / Hotshot
-              u8g2.print(F(""));
+            default: // armor p / high ex / stun / FMJ
+              u8g2.print(F("SEMI"));
               break;
           }
         }
