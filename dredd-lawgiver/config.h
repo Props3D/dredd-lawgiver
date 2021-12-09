@@ -16,8 +16,8 @@
 #define ENABLE_DEBUG                 1
 
 // Comment out if you want to disable any component
-//#define ENABLE_EASY_AUDIO            1 //Enable all audio 
-//#define ENABLE_EASY_BUTTON           1 //Enable all buttons
+#define ENABLE_EASY_AUDIO            1 //Enable all audio 
+#define ENABLE_EASY_BUTTON           1 //Enable all buttons
 //#define ENABLE_EASY_LED              1 //Enable LEDs
 #define ENABLE_EASY_OLED             1 //Enable OLED Display
 #define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
@@ -54,30 +54,41 @@
 #define OLED_RESET_PIN      8
 
 // track by file index - upload these to the SD card in the correct order
-#define TRACK_START_UP        1
+#define TRACK_DNA_CHK         1
 #define TRACK_CHANGE_MODE     2
-#define TRACK_FIRE            3
-#define TRACK_HOTSHOT         4
-#define TRACK_HIGHEX          5
-#define TRACK_STUN            6
-#define TRACK_CLIP_RELOAD     7
-#define TRACK_CLIP_EMPTY      8
-#define TRACK_DNA_CHK         9
-#define TRACK_DNA_FAIL        10
-#define TRACK_THEME           11
+#define TRACK_AP_FIRE         3
+#define TRACK_IN_FIRE         3
+#define TRACK_HE_FIRE         3
+#define TRACK_HS_FIRE         3
+#define TRACK_ST_FIRE         3
+#define TRACK_FMJ_FIRE        3
+#define TRACK_RAPID_FIRE      4
+#define TRACK_CLIP_EMPTY      99
+#define TRACK_START_UP        99
+#define TRACK_ID_OK           99
+#define TRACK_DNA_FAIL        99
+#define TRACK_CLIP_RELOAD     99
+#define TRACK_THEME           99
+
 
 // Common constant definitions - DO NOT CHANGE
-static const uint8_t TRACK_FIRE_ARR[]    = {TRACK_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_INCD_ARR[]    = {TRACK_HOTSHOT, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_HIEX_ARR[]    = {TRACK_HIGHEX, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_STUN_ARR[]    = {TRACK_STUN, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_AP_ARR[]       = {TRACK_AP_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_IN_ARR[]       = {TRACK_IN_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_HE_ARR[]       = {TRACK_HE_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_HS_ARR[]       = {TRACK_HS_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_ST_ARR[]       = {TRACK_ST_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_FMJ_ARR[]      = {TRACK_FMJ_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_RAPID_ARR[]    = {TRACK_RAPID_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 
 // Voice Recognition Commands
-#define SELECTOR_ARMOR_MODE         0
-#define SELECTOR_HOTSHOT_MODE       1
-#define SELECTOR_HIGHEX_MODE        2
-#define SELECTOR_STUN_MODE          3
+#define SELECTOR_AP_MODE         0
+#define SELECTOR_IN_MODE         1
+#define SELECTOR_HE_MODE         2
+#define SELECTOR_HS_MODE         3
+#define SELECTOR_ST_MODE         4
+#define SELECTOR_FMJ_MODE        5
+#define SELECTOR_RAPID_MODE      6
 
-static const uint8_t VOICE_RECORDS_ARR_SZ   = 4;
-static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_ARMOR_MODE, SELECTOR_HOTSHOT_MODE, SELECTOR_HIGHEX_MODE, SELECTOR_STUN_MODE};
+static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
+static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HE_MODE, SELECTOR_HS_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
 #endif

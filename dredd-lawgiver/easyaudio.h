@@ -36,7 +36,7 @@ class EasyAudio
     const uint8_t playbackDelay = 100;
 
   public:
-    EasyAudio(uint8_t rxPin = 0, uint8_t txPin = 1) : mySerial(rxPin, txPin), tracks(5) {};
+    EasyAudio(uint8_t rxPin, uint8_t txPin) : mySerial(rxPin, txPin), tracks(5) {};
 
     void begin(uint8_t vol) {
 #ifdef ENABLE_EASY_AUDIO

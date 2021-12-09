@@ -125,10 +125,7 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       // Standard
       drawGrid();
-      u8g2.setFont(u8g2_font_helvB14_tr);
-      u8g2.setCursor(180, 42);
-      //u8g2.print((class __FlashStringHelper *)semi);
-      u8g2.print(F("SEMI"));
+      drawAmmoMode();
       drawAmmoName();
       drawAmmoField();
 #endif
@@ -146,9 +143,10 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       u8g2.drawBox(0, 0, progress , 7);
       u8g2.drawDisc(progress, 3, 3);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      u8g2.print(F("Comm Ok"));
+      u8g2.print(F("COMM OK"));
+      drawAmmoMode();
       drawGrid();
 #endif
     }
@@ -157,9 +155,10 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       u8g2.drawBox(0, 0, progress , 7);
       u8g2.drawDisc(progress, 3, 3);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      u8g2.print(F("DNA Check"));
+      u8g2.print(F("DNA CHECK"));
+      drawAmmoMode();
       drawGrid();
 #endif
     }
@@ -168,9 +167,10 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       u8g2.drawBox(0, 0, progress , 7);
       u8g2.drawDisc(progress, 3, 3);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      u8g2.print(F("I.D. Ok"));
+      u8g2.print(F("I.D. OK"));
+      drawAmmoMode();
       drawGrid();
 #endif
     }
@@ -179,13 +179,14 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       u8g2.drawBox(0, 0, progress , 7);
       u8g2.drawDisc(progress, 3, 3);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
           u8g2.print(F(""));
       } else {
-          u8g2.print(F("I.D. Failed"));
+          u8g2.print(F("I.D. FAIL"));
       }
+      drawAmmoMode();
       drawGrid();
 #endif
     }
@@ -193,18 +194,18 @@ class EasyOLED
     void drawIDName(void) {
 #ifdef ENABLE_EASY_OLED
       _blink = (millis() % (500 + 500) < 500);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
           u8g2.print(F(""));
       } else {
           u8g2.print(_name);
       }
+      drawAmmoMode();
       drawGrid();
 #endif
     }
 
-    // transfer internal memory to the display
     void drawDisplay(int displayMode, int progress) {
 #ifdef ENABLE_EASY_OLED
       u8g2.firstPage();
@@ -274,13 +275,11 @@ class EasyOLED
       u8g2.drawBox(95, 44, 2, 20);
       u8g2.drawBox(143, 44, 2, 20);
       u8g2.drawBox(191, 44, 2, 20);
-      //Grid
 
       //distance field
       u8g2.setFont(u8g2_font_helvB12_tr);
       u8g2.setCursor(0, 61);
       u8g2.print(F("D:0.0"));
-      //distance field
 #endif
     }
 
@@ -305,17 +304,7 @@ class EasyOLED
       sprintf (_buf, "%dfmj", _ammoCounts[3]);
       u8g2.setCursor(196, 61);
       u8g2.print(_buf);
-      //u8g2.drawStr(196, 61, buf);
       switch (_ammoSelection) {
-        case 3:
-          u8g2.setDrawColor(1);
-          u8g2.drawBox(191, 46, 48, 20);
-          u8g2.setDrawColor(0);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%dfmj", _ammoCounts[3]);
-          u8g2.drawStr(196, 61, _buf);
-          u8g2.setDrawColor(1);
-          break;
         case 0:
           u8g2.setDrawColor(1);
           u8g2.drawBox(47, 46, 48, 20);
@@ -346,6 +335,79 @@ class EasyOLED
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
+        case 3:
+          u8g2.setDrawColor(1);
+          u8g2.drawBox(191, 46, 48, 20);
+          u8g2.setDrawColor(0);
+          u8g2.setCursor(196, 61);
+          memset(_buf, 0, sizeof(_buf));
+          sprintf (_buf, "%dfmj", _ammoCounts[3]);
+          u8g2.print(_buf);
+          u8g2.setDrawColor(1);
+          break;
+        default:
+          u8g2.setDrawColor(1);
+          u8g2.drawBox(191, 46, 48, 20);
+          u8g2.setDrawColor(0);
+          u8g2.setCursor(196, 61);
+          memset(_buf, 0, sizeof(_buf));
+          sprintf (_buf, "%dfmj", _ammoCounts[3]);
+          u8g2.print(_buf);
+          u8g2.setDrawColor(1);
+          break;
+      }
+#endif
+    }
+
+    void drawAmmoMode() {
+#ifdef ENABLE_EASY_OLED
+      u8g2.setFont(u8g2_font_helvB14_tr);
+      u8g2.setCursor(180, 42);
+      if (_displayMode < DISPLAY_MAIN) {
+          if (_displayMode == DISPLAY_DNA_CHK)
+            u8g2.print(F("RAPID"));
+          else
+            u8g2.print(F("SEMI"));
+      }
+      
+      if (_displayMode == DISPLAY_MAIN) {
+        int ammoCount = _ammoCounts[_ammoSelection];
+        if (ammoCount < 4 && ammoCount > 0) {
+          // low ammo
+          u8g2.print(F("SEMI"));
+        } else if (ammoCount == 0 ) {
+          // empty clip
+          u8g2.print(F("SEMI"));
+        }
+        else
+        {
+          switch (_ammoSelection) {
+            case 0:
+              // armor p
+              u8g2.print(F("SEMI"));
+              break;
+            case 2:
+              // high ex
+              u8g2.print(F("SEMI"));
+              break;
+            case 3:
+              // stun
+              u8g2.print(F("SEMI"));
+              break;
+            case 5:
+              // FMJ
+              u8g2.print(F("SEMI"));
+              break;
+            case 6:
+              // FMJ
+              u8g2.print(F("RAPID"));
+              break;
+            default:
+              // Incendiary / Hotshot
+              u8g2.print(F(""));
+              break;
+          }
+        }
       }
 #endif
     }
@@ -354,10 +416,10 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       int ammoCount = _ammoCounts[_ammoSelection];
       u8g2.setDrawColor(1);
-      u8g2.setFont(u8g2_font_helvB18_tr);
+      u8g2.setFont(u8g2_font_helvB14_tr);
       if (ammoCount < 4 && ammoCount > 0) {
         u8g2.setCursor(0, 42);
-        u8g2.print(F("Low Ammo"));
+        u8g2.print(F("LOW AMMO"));
       } else if (ammoCount == 0 ) {
       // Gun Empty - blink
         _blink = (millis() % (500 + 500) < 500);
@@ -366,7 +428,7 @@ class EasyOLED
             u8g2.print(F(""));
         } else {
             u8g2.setCursor(0, 42);
-            u8g2.print(F("Empty"));
+            u8g2.print(F("EMPTY"));
         }
       }
       else
@@ -374,19 +436,28 @@ class EasyOLED
         switch (_ammoSelection) {
           case 0:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("Armor Pier."));
+            u8g2.print(F("ARMOR PIER."));
             break;
           case 1:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("Hotshot"));
+            u8g2.print(F("INCENDIARY"));
             break;
           case 2:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("HighEx"));
+            u8g2.print(F("HIGH EX"));
             break;
           case 3:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("Stun"));
+            u8g2.print(F("HOT SHOT"));
+            break;
+          case 4:
+            u8g2.setCursor(0, 42);
+            u8g2.print(F("STUN"));
+            break;
+          default:
+            // FMJ / Rapid
+            u8g2.setCursor(0, 42);
+            u8g2.print(F(""));
             break;
         }
       }

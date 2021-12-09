@@ -21,10 +21,10 @@
    There's no need to change any of the following code or functions.
 */
 // Counters for each firing mode
-EasyCounter fireCounter("fire");
-EasyCounter incdCounter("incend");
-EasyCounter hiexCounter("highex");
-EasyCounter stunCounter("stun");
+EasyCounter apCounter("fire");
+EasyCounter inCounter("incend");
+EasyCounter heCounter("highex");
+EasyCounter fmjCounter("stun");
 
 EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 //EasyButton trigger(TRIGGER_PIN);
@@ -50,9 +50,9 @@ uint8_t getSelectedTrack(uint8_t idx);
 void ammoDown(void);
 
 // trigger mode status
-volatile uint8_t selectedTriggerMode   = SELECTOR_ARMOR_MODE;   // sets the fire mode to blaster to start
+volatile uint8_t selectedTriggerMode   = SELECTOR_FMJ_MODE;   // sets the fire mode to blaster to start
 long lastTriggerTimeDebounce = 0;
-const static long debounceTriggerTimeField = 30;
+const static long debounceTriggerTimeField = 50;
 
 void setup() {
   Serial.begin (115200);
@@ -62,7 +62,7 @@ void setup() {
   //trigger.begin(25);
 
   //initializes the audio player and sets the volume
-  audio.begin(20);
+  audio.begin(25);
 
   // initialize all the leds
   initLedIndicators();
@@ -70,13 +70,13 @@ void setup() {
   fireLed.begin(75);
 
   // init the display
-  selectedTriggerMode = SELECTOR_ARMOR_MODE;
+  selectedTriggerMode = SELECTOR_FMJ_MODE;
   // Initialize the clip counters for different modes
-  fireCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  incdCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  hiexCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  stunCounter.begin(0, 10, COUNTER_MODE_DOWN, false);
-  uint8_t counters[4] = {fireCounter.getCount(), incdCounter.getCount(), hiexCounter.getCount(), stunCounter.getCount()};
+  apCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  inCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  heCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
+  fmjCounter.begin(0, 50, COUNTER_MODE_DOWN, false);
+  uint8_t counters[4] = {apCounter.getCount(), inCounter.getCount(), heCounter.getCount(), fmjCounter.getCount()};
   oled.begin(selectedTriggerMode, counters);
 
   // init the voice module
@@ -144,6 +144,9 @@ void startUpSequence() {
     oled.setDisplayMode(oled.DISPLAY_COMM_CHK);
   }
   if (millis() > 3200 && millis() < 4200) {
+    if (oled.currentDisplayMode() != oled.DISPLAY_DNA_CHK) {
+      audio.queuePlayback(TRACK_DNA_CHK);
+    }
     debugLog("OLED display - DNA Check");
     oled.setDisplayMode(oled.DISPLAY_DNA_CHK);
   }
@@ -260,23 +263,29 @@ void sendBlasterPulse(EasyCounter &counter) {
 }
 
 uint8_t getSelectedTrack(uint8_t idx) {
-  if (selectedTriggerMode == SELECTOR_ARMOR_MODE)
-    return TRACK_FIRE_ARR[idx];
-  if (selectedTriggerMode == SELECTOR_HOTSHOT_MODE)
-    return TRACK_INCD_ARR[idx];
-  if (selectedTriggerMode == SELECTOR_HIGHEX_MODE)
-    return TRACK_HIEX_ARR[idx];
-  return TRACK_STUN_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_AP_MODE)
+    return TRACK_AP_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_IN_MODE)
+    return TRACK_IN_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_HE_MODE)
+    return TRACK_HE_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_HS_MODE)
+    return TRACK_HS_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_ST_MODE)
+    return TRACK_ST_ARR[idx];
+  if (selectedTriggerMode == SELECTOR_RAPID_MODE)
+    return TRACK_RAPID_ARR[idx];
+  return TRACK_FMJ_ARR[idx];
 }
 
 EasyCounter& getTriggerCounter() {
-  if (selectedTriggerMode == SELECTOR_ARMOR_MODE)
-    return fireCounter;
-  if (selectedTriggerMode == SELECTOR_HOTSHOT_MODE)
-    return incdCounter;
-  if (selectedTriggerMode == SELECTOR_HIGHEX_MODE)
-    return hiexCounter;
-  return stunCounter;
+  if (selectedTriggerMode == SELECTOR_AP_MODE)
+    return apCounter;
+  if (selectedTriggerMode == SELECTOR_IN_MODE)
+    return inCounter;
+  if (selectedTriggerMode == SELECTOR_HE_MODE)
+    return heCounter;
+  return fmjCounter;
 }
 
 /**
@@ -292,21 +301,33 @@ void handleSelectorMode() {
   if (cmd > -1) {
     selectedTriggerMode = cmd;
     // Check for Switching modes
-    if (selectedTriggerMode == SELECTOR_ARMOR_MODE) {
-      blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
+    if (selectedTriggerMode == SELECTOR_AP_MODE) {
+      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       debugLog("Armor Piercing Mode selected");
     }
-    if (selectedTriggerMode == SELECTOR_HOTSHOT_MODE) {
-      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      debugLog("Inceddiary Mode selected");
+    if (selectedTriggerMode == SELECTOR_IN_MODE) {
+      blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
+      debugLog("Incendiary Mode selected");
     }
-    if (selectedTriggerMode == SELECTOR_HIGHEX_MODE) {
-      blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
+    if (selectedTriggerMode == SELECTOR_HE_MODE) {
+      blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
       debugLog("High Ex Mode selected");
     }
-    if (selectedTriggerMode == SELECTOR_STUN_MODE) {
+    if (selectedTriggerMode == SELECTOR_HS_MODE) {
+      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
+      debugLog("Hotshot Mode selected");
+    }
+    if (selectedTriggerMode == SELECTOR_ST_MODE) {
       blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
       debugLog("Stun Mode selected");
+    }
+    if (selectedTriggerMode == SELECTOR_FMJ_MODE) {
+      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
+      debugLog("FMJ Mode selected");
+    }
+    if (selectedTriggerMode == SELECTOR_RAPID_MODE) {
+      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
+      debugLog("FMJ Mode selected");
     }
     audio.queuePlayback(TRACK_CHANGE_MODE);
   }
