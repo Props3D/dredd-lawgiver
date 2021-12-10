@@ -92,6 +92,7 @@ class EasyOLED
     */
     void updateDisplay(int ammoSelection, int ammoCount) {
 #ifdef ENABLE_EASY_OLED
+      _blink = (millis() % (500 + 500) < 500);
       // Comm OK Sequence
       if (_displayMode == DISPLAY_COMM_CHK) {
         if (millis() > _progressBarInterval + _lastProgressBarUpdate) {
@@ -169,11 +170,10 @@ class EasyOLED
       u8g2.drawDisc(progress, 3, 3);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
-      _blink = (millis() % (500 + 500) < 500);
       if (_blink) {
-          u8g2.print(F(""));
-      } else {
           u8g2.print(F("I.D. OK"));
+      } else {
+          u8g2.print(F(""));
       }
       drawAmmoMode();
       drawGrid();
@@ -187,9 +187,9 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
-          u8g2.print(F(""));
-      } else {
           u8g2.print(F("I.D. FAIL"));
+      } else {
+          u8g2.print(F(""));
       }
       drawAmmoMode();
       drawGrid();
@@ -398,14 +398,12 @@ class EasyOLED
         u8g2.setCursor(0, 42);
         u8g2.print(F("AMMUNITION LOW"));
       } else if (ammoCount == 0 ) {
-      // Gun Empty - blink
-        _blink = (millis() % (500 + 500) < 500);
+        // Gun Empty - blink
+        u8g2.setCursor(0, 42);
         if (_blink) {
-            u8g2.setCursor(0, 42);
-            u8g2.print(F(""));
-        } else {
-            u8g2.setCursor(0, 42);
             u8g2.print(F("EMPTY"));
+        } else {
+            u8g2.print(F(""));
         }
       }
       else

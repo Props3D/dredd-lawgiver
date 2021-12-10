@@ -81,13 +81,15 @@ static const uint8_t TRACK_FMJ_ARR[]      = {TRACK_FMJ_FIRE, TRACK_CLIP_EMPTY, T
 static const uint8_t TRACK_RAPID_ARR[]    = {TRACK_RAPID_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 
 // Voice Recognition Commands
-#define SELECTOR_AP_MODE         0
-#define SELECTOR_IN_MODE         1
-#define SELECTOR_HE_MODE         2
-#define SELECTOR_HS_MODE         3
-#define SELECTOR_ST_MODE         4
-#define SELECTOR_FMJ_MODE        5
-#define SELECTOR_RAPID_MODE      6
+#define SELECTOR_AP_MODE         0 // speak "Armor Piercing"
+#define SELECTOR_IN_MODE         1 // speak "Incendiary"
+#define SELECTOR_HE_MODE         2 // speak "High Ex"
+#define SELECTOR_HS_MODE         3 // speak "Hotshot"
+#define SELECTOR_ST_MODE         4 // speak "Stun"
+#define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
+#define SELECTOR_RAPID_MODE      6 // speak "Rapid"
+#define SELECTOR_RAPID_MODE      7 // speak "Reload"
+
 
 static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
 static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HE_MODE, SELECTOR_HS_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};

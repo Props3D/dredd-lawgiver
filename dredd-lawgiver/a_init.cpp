@@ -114,7 +114,7 @@ void ammoIndicators(void) {
  */
 void loop () {
   // run the start up sequence first
-  if (millis() < 9200) {
+  if (millis() < 9600) {
     startUpSequence();
     runOledDisplay();
     runAudioPlayback();
@@ -167,20 +167,27 @@ void startUpSequence() {
 
   if (oled.currentDisplayMode() != oled.DISPLAY_ID_FAIL) {
     // ID OK 1500ms
-    if (millis() > 5400 && millis() < 6900) {
+    if (millis() > 5400 && millis() < 7400) {
       debugLog("OLED display - ID OK");
       oled.setDisplayMode(oled.DISPLAY_ID_OK);
-      digitalWrite(RED_LED_PIN, LOW);
-      digitalWrite(GREEN_LED_PIN, HIGH);
+      // blink the green
+      bool _blink = (millis() % (500 + 500) < 500);
+      if (_blink) {
+          digitalWrite(RED_LED_PIN, LOW);
+          digitalWrite(GREEN_LED_PIN, HIGH);
+      } else {
+          digitalWrite(RED_LED_PIN, LOW);
+          digitalWrite(GREEN_LED_PIN, LOW);
+      }
     }
     // ID NAME 1500ms
-    if (millis() > 6900 && millis() < 8900) {
+    if (millis() > 7400 && millis() < 9400) {
       debugLog("OLED display - ID NAME");
       oled.setDisplayMode(oled.DISPLAY_ID_NAME);
     }
 
     // Firing Mode
-    if (millis() > 8900) {
+    if (millis() > 9400) {
       debugLog("OLED display - Main");
       oled.setDisplayMode(oled.DISPLAY_MAIN);
       digitalWrite(GREEN_LED_PIN, LOW);
