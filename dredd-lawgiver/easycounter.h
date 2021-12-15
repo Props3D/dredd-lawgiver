@@ -45,6 +45,9 @@ class EasyCounter
   public:
     EasyCounter(const char *label) : _name(label) {}
 
+    void begin(int lowNumber, int highNumber, int increment) {
+      begin(lowNumber, highNumber, increment, false);
+    }
     void begin(int lowNumber, int highNumber, int increment, bool resetOnEmpty) {
       setLow(lowNumber);
       setHigh(highNumber);
@@ -57,10 +60,11 @@ class EasyCounter
         if (_resetOnEmpty) resetCount();
         return this;
       }
-      if (_increment == COUNTER_MODE_UP) 
+      if (_increment == COUNTER_MODE_UP) {
           _currentCounter = _currentCounter + 1;
-       else
+      } else {
           _currentCounter = _currentCounter - 1;
+      }
       return this;
     }
 

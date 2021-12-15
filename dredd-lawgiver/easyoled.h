@@ -31,6 +31,12 @@ class EasyOLED
 {
 
   private:
+    const long _progressBarIntervalMs = 100;
+    const int _progressBarIncrement_1 = 10;
+    const int _progressBarIncrement_2 = 8;
+    // index of ammo selections and ammo counters based on the config.h
+    uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
+
     // After downloading the library, Don't forget to Enable U8G2_16BIT in u8g2.h
     U8G2_SH1122_256X64_2_4W_HW_SPI u8g2;
 
@@ -38,7 +44,6 @@ class EasyOLED
     uint8_t _displayMode = 0;
     uint8_t _progressBar = 0;
 
-    long _progressBarInterval = 100;
     long _lastProgressBarUpdate = 0;
     uint8_t _ammoSelection = 0;
     bool _blink = false;
@@ -56,7 +61,7 @@ class EasyOLED
     const static uint8_t DISPLAY_MAIN       = 7;
 
     EasyOLED(const char *name) : u8g2(U8G2_R2, /* clock=13*/ /* data=11*/ /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
-                           _name(name){
+                           _name(name) {
     }
 
     /**
@@ -95,32 +100,30 @@ class EasyOLED
       _blink = (millis() % (500 + 500) < 500);
       // Comm OK Sequence
       if (_displayMode == DISPLAY_COMM_CHK) {
-        if (millis() > _progressBarInterval + _lastProgressBarUpdate) {
+        if (millis() > _progressBarIntervalMs + _lastProgressBarUpdate) {
           //debugLog("OLED display - COMM OK Progress");
-          _progressBar = _progressBar + 10;
+          _progressBar = _progressBar + _progressBarIncrement_1;
           _lastProgressBarUpdate = millis();
         }
       }
 
       // DNA Progress Sequence
       if (_displayMode == DISPLAY_DNA_PRG) {
-        if (millis() > _progressBarInterval + _lastProgressBarUpdate) {
+        if (millis() > _progressBarIntervalMs + _lastProgressBarUpdate) {
           //debugLog("OLED display - DNA Check Progress");
-          _progressBar = _progressBar + 10;
+          _progressBar = _progressBar + _progressBarIncrement_2;
           _lastProgressBarUpdate = millis();
         }
       }
 
-      if (_ammoSelection != ammoSelection || _ammoCounts[ammoSelection] != ammoCount) {
+      if (_ammoSelection != ammoSelection || _ammoCounts[_ammoIdx[ammoSelection]] != ammoCount) {
         _ammoSelection = ammoSelection;
-        _ammoCounts[_ammoSelection] = ammoCount;
+        _ammoCounts[_ammoIdx[_ammoSelection]] = ammoCount;
       }
-
       drawDisplay(_displayMode, _progressBar);
       delay(10);
 #endif
     }
-
 
     void drawFiringMode() {
 #ifdef ENABLE_EASY_OLED
@@ -140,10 +143,16 @@ class EasyOLED
 #endif
     }
 
-    void drawCommOk(int progress) {
+    void drawProgress(int progress) {
 #ifdef ENABLE_EASY_OLED
       u8g2.drawBox(0, 0, progress , 7);
       u8g2.drawDisc(progress, 3, 3);
+#endif
+    }
+
+    void drawCommOk(int progress) {
+#ifdef ENABLE_EASY_OLED
+      drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       u8g2.print(F("COMM OK"));
@@ -154,8 +163,7 @@ class EasyOLED
 
     void drawDNACheck(int progress) {
 #ifdef ENABLE_EASY_OLED
-      u8g2.drawBox(0, 0, progress , 7);
-      u8g2.drawDisc(progress, 3, 3);
+      drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       u8g2.print(F("DNA CHECK"));
@@ -166,8 +174,7 @@ class EasyOLED
 
     void drawIDOk(int progress) {
 #ifdef ENABLE_EASY_OLED
-      u8g2.drawBox(0, 0, progress , 7);
-      u8g2.drawDisc(progress, 3, 3);
+      drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
@@ -182,8 +189,7 @@ class EasyOLED
 
     void drawIDFail(int progress) {
 #ifdef ENABLE_EASY_OLED
-      u8g2.drawBox(0, 0, progress , 7);
-      u8g2.drawDisc(progress, 3, 3);
+      drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
@@ -196,8 +202,9 @@ class EasyOLED
 #endif
     }
 
-    void drawIDName(void) {
+    void drawIDName(int progress) {
 #ifdef ENABLE_EASY_OLED
+      drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       u8g2.print(_name);
@@ -236,7 +243,7 @@ class EasyOLED
             break;
           case DISPLAY_ID_NAME:
             // ID NAME
-            drawIDName();
+            drawIDName(progress);
             break;
           default:
             break;
@@ -316,7 +323,7 @@ class EasyOLED
           u8g2.setDrawColor(1);
           break;
         case 1: // incendiary
-        case 3: // hotshot
+        case 2: // hotshot
           u8g2.setDrawColor(1);
           u8g2.drawBox(95, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -326,7 +333,7 @@ class EasyOLED
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
-        case 2: // high explosive
+        case 3: // high explosive
           u8g2.setDrawColor(1);
           u8g2.drawBox(143, 46, 48, 20);
           u8g2.setDrawColor(0);
@@ -391,7 +398,7 @@ class EasyOLED
 
     void drawAmmoName() {
 #ifdef ENABLE_EASY_OLED
-      int ammoCount = _ammoCounts[_ammoSelection];
+      int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);
       if (ammoCount < 4 && ammoCount > 0) {
@@ -419,11 +426,11 @@ class EasyOLED
             break;
           case 2:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("HIGH EX"));
+            u8g2.print(F("HOT SHOT"));
             break;
           case 3:
             u8g2.setCursor(0, 42);
-            u8g2.print(F("HOT SHOT"));
+            u8g2.print(F("HIGH EX"));
             break;
           case 4:
             u8g2.setCursor(0, 42);

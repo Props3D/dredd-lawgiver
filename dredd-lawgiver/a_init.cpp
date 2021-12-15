@@ -21,10 +21,10 @@
    There's no need to change any of the following code or functions.
 */
 // Counters for each firing mode
-EasyCounter apCounter("fire");
-EasyCounter inCounter("incend");
-EasyCounter heCounter("highex");
-EasyCounter fmjCounter("stun");
+EasyCounter apCounter("ap");
+EasyCounter inCounter("in");
+EasyCounter heCounter("he");
+EasyCounter fmjCounter("fmj");
 
 EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 //EasyButton trigger(TRIGGER_PIN);
@@ -44,22 +44,22 @@ void runOledDisplay(void);
 void runLedDisplay(void);
 void handleFireTrigger(void);
 void handleSelectorMode(void);
-void sendBlasterPulse(EasyCounter &counter);
+void sendBlasterPulse(void);
 EasyCounter& getTriggerCounter(void);
 uint8_t getSelectedTrack(uint8_t idx);
 void ammoDown(void);
 
-// trigger mode status
+/**
+ *  Variables for tracking selected trigger mode.
+ *  Variables must be marked as volatile because they are updated in the ISR.
+ */
 volatile uint8_t selectedTriggerMode   = SELECTOR_FMJ_MODE;   // sets the fire mode to blaster to start
-long lastTriggerTimeDebounce = 0;
-const static long debounceTriggerTimeField = 50;
+volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
+const static long debounceTriggerTimeField = 250;             // time measured between bounces
 
 void setup() {
   Serial.begin (115200);
   debugLog("Starting setup");
-
-  // set up the fire trigger and the debounce threshold
-  //trigger.begin(25);
 
   //initializes the audio player and sets the volume
   audio.begin(25);
@@ -72,10 +72,10 @@ void setup() {
   // init the display
   selectedTriggerMode = SELECTOR_FMJ_MODE;
   // Initialize the clip counters for different modes
-  apCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  inCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  heCounter.begin(0, 25, COUNTER_MODE_DOWN, false);
-  fmjCounter.begin(0, 50, COUNTER_MODE_DOWN, false);
+  apCounter.begin(0, 25, COUNTER_MODE_DOWN);
+  inCounter.begin(0, 25, COUNTER_MODE_DOWN);
+  heCounter.begin(0, 25, COUNTER_MODE_DOWN);
+  fmjCounter.begin(0, 50, COUNTER_MODE_DOWN);
   uint8_t counters[4] = {apCounter.getCount(), inCounter.getCount(), heCounter.getCount(), fmjCounter.getCount()};
   oled.begin(selectedTriggerMode, counters);
 
@@ -85,17 +85,23 @@ void setup() {
   // attach the interrupts
 #ifndef ENABLE_EASY_BUTTON
   debugLog("Attach Interrupts");
+  pinMode(TRIGGER_PIN, INPUT_PULLUP);
   noInterrupts();
-  attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), ammoDown, RISING);
+  attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), ammoDown, FALLING);
   interrupts();
 #endif
+// set up the fire trigger and the debounce threshold
+#ifdef ENABLE_EASY_BUTTON
+  trigger.begin(25);
+#endif
+
 }
 
 void initLedIndicators(void) {
-  pinMode(RED_LED_PIN, OUTPUT);       
-  pinMode(GREEN_LED_PIN, OUTPUT);       
-  digitalWrite(RED_LED_PIN, LOW);   
-  digitalWrite(GREEN_LED_PIN, LOW);   
+  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  digitalWrite(RED_LED_PIN, LOW);
+  digitalWrite(GREEN_LED_PIN, LOW);
 }
 
 void ammoIndicators(void) {
@@ -105,7 +111,7 @@ void ammoIndicators(void) {
     digitalWrite(GREEN_LED_PIN, LOW);    
   } else {
     digitalWrite(RED_LED_PIN, LOW);
-    digitalWrite(GREEN_LED_PIN, HIGH);
+    digitalWrite(GREEN_LED_PIN, LOW);
   }
 }
 
@@ -114,7 +120,7 @@ void ammoIndicators(void) {
  */
 void loop () {
   // run the start up sequence first
-  if (millis() < 9600) {
+  if (millis() < STARTUP_END_MS) {
     startUpSequence();
     runOledDisplay();
     runAudioPlayback();
@@ -131,33 +137,34 @@ void loop () {
 /**
  * 
  */
-void startUpSequence() {
-  // Logo - 2sec
-  if (millis() < 2000) {
+void startUpSequence(void) {
+  // Logo
+  if (millis() < STARTUP_LOGO_MS) {
     debugLog("OLED display - LOGO");
     oled.setDisplayMode(oled.DISPLAY_LOGO);
   }
-  // Comm OK Sequence - 1800 msec
-  if (millis() > 2000 && millis() < 3200) {
+  // Comm OK Sequence
+  if (millis() > STARTUP_LOGO_MS && millis() < STARTUP_COMM_OK_MS) {
     digitalWrite(RED_LED_PIN, HIGH);
     debugLog("OLED display - Comm OK");
     oled.setDisplayMode(oled.DISPLAY_COMM_CHK);
   }
-  if (millis() > 3200 && millis() < 4200) {
-    if (oled.currentDisplayMode() != oled.DISPLAY_DNA_CHK) {
-      audio.queuePlayback(TRACK_DNA_CHK);
-    }
+  // switch to DNA Check and wait a second
+  if (millis() > STARTUP_COMM_OK_MS && millis() < STARTUP_DNA_CHK_MS) {
     debugLog("OLED display - DNA Check");
     oled.setDisplayMode(oled.DISPLAY_DNA_CHK);
   }
 
-  // DNA Check Sequence - 1200 msec
+  // DNA Check Sequence
   bool buttonState = true; //trigger.checkState() == trigger.BUTTON_HOLD_PRESS;
-  if (buttonState && millis() > 4200 && millis() < 5400) {
+  if (buttonState && millis() > STARTUP_DNA_CHK_MS && millis() < STARTUP_DNA_PRG_MS) {
+    if (oled.currentDisplayMode() != oled.DISPLAY_DNA_PRG) {
+      audio.queuePlayback(TRACK_DNA_CHK);
+    }
     debugLog("OLED display - DNA Progress");
     oled.setDisplayMode(oled.DISPLAY_DNA_PRG);
   }
-  if (!buttonState && millis() > 4200 && millis() < 5400) {
+  if (!buttonState && millis() > STARTUP_DNA_CHK_MS && millis() < STARTUP_DNA_PRG_MS) {
     if (oled.currentDisplayMode() == oled.DISPLAY_DNA_PRG) {
       audio.queuePlayback(TRACK_DNA_FAIL);
     }
@@ -166,8 +173,7 @@ void startUpSequence() {
   }
 
   if (oled.currentDisplayMode() != oled.DISPLAY_ID_FAIL) {
-    // ID OK 1500ms
-    if (millis() > 5400 && millis() < 7400) {
+    if (millis() > STARTUP_DNA_PRG_MS && millis() < STARTUP_ID_OK_MS) {
       debugLog("OLED display - ID OK");
       oled.setDisplayMode(oled.DISPLAY_ID_OK);
       // blink the green
@@ -180,14 +186,14 @@ void startUpSequence() {
           digitalWrite(GREEN_LED_PIN, LOW);
       }
     }
-    // ID NAME 1500ms
-    if (millis() > 7400 && millis() < 9400) {
+    // Display Judge Name
+    if (millis() > STARTUP_ID_OK_MS && millis() < STARTUP_JUDGE_NAME_MS) {
       debugLog("OLED display - ID NAME");
       oled.setDisplayMode(oled.DISPLAY_ID_NAME);
     }
 
     // Firing Mode
-    if (millis() > 9400) {
+    if (millis() > STARTUP_JUDGE_NAME_MS) {
       debugLog("OLED display - Main");
       oled.setDisplayMode(oled.DISPLAY_MAIN);
       digitalWrite(GREEN_LED_PIN, LOW);
@@ -197,27 +203,30 @@ void startUpSequence() {
 /**
    Playback the next queued track
 */
-void runAudioPlayback() {
+void runAudioPlayback(void) {
   audio.playQueuedTrack();
 }
 /**
    Run the led pattern
 */
-void runLedDisplay() {
+void runLedDisplay(void) {
   fireLed.updateDisplay();
 }
 
 /**
    Run the oled pattern
 */
-void runOledDisplay() {
+void runOledDisplay(void) {
   oled.updateDisplay(selectedTriggerMode, getTriggerCounter().getCount());
 }
 
+/**
+ * Checks the fire trigger momentary switch.
+ */
 void ammoDown(void) {
     if ((millis() - lastTriggerTimeDebounce) > debounceTriggerTimeField) {
-    if (digitalRead(TRIGGER_PIN) == HIGH) {
-      sendBlasterPulse(getTriggerCounter());
+    if (digitalRead(TRIGGER_PIN) == LOW) {
+      sendBlasterPulse();
     }
     lastTriggerTimeDebounce = millis();
   }
@@ -251,14 +260,17 @@ void handleFireTrigger(void) {
         c. update led counter to the current clip counter
      4. Otherwise play empty clip track
 */
-void sendBlasterPulse(EasyCounter &counter) {
+void sendBlasterPulse(void) {
   debugLog("send alternating blaster pulse");
-  bool emptyClip = counter.isEmpty();
+  bool emptyClip = getTriggerCounter().isEmpty();
   // check the track number before ticking, in case it's the last round
-  int trackIdx = counter.getState(); // returns the approapriate track, or empty clip
-  counter.tick();
-  if (trackIdx != counter.getState())
-    trackIdx = counter.getState();   // We redo this when the clip is full to get the reload track
+  int trackIdx = getTriggerCounter().getState(); // returns the approapriate track, or empty clip
+  // move the counter, if possible
+  getTriggerCounter().tick();
+  
+  // We redo this when the clip is full to get the reload track
+  //if (emptyClip && trackIdx != getTriggerCounter().getState())
+  //  trackIdx = getTriggerCounter().getState();   
 
   // trigger the low-ammo indicators
   ammoIndicators();
@@ -285,10 +297,12 @@ uint8_t getSelectedTrack(uint8_t idx) {
   return TRACK_FMJ_ARR[idx];
 }
 
-EasyCounter& getTriggerCounter() {
+EasyCounter& getTriggerCounter(void) {
   if (selectedTriggerMode == SELECTOR_AP_MODE)
     return apCounter;
   if (selectedTriggerMode == SELECTOR_IN_MODE)
+    return inCounter;
+  if (selectedTriggerMode == SELECTOR_HS_MODE)
     return inCounter;
   if (selectedTriggerMode == SELECTOR_HE_MODE)
     return heCounter;
@@ -302,7 +316,7 @@ EasyCounter& getTriggerCounter() {
      a. playback changee mode track
      b. toggle fire mode
 */
-void handleSelectorMode() {
+void handleSelectorMode(void) {
   int cmd = voice.readCommand();
   
   if (cmd > -1) {

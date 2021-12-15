@@ -17,7 +17,7 @@
 
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO            1 //Enable all audio 
-#define ENABLE_EASY_BUTTON           1 //Enable all buttons
+//#define ENABLE_EASY_BUTTON           1 //Enable all buttons
 //#define ENABLE_EASY_LED              1 //Enable LEDs
 #define ENABLE_EASY_OLED             1 //Enable OLED Display
 #define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
@@ -70,27 +70,40 @@
 #define TRACK_CLIP_RELOAD     99
 #define TRACK_THEME           99
 
+/**
+ * Timing Defintions for start up sequence timings
+ */
+#define STARTUP_LOGO_MS           2000  // 2 sec
+#define STARTUP_COMM_OK_MS        3200  // 1.2 sec
+#define STARTUP_DNA_CHK_MS        4200  // 1 sec
+#define STARTUP_DNA_PRG_MS        5700  // 1.5 sec
+#define STARTUP_ID_OK_MS          7500  // 1.8 sec
+#define STARTUP_JUDGE_NAME_MS     9300  // 1.8 sec
+#define STARTUP_END_MS            10000
 
 // Common constant definitions - DO NOT CHANGE
 static const uint8_t TRACK_AP_ARR[]       = {TRACK_AP_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_IN_ARR[]       = {TRACK_IN_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_HE_ARR[]       = {TRACK_HE_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_HS_ARR[]       = {TRACK_HS_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+static const uint8_t TRACK_HE_ARR[]       = {TRACK_HE_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_ST_ARR[]       = {TRACK_ST_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_FMJ_ARR[]      = {TRACK_FMJ_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_RAPID_ARR[]    = {TRACK_RAPID_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 
-// Voice Recognition Commands
+/**
+ *  Voice Recognition Commands
+ *  Each command must be trained to follow this sequence.
+ */
 #define SELECTOR_AP_MODE         0 // speak "Armor Piercing"
 #define SELECTOR_IN_MODE         1 // speak "Incendiary"
-#define SELECTOR_HE_MODE         2 // speak "High Ex"
-#define SELECTOR_HS_MODE         3 // speak "Hotshot"
+#define SELECTOR_HS_MODE         2 // speak "Hotshot"
+#define SELECTOR_HE_MODE         3 // speak "High Ex"
 #define SELECTOR_ST_MODE         4 // speak "Stun"
 #define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
 #define SELECTOR_RAPID_MODE      6 // speak "Rapid"
-#define SELECTOR_RAPID_MODE      7 // speak "Reload"
+#define SELECTOR_RELOAD_CMD      7 // speak "Reload"
 
 
 static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
-static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HE_MODE, SELECTOR_HS_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
+static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HS_MODE, SELECTOR_HE_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
 #endif
