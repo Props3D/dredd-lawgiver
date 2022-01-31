@@ -21,7 +21,7 @@
 #define ENABLE_EASY_OLED             1 //Enable OLED Display
 #define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
 
-// Configurable User ID
+// Customizable ID badge for DNA Check sequence 
 #define DISPLAY_USER_ID              "Dredd"
 
 // Pin configuration for MP3 Player
@@ -70,13 +70,6 @@
 #define TRACK_THEME           99  // TODO: add feature to playback theme
 
 /**
- * Defintions for tracking startup sequence
- */
-#define STARTUP_LOOP              2  // Startup sequence
-#define MAIN_LOOP                 1  // main loop
-#define STOP_LOOP                 0  // stop loop
-
-/**
  * Timing Defintions for start up sequence timings
  */
 #define STARTUP_LOGO_MS           2000  // 2 sec
@@ -87,6 +80,31 @@
 #define STARTUP_JUDGE_NAME_MS     9300  // 1.8 sec
 #define STARTUP_END_MS            10000
 
+/**
+ *  Voice Recognition Commands
+ *  Each command must be trained to follow this sequence.
+ *  
+ *  IMPORTANT - if you change this sequence, you must update the VOICE_RECORDS_ARR
+ */
+#define SELECTOR_AP_MODE         0 // speak "Armor Piercing" or just "Armor"
+#define SELECTOR_IN_MODE         1 // speak "Incendiary"
+#define SELECTOR_HS_MODE         2 // speak "Hotshot"
+#define SELECTOR_HE_MODE         3 // speak "High Ex"
+#define SELECTOR_ST_MODE         4 // speak "Stun"
+#define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
+#define SELECTOR_RAPID_MODE      6 // speak "Rapid"
+
+static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
+static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HS_MODE, SELECTOR_HE_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
+
+
+/**
+ * Defintions for tracking startup sequence. DO NOT CHANGE
+ */
+#define STARTUP_LOOP              2  // Startup sequence
+#define MAIN_LOOP                 1  // main loop
+#define STOP_LOOP                 0  // stop loop
+
 // Common constant definitions - DO NOT CHANGE
 static const uint8_t TRACK_AP_ARR[]       = {TRACK_AP_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_IN_ARR[]       = {TRACK_IN_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
@@ -96,19 +114,4 @@ static const uint8_t TRACK_ST_ARR[]       = {TRACK_ST_FIRE, TRACK_CLIP_EMPTY, TR
 static const uint8_t TRACK_FMJ_ARR[]      = {TRACK_FMJ_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 static const uint8_t TRACK_RAPID_ARR[]    = {TRACK_RAPID_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
 
-/**
- *  Voice Recognition Commands
- *  Each command must be trained to follow this sequence.
- */
-#define SELECTOR_AP_MODE         0 // speak "Armor Piercing"
-#define SELECTOR_IN_MODE         1 // speak "Incendiary"
-#define SELECTOR_HS_MODE         2 // speak "Hotshot"
-#define SELECTOR_HE_MODE         3 // speak "High Ex"
-#define SELECTOR_ST_MODE         4 // speak "Stun"
-#define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
-#define SELECTOR_RAPID_MODE      6 // speak "Rapid"
-
-
-static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
-static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HS_MODE, SELECTOR_HE_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
 #endif
