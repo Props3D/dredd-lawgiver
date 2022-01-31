@@ -255,8 +255,8 @@ void startUpSequence(void) {
   if (_sequenceMode == oled.DISPLAY_MAIN) {
       // wait a second
       if (millis() > STARTUP_END_MS + lastDisplayUpdate) {
-        lastDisplayUpdate = millis();
-        // make sure the ISR didn't set that during the DNA Check
+        audio.queuePlayback(getSelectedTrack(STATE_RELOAD));
+        // make sure the ISR doesn't trigger ammo shot during the DNA Check
         activateAmmoDown = false;
         // let's turn off the ammo indicators
         ammoIndicators();
