@@ -263,10 +263,10 @@ class EasyOLED
 
       //Grid
       u8g2.drawBox(0, 44, 240, 2);
-      u8g2.drawBox(47, 44, 2, 20);
-      u8g2.drawBox(95, 44, 2, 20);
-      u8g2.drawBox(143, 44, 2, 20);
-      u8g2.drawBox(191, 44, 2, 20);
+      u8g2.drawBox(44, 44, 2, 20);
+      u8g2.drawBox(92, 44, 2, 20);
+      u8g2.drawBox(138, 44, 2, 20);
+      u8g2.drawBox(184, 44, 2, 20);
 
       //distance field
       u8g2.setFont(u8g2_font_helvB12_tr);
@@ -280,24 +280,24 @@ class EasyOLED
       // Standard
       u8g2.setFont(u8g2_font_helvB12_tr);
       u8g2.setDrawColor(1);
-      u8g2.setCursor(54, 61);
+      u8g2.setCursor(47, 61);
       formatAmmo(_buf, 0);
       u8g2.print(_buf);
-      u8g2.setCursor(104, 61);
+      u8g2.setCursor(95, 61);
       formatAmmo(_buf, 1);
       u8g2.print(_buf);
-      u8g2.setCursor(150, 61);
+      u8g2.setCursor(141, 61);
       formatAmmo(_buf, 2);
       u8g2.print(_buf);
       formatAmmo(_buf, 3);
-      u8g2.setCursor(196, 61);
+      u8g2.setCursor(187, 61);
       u8g2.print(_buf);
       switch (_ammoSelection) {
         case 0: // armor piercing
           u8g2.setDrawColor(1);
-          u8g2.drawBox(47, 46, 48, 20);
+          u8g2.drawBox(44, 46, 46, 20);
           u8g2.setDrawColor(0);
-          u8g2.setCursor(54, 61);
+          u8g2.setCursor(47, 61);
           formatAmmo(_buf, 0);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
@@ -305,27 +305,27 @@ class EasyOLED
         case 1: // incendiary
         case 2: // hotshot
           u8g2.setDrawColor(1);
-          u8g2.drawBox(95, 46, 48, 20);
+          u8g2.drawBox(92, 46, 46, 20);
           u8g2.setDrawColor(0);
-          u8g2.setCursor(104, 61);
+          u8g2.setCursor(95, 61);
           formatAmmo(_buf, 1);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
         case 3: // high explosive
           u8g2.setDrawColor(1);
-          u8g2.drawBox(143, 46, 48, 20);
+          u8g2.drawBox(138, 46, 46, 20);
           u8g2.setDrawColor(0);
-          u8g2.setCursor(150, 61);
+          u8g2.setCursor(141, 61);
           formatAmmo(_buf, 2);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
         default: // FMJ / STUN / RAPID
           u8g2.setDrawColor(1);
-          u8g2.drawBox(191, 46, 48, 20);
+          u8g2.drawBox(184, 46, 56, 20);
           u8g2.setDrawColor(0);
-          u8g2.setCursor(196, 61);
+          u8g2.setCursor(187, 61);
           formatAmmo(_buf, 3);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);

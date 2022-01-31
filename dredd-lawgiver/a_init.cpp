@@ -110,7 +110,7 @@ void setup() {
   // init the display
   oled.begin(selectedTriggerMode, getCounters());
 
-  // init the voice recog module
+  // init the voice recognition module
   voice.begin();
 
   // set up the fire trigger and the debounce threshold
@@ -174,10 +174,12 @@ void mainLoop (void) {
 void startUpSequence(void) {
   uint8_t _sequenceMode = oled.getDisplayMode();
   if (_sequenceMode == 0) {
+      debugLog("Startup - Logo");
       oled.startupDisplay(oled.DISPLAY_LOGO, 0);
   }
   if (_sequenceMode == oled.DISPLAY_LOGO) {
       if (millis() > STARTUP_LOGO_MS + lastDisplayUpdate) {
+        debugLog("Startup - Comm Ok");
         oled.startupDisplay(oled.DISPLAY_COMM_CHK, 0);
         // Red led on
         digitalWrite(RED_LED_PIN, HIGH);
@@ -190,6 +192,7 @@ void startUpSequence(void) {
         lastDisplayUpdate = millis();
       }
       if (progressBarUpdates > 9) {
+        debugLog("Startup - DNA Chk");
         oled.startupDisplay(oled.DISPLAY_DNA_CHK, progressBarUpdates);        
         lastDisplayUpdate = millis();
       }
@@ -202,6 +205,7 @@ void startUpSequence(void) {
           audio.queuePlayback(TRACK_DNA_CHK);
           oled.startupDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         } else {
+          debugLog("Startup - ID FAIL");
           audio.queuePlayback(TRACK_DNA_FAIL);
           oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
@@ -217,11 +221,13 @@ void startUpSequence(void) {
           progressBarUpdates++;
           lastDisplayUpdate = millis();
         } else {
+          debugLog("Startup - ID FAIL");
           audio.queuePlayback(TRACK_DNA_FAIL);
           oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
       }
       if (progressBarUpdates > 18) {
+        debugLog("Startup - ID OK");
         oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
         // RED off, Green on
         digitalWrite(RED_LED_PIN, LOW);
@@ -240,6 +246,7 @@ void startUpSequence(void) {
           digitalWrite(GREEN_LED_PIN, LOW);
       }
       if (millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
+        debugLog("Startup - ID Name");
         oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
         lastDisplayUpdate = millis();
       }
@@ -248,6 +255,7 @@ void startUpSequence(void) {
       // blink the ID NAME
       oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
       if (millis() > (STARTUP_ID_NAME_MS + lastDisplayUpdate)) {
+        debugLog("Startup - Name");
         oled.startupDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
         lastDisplayUpdate = millis();
       }
@@ -255,6 +263,7 @@ void startUpSequence(void) {
   if (_sequenceMode == oled.DISPLAY_MAIN) {
       // wait a second
       if (millis() > STARTUP_END_MS + lastDisplayUpdate) {
+        debugLog("Startup - Main loop");
         audio.queuePlayback(getSelectedTrack(STATE_RELOAD));
         // make sure the ISR doesn't trigger ammo shot during the DNA Check
         activateAmmoDown = false;
