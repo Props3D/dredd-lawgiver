@@ -27,7 +27,7 @@ Speaker Amp - PAM8302A | 7 bit LED - Neopixel (circular, NOT the ring)
 20mm 2W speaker | 7mm momentary switch
 ![Mini 360 DC-DC Buck Converter](https://user-images.githubusercontent.com/20442880/137374870-9687ea11-6a7c-48f6-8c0b-2ff4e34c62d3.jpg) | ![Lipo 7 4v](https://user-images.githubusercontent.com/20442880/137374882-cb61cde1-8c05-4817-9e06-7526e851bfad.jpg)
 Mini 360 DC-DC Buck Converter | Lipo 7.4v
-![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![Voice Recognition Module V3]()
+![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![Voice Recognition Module V3](https://user-images.githubusercontent.com/88125656/151881080-59063635-61f9-4151-8e54-19e14b0e2d9f.jpeg)
 2 X 1K Resister | Voice Recognition Module V3 from Elechouse
 
 ## Assembly Parts
@@ -226,4 +226,3 @@ files and directories from the card.
 
 ## Test Board Reference Design
 ![SE14r](https://user-images.githubusercontent.com/20442880/137375634-33618817-6704-49bb-8df2-a8f4f221b191.JPG)
-
