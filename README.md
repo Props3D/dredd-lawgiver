@@ -44,9 +44,9 @@ The U8g2 library has a pretty large program foot print, so we need to make a num
 minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2optimization for details.
  1. Open <intall directory>/Arduino/libraries/u8g2/clib/u8g2.h
  2. Comment out following lines to reduce program size
-   a. #define U8G2_WITH_INTERSECTION
-   b. #define U8G2_WITH_CLIP_WINDOW_SUPPORT
-   c. #define U8G2_WITH_FONT_ROTATION
+    - #define U8G2_WITH_INTERSECTION
+    - #define U8G2_WITH_CLIP_WINDOW_SUPPORT
+    - #define U8G2_WITH_FONT_ROTATION
 
 ## Voice Recognition module
 The voice recognition module is from Elechouse. This library has to be installed
@@ -61,7 +61,7 @@ library. Follow the instructions on the github page, but here's a few tips:
  1. Make sure to change the RX and TX pin based on how you connected it to the Arduino
  2. The commands should be trained based on the programs expected order - defined in config.h
  3. Once all of the commands are trained, update the module to autoload the commands on startup
-   a. This step is crucual to make the VR module work with this sketch.
+    - This step is crucual to make the VR module work with this sketch.
 
 To configure the autoload feature:
  1. Open the vr_sample_bridge sketch
@@ -69,11 +69,11 @@ To configure the autoload feature:
  3. Upload the sketch to the Arduino
  4. Open the Serial Monitor. Set baud rate 115200, set send with Newline or Both NL & CR.
  5. Enter command: 00
-   a. you should see output like: AA 08 00 00 00 00 00 00 00 0A
+    - you should see output like: AA 08 00 00 00 00 00 00 00 0A
  6. Enter command: 15 7F 00 01 02 03 04 05 06
-   a. This tells the boards to autoload 7 records and which trained slots to load
+    - This tells the boards to autoload 7 records and which trained slots to load
  7. Enter command: 00
-   a. you should see output like: AA 08 00 00 00 00 00 7F 00 0A
+    - you should see output like: AA 08 00 00 00 00 00 7F 00 0A
 
 If you can't get the autoload feature configured, you could uncomment code in the EasyVoice.begin() function
 to manually load each record on startup. Recommend avoiding this if possible, it may slow the startup sequence
