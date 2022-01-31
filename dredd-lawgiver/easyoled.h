@@ -1,32 +1,26 @@
 #ifndef easyoled_h
 #define easyoled_h
 
-//#include <Arduino.h>
 #include <U8g2lib.h>
 #include "debug.h"
 
-//#ifdef U8X8_HAVE_HW_SPI
-//#include <SPI.h>
-//#endif
-
-
 /**
-   A simple class for managing an LED display. It's mainly based on
-   OLED 2.08 display
+ * A simple class for managing an LED display. It's mainly based on
+ * OLED 2.08 display
+ *
+ * The main configuration is specified on declaration:
+ * eg. EasyOLED<13, 11, 8, 9, 10> oledDisplay;
+ *
+ * In the setup, you can use the begin() function to initialize the display count and brightness.
+ * eg. display.begin();
+ *
+ * The display count can be updated using the updateDisplay() function
+ * eg. display.updateDisplay(ammoSelection, ammoCounter);
+ *
+ * REQUIRED LIBRARY: U8g2lib
+ */
 
-   The main configuration is specified on declaration:
-   eg. EasyOLED<8, 9, 10> oledDisplay;
-
-   In the setup, you can use the begin() function to initialize the display count and brightness.
-   eg. display.begin();
-
-   The display count can be updated using the updateDisplay() function
-   eg. display.updateDisplay(ammoSelection, ammoCounter);
-
-   REQUIRED LIBRARY: U8g2lib
-*/
-
-template <int CS_PIN, int DC_PIN, int RESET_PIN>
+template <int CL_PIN, int DA_PIN, int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED
 {
 
@@ -37,8 +31,8 @@ class EasyOLED
     // index of ammo selections and ammo counters based on the config.h
     uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
 
-    // After downloading the library, Don't forget to Enable U8G2_16BIT in u8g2.h
-    U8G2_SH1122_256X64_2_4W_HW_SPI u8g2;
+    // See the instructions for optimizing the U8g2 lib.
+    U8G2_SH1122_256X64_2_4W_SW_SPI u8g2;
 
     String _name;
     uint8_t _displayMode = 0;
@@ -60,8 +54,8 @@ class EasyOLED
     const static uint8_t DISPLAY_ID_NAME    = 6;
     const static uint8_t DISPLAY_MAIN       = 7;
 
-    EasyOLED(const char *name) : u8g2(U8G2_R2, /* clock=13*/ /* data=11*/ /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
-                           _name(name) {
+    EasyOLED(const char *name) : u8g2(U8G2_R0, /* clock=CL_PIN*/CL_PIN, /* data=DA_PIN*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+      _name(name) {
     }
 
     /**
@@ -69,7 +63,7 @@ class EasyOLED
     */
     void begin(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
-      debugLog("Initialing OLED display");
+      debugLog("Initializing OLED display");
       u8g2.begin();
       u8g2.setBusClock(8000000);
       _ammoSelection = ammoSelection;
@@ -95,7 +89,7 @@ class EasyOLED
 
         For this reason, don't add any debug logging in this method.
     */
-    void updateDisplay(int ammoSelection, int ammoCount) {
+    void updateDisplay(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
       _blink = (millis() % (500 + 500) < 500);
       // Comm OK Sequence
@@ -116,10 +110,9 @@ class EasyOLED
         }
       }
 
-      if (_ammoSelection != ammoSelection || _ammoCounts[_ammoIdx[ammoSelection]] != ammoCount) {
-        _ammoSelection = ammoSelection;
-        _ammoCounts[_ammoIdx[_ammoSelection]] = ammoCount;
-      }
+      _ammoSelection = ammoSelection;
+      memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
+
       drawDisplay(_displayMode, _progressBar);
       delay(10);
 #endif
@@ -178,9 +171,9 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
-          u8g2.print(F("I.D. OK"));
+        u8g2.print(F("I.D. OK"));
       } else {
-          u8g2.print(F(""));
+        u8g2.print(F(""));
       }
       drawAmmoMode();
       drawGrid();
@@ -193,9 +186,9 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
       if (_blink) {
-          u8g2.print(F("I.D. FAIL"));
+        u8g2.print(F("I.D. FAIL"));
       } else {
-          u8g2.print(F(""));
+        u8g2.print(F(""));
       }
       drawAmmoMode();
       drawGrid();
@@ -216,7 +209,7 @@ class EasyOLED
     void drawDisplay(int displayMode, int progress) {
 #ifdef ENABLE_EASY_OLED
       u8g2.firstPage();
-      do {     
+      do {
         switch (displayMode) {
           case DISPLAY_MAIN:
             drawFiringMode();
@@ -296,19 +289,15 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB12_tr);
       u8g2.setDrawColor(1);
       u8g2.setCursor(54, 61);
-      memset(_buf, 0, sizeof(_buf));
-      sprintf (_buf, "%dap", _ammoCounts[0]);
+      formatAmmo(_buf, 0);
       u8g2.print(_buf);
       u8g2.setCursor(104, 61);
-      memset(_buf, 0, sizeof(_buf));
-      sprintf (_buf, "%din", _ammoCounts[1]);
+      formatAmmo(_buf, 1);
       u8g2.print(_buf);
       u8g2.setCursor(150, 61);
-      memset(_buf, 0, sizeof(_buf));
-      sprintf (_buf, "%dhe", _ammoCounts[2]);
+      formatAmmo(_buf, 2);
       u8g2.print(_buf);
-      memset(_buf, 0, sizeof(_buf));
-      sprintf (_buf, "%dfmj", _ammoCounts[3]);
+      formatAmmo(_buf, 3);
       u8g2.setCursor(196, 61);
       u8g2.print(_buf);
       switch (_ammoSelection) {
@@ -317,8 +306,7 @@ class EasyOLED
           u8g2.drawBox(47, 46, 48, 20);
           u8g2.setDrawColor(0);
           u8g2.setCursor(54, 61);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%dap", _ammoCounts[0]);
+          formatAmmo(_buf, 0);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
@@ -328,8 +316,7 @@ class EasyOLED
           u8g2.drawBox(95, 46, 48, 20);
           u8g2.setDrawColor(0);
           u8g2.setCursor(104, 61);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%din", _ammoCounts[1]);
+          formatAmmo(_buf, 1);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
@@ -338,8 +325,7 @@ class EasyOLED
           u8g2.drawBox(143, 46, 48, 20);
           u8g2.setDrawColor(0);
           u8g2.setCursor(150, 61);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%dhe", _ammoCounts[2]);
+          formatAmmo(_buf, 2);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
@@ -348,8 +334,7 @@ class EasyOLED
           u8g2.drawBox(191, 46, 48, 20);
           u8g2.setDrawColor(0);
           u8g2.setCursor(196, 61);
-          memset(_buf, 0, sizeof(_buf));
-          sprintf (_buf, "%dfmj", _ammoCounts[3]);
+          formatAmmo(_buf, 3);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
           break;
@@ -362,12 +347,12 @@ class EasyOLED
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(180, 42);
       if (_displayMode < DISPLAY_MAIN) {
-          if (_displayMode == DISPLAY_DNA_CHK)
-            u8g2.print(F("RAPID"));
-          else
-            u8g2.print(F("SEMI"));
+        if (_displayMode == DISPLAY_DNA_CHK)
+          u8g2.print(F("RAPID"));
+        else
+          u8g2.print(F("SEMI"));
       }
-      
+
       if (_displayMode == DISPLAY_MAIN) {
         int ammoCount = _ammoCounts[_ammoSelection];
         if (ammoCount < 4 && ammoCount > 0) {
@@ -381,7 +366,7 @@ class EasyOLED
         {
           switch (_ammoSelection) {
             case 1: // incendiary
-            case 3: // hotshot
+            case 2: // hotshot
               u8g2.print(F(""));
               break;
             case 6: // FMJ
@@ -408,9 +393,9 @@ class EasyOLED
         // Gun Empty - blink
         u8g2.setCursor(0, 42);
         if (_blink) {
-            u8g2.print(F("EMPTY"));
+          u8g2.print(F("EMPTY"));
         } else {
-            u8g2.print(F(""));
+          u8g2.print(F(""));
         }
       }
       else
@@ -444,6 +429,49 @@ class EasyOLED
         }
       }
 #endif
+    }
+
+    void formatInt( int i, int factor, char* _buffer)
+    {
+      uint8_t len        = 0;
+      while ((factor > 1) && (i >= factor)) {
+        _buffer[ len++ ] = ' ';
+        factor /= 10;
+      }
+      itoa( i, &_buffer[ len ], 10 );
+    }
+
+    void formatAmmo(char* _buffer, int idx) {
+      memset(_buffer, 0, sizeof(_buffer));
+      formatInt(_ammoCounts[idx], 10, _buffer);
+      uint8_t len = strlen(_buffer);
+      switch (idx) {
+        case 0: // armor piercing
+          _buffer[ len++ ] = 'a';
+          _buffer[ len++ ] = 'p';
+          _buffer[ len   ] = '\0'; // NUL-terminate the C string
+          //sprintf (_buf, "%dap", _ammoCounts[0]);
+          break;
+        case 1: // incendiary
+          _buf[ len++ ] = 'i';
+          _buf[ len++ ] = 'n';
+          _buf[ len   ] = '\0'; // NUL-terminate the C string
+          //sprintf (_buf, "%din", _ammoCounts[1]);
+          break;
+        case 2: // highex
+          _buf[ len++ ] = 'h';
+          _buf[ len++ ] = 'e';
+          _buf[ len   ] = '\0'; // NUL-terminate the C string
+          //sprintf (_buf, "%dhe", _ammoCounts[2]);
+          break;
+        case 3: // full metal jacket
+          _buf[ len++ ] = 'f';
+          _buf[ len++ ] = 'm';
+          _buf[ len++ ] = 'j';
+          _buf[ len   ] = '\0'; // NUL-terminate the C string
+          //sprintf (_buf, "%dfmj", _ammoCounts[3]);
+          break;
+      }
     }
 
 };

@@ -1,7 +1,6 @@
 #ifndef easyaudio_h
 #define easyaudio_h
 
-//#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <DFPlayerMini_Fast.h>
 #include "easyqueue.h"
@@ -43,18 +42,20 @@ class EasyAudio
       debugLog("setup audio");
       mySerial.begin(9600);
       player.begin(mySerial, 100); //set Serial for DFPlayer-mini mp3 module 
-      player.volume (vol);     //initial volume, 30 is max, 3 makes the wife not angry
+      player.volume (vol);         //initial volume, 30 is max, 3 makes the wife not angry
 #endif
     }
 
     void queuePlayback(uint8_t track) {
+#ifdef ENABLE_EASY_AUDIO
       tracks.push(track);
+#endif
     }
 
     void playQueuedTrack() {
 #ifdef ENABLE_EASY_AUDIO
       if (!tracks.empty()) {
-        debugLog("playing track ");
+        debugLog("playing queued track ");
         player.playFromMP3Folder( tracks.pop() ); 
       }
 #endif

@@ -3,8 +3,6 @@
 #ifndef debuglog_h
 #define debuglog_h
 
-//#include <Arduino.h> 
-
 /**
  * Debug logging that can be disabled, See config.h to disable.
  */

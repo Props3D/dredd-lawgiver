@@ -26,7 +26,8 @@ typedef void (*callback_function)(void); // type for conciseness
 class ezPattern {
   protected:
     callback_function _callbackPtr = 0;     // pointer to callback function
-    uint8_t _activated             = 0;     // signal when the pattern should be active
+    volatile uint8_t _activated    = 0;     // signal when the pattern should be active
+
     uint8_t _frameRate             = 16;    // larger number is a slower fade
     unsigned long _flashTimer      = 0;     // time when the white flash started
 
@@ -124,6 +125,12 @@ class ezBlasterShot : public ezPattern
       return false;
     }
     bool checkWhiteFlash(CRGB *leds, uint8_t count) {
+      if (_activated == 4) {
+        this->whiteflash(leds, count);
+        _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
+        _activated = 3;   // hold the flash
+        return true;
+      }
       if (_activated == 3) {
         long duration = millis() - _flashTimer;
         if (duration > _flashDuration) {
@@ -187,9 +194,10 @@ class ezBlasterShot : public ezPattern
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      debugLog("BlasterShot - initialized");
+      debugLog("BlasterShot - activated");
+      _activated = 3;    // start with white flash and color fade
+      //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
-      _activated = 3;    // white flash and color fade
       this->whiteflash(leds, count);
     }
 
@@ -240,10 +248,10 @@ class ezBlasterPulse : public ezPattern
     uint8_t width = 2;                   // Can increase the number of pixels (width) of the chase. [1 or greater]
 
     uint8_t patternWidth = 0; // Total width of the pattern to animate
-    int8_t advanceUp   = 0;   // Stores the starting position at the beginning of the strip.
-    int8_t advanceDown = 0;   // Stores the starting position at the top of strip, when mirrored
+    volatile int8_t advanceUp   = 0;   // Stores the starting position at the beginning of the strip.
+    volatile int8_t advanceDown = 0;   // Stores the starting position at the top of strip, when mirrored
+    volatile int8_t middle   = 0;      // Where's the middle of the strip
     bool mirrored   = 1;      // is this a mirrored led strip
-    int8_t middle   = 0;      // Where's the middle of the strip
 
     // helper functions
     bool checkPulseFinshed(CRGB *leds, uint8_t count) {
@@ -315,7 +323,7 @@ class ezBlasterPulse : public ezPattern
       patternWidth = width;
     }
     void activate(CRGB *leds, uint8_t count) {
-      debugLog("Blaster Pulse - initialized");
+      //debugLog("Blaster Pulse - initialized");
       advanceUp = 0;
       advanceDown = count-1;
       middle = count/2;
@@ -327,10 +335,10 @@ class ezBlasterPulse : public ezPattern
       EVERY_N_MILLISECONDS(_frameRate) {
         if (checkPulseFinshed(leds, count)) {
           this->fadeToBlack(leds, count);
-          debugLog("Blaster Pulse - ending blaster pulse");
+          //debugLog("Blaster Pulse - ending blaster pulse");
         }
         if (checkPulseReachedTop(leds, count)) {
-          debugLog("Blaster Pulse - reached the end of strip");
+          //debugLog("Blaster Pulse - reached the end of strip");
         }
         advancePulse(leds, count);
       }
@@ -363,10 +371,10 @@ class ezBlasterRepeatingPulse : public ezPattern
     uint8_t space = 1;             // space between pulses
 
     uint8_t patternWidth = 0;   // Total width of the pattern to animate
-    int8_t advanceUp     = 0;   // Stores the starting position at the beginning of the strip.
-    int8_t advanceDown   = 0;   // Stores the starting position at the top of strip, when mirrored
+    volatile int8_t advanceUp     = 0;   // Stores the starting position at the beginning of the strip.
+    volatile int8_t advanceDown   = 0;   // Stores the starting position at the top of strip, when mirrored
     bool mirrored        = 0;   // is this a mirrored led strip
-    uint8_t middle       = 0;   // Where's the middle of the strip
+    volatile uint8_t middle       = 0;   // Where's the middle of the strip
     bool fadePulse       = 1;   // Is there a trailing fade
 
     static const uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
@@ -485,7 +493,7 @@ class ezBlasterRepeatingPulse : public ezPattern
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      debugLog("RepeatPulse - initialized");
+      //debugLog("RepeatPulse - initialized");
       advanceUp = 0;
       advanceDown = count-1;
       middle = count/2;
@@ -497,10 +505,10 @@ class ezBlasterRepeatingPulse : public ezPattern
       EVERY_N_MILLISECONDS(_frameRate) {
         if (checkPulseFinshed(leds, count)) {
           this->fadeToBlack(leds, count);
-          debugLog("Repeater Pulse - ending blaster pulse");
+          //debugLog("Repeater Pulse - ending blaster pulse");
         }
         if (checkPulseReachedTop(leds, count)) {
-          debugLog("Repeater Pulse - reached the end of strip");
+          //debugLog("Repeater Pulse - reached the end of strip");
         }
         advancePulse(leds, count);
       }

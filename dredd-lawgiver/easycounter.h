@@ -1,12 +1,11 @@
 #ifndef easycounter_h
 #define easycounter_h
 
-//#include <Arduino.h>
 #include "debug.h"
 
 const static uint8_t STATE_ACTIVE      = 0;
 const static uint8_t STATE_EMPTY       = 1;
-const static uint8_t STATE_FULL        = 2;
+const static uint8_t STATE_RELOAD      = 2;
 
 const static int COUNTER_MODE_UP    =  1;
 const static int COUNTER_MODE_DOWN  = -1;
@@ -52,7 +51,7 @@ class EasyCounter
       setLow(lowNumber);
       setHigh(highNumber);
       setIncrement(increment);
-      resetCount();
+      increment == COUNTER_MODE_UP ? setCount(_low) : setCount(_high);
     }
 
     EasyCounter* EasyCounter::tick() {
@@ -84,6 +83,7 @@ class EasyCounter
       return false;
     }
 
+    // returns the reload state
     int resetCount() {
       if (_increment == COUNTER_MODE_UP)
         setCount(_low);
@@ -98,7 +98,6 @@ class EasyCounter
 
     uint8_t getState() {
       if (isEmpty()) return STATE_EMPTY;
-      if (isFull()) return STATE_FULL;
       return STATE_ACTIVE;
     }
 };

@@ -37,7 +37,7 @@ class EasyLedv3
   protected:
     // variable declaration
     CRGB leds[LED_COUNT];
-    ezPattern *pattern = 0;
+    volatile ezPattern *pattern = 0;
 
   public:
     //some constants for functions
@@ -55,6 +55,7 @@ class EasyLedv3
     void begin(int brightness) {
 #ifdef ENABLE_EASY_LED
       if (LED_COUNT > 0 && LED_PIN_IN > 0) {
+        debugLog("Initializing leds");
         FastLED.addLeds<WS2812, LED_PIN_IN, GRB>(leds, LED_COUNT);
         FastLED.setBrightness(brightness);
         FastLED.setMaxPowerInVoltsAndMilliamps(5, 450); //5v and 450mA
