@@ -23,14 +23,26 @@ Electronic | Components
 Arduino Nano v3 | DF Player Mini + 64mb Micro SD Card
 ![PAM8302A Amp](https://user-images.githubusercontent.com/20442880/137374587-abdad903-b008-4d2e-830e-c8b3c6a2c837.jpg) | ![7 bit LED - Neopixel](https://user-images.githubusercontent.com/20442880/137374620-dca6e2eb-40d9-4092-86c2-f67ab250e8d5.jpg)
 Speaker Amp - PAM8302A | 7 bit LED - Neopixel (circular, NOT the ring)
-![40mm 2W speaker](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
-40mm 2W speaker | 7mm momentary switch
+![20mm 2W speaker](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
+20mm 2W speaker | 7mm momentary switch
 ![Mini 360 DC-DC Buck Converter](https://user-images.githubusercontent.com/20442880/137374870-9687ea11-6a7c-48f6-8c0b-2ff4e34c62d3.jpg) | ![Lipo 7 4v](https://user-images.githubusercontent.com/20442880/137374882-cb61cde1-8c05-4817-9e06-7526e851bfad.jpg)
 Mini 360 DC-DC Buck Converter | Lipo 7.4v
-![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![DRV2605L with 8mm ERM](https://user-images.githubusercontent.com/20442880/137374950-a2673b35-5a02-46b6-b322-de556f20e97e.jpg)
-2 X 1K Resister | DRV2605L with 8mm ERM (Optional)
+![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![Voice Recognition Module V3]()
+2 X 1K Resister | Voice Recognition Module V3 from Elechouse
 
-## Parts
+## Assembly Parts
+
+* M3X12mm Flat x 1 - Top Rear Sight
+* M3X8mm Flat x 1 - Top Front Sight
+* M4X10mm Button X 2 - Top Cover through Frame and Barrel
+* M3X16mm Cap X 3 - Rear Mag Cover, Trigger Group
+* M4X12mm Cap X 2 - Trigger Group to Cocking Mechanism
+* M3X8mm Cap X 2 - Trigger Group to Frame
+* M2.5X12mm Cap X 2 -  Microswitch in Cocking Mechanism
+* 1/8in rod X 9mm X 1 - Trigger axle
+* 1/8in rod x 54mm x 2 - Cocking Mechanism
+* 5/16 X 1 1/8 Extension Spring - Cocking Mechanism
+* 20mm Compression Spring - Magazine latch 
 
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
@@ -39,7 +51,7 @@ There's are number of libraries that you will need to install using the Arduino 
  3. VoiceRecognitionV3
  4. DFPlayerMini_Fast
 
-## Installing U8g2lib and required modifications
+### Installing U8g2lib and required modifications
 The U8g2 library has a pretty large program foot print, so we need to make a number of changes to
 minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2optimization for details.
  1. Open <intall directory>/Arduino/libraries/u8g2/clib/u8g2.h
@@ -48,22 +60,48 @@ minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2
     - #define U8G2_WITH_CLIP_WINDOW_SUPPORT
     - #define U8G2_WITH_FONT_ROTATION
 
-## Voice Recognition module
-The voice recognition module is from Elechouse. This library has to be installed
-manually to the Arduino library
+### Voice Recognition module
+The voice recognition module is from Elechouse. Their library has to be installed
+manually to the Arduino library, and can be found on Github.
  1. Open https://github.com/elechouse/VoiceRecognitionV3
  2. Download the zip or clone the repo
  3. Extract contents into the /Arduino Sketch/libraries directory
 
-Once installed, follow the instructions to train the VR module. It can have up to 7
-active voice commands.Train each command using the example sketches that come with the
-library. Follow the instructions on the github page, but here's a few tips:
+Once installed, follow the instructions to train the VR module. You can train up to 7
+active voice commands. Train each command using the example sketche that comes with the
+library. You can find detailed instructions in the manual or the
+[VoiceRecognitionV3 github](https://github.com/elechouse/VoiceRecognitionV3) page, but here's
+a few tips to make you successful:
  1. Make sure to change the RX and TX pin based on how you connected it to the Arduino
  2. The commands should be trained based on the programs expected order - defined in config.h
  3. Once all of the commands are trained, update the module to autoload the commands on startup
     - This step is crucual to make the VR module work with this sketch.
 
-To configure the autoload feature:
+#### Training commands
+You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](https://github.com/elechouse/VoiceRecognitionV3) page.
+ 1. Open vr_sample_train (File -> Examples -> VoiceRecognitionV3 -> vr_sample_train)
+ 2. Choose right Arduino board (Tool -> Board, UNO recommended), Choose right serial port.
+ 3. Click Upload button, wait until Arduino is uploaded.
+ 4. Open Serial Monitor. Set baud rate 115200, set send with Newline or Both NL & CR.
+ 5. Check the Voice Recognition Module settings. Input settings
+    - Enter command: settings
+    - Hit Enter to send.
+ 6. Train Voice Recognition Module.
+    - To train record 0, enter command: train 0
+    - When Serial Monitor prints "Speak now", you need speak your command
+    - When Serial Monitor prints "Speak again", you need repeat your command again.
+    - If these two voice commands are matched, Serial Monitor prints "Success", and "record 0" is trained
+    - or if are not matched, repeat speaking until success.
+ 7. Repeat the process for each command i.e. train 1, train 2, train 3, etc
+ 8. Once all the commands are recorded, load and test the voice commands
+    - To load all 7 voice commands, enter command: load 0 1 2 3 4 5 6
+    - Speak the command to see if the Voice Recognition Module can recognize your words.
+    - When recognized it will display the VR index
+ 9. If some of the commands don't work well, you can re-train until you're satisfied
+ 10. Training complete
+ 11. Follow the next section to enable autoloading of the trained recordings
+ 
+#### Configuring Autoload feature
  1. Open the vr_sample_bridge sketch
  2. Set the correct RX/TX pins numbers to match your wiring
  3. Upload the sketch to the Arduino
@@ -80,16 +118,14 @@ to manually load each record on startup. Recommend avoiding this if possible, it
 or have other unintended problems. That part is untested.
 
 ## Setup and Configuration
-The code can be used by updating the values in config.h based on your components,
+The component configurations can be easily customized by updating the values in config.h based on your components,
 wiring, and audio tracks.
 
 ```c++
 /** 
- * Enable debug logging:
- *    enabled == 1
- *    disabled == 0
+ *  Uncomment the following line to enable debug logging
  */
-#define ENABLE_DEBUG                 0
+//#define ENABLE_DEBUG                 1
 
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO            1 //Enable all audio 
