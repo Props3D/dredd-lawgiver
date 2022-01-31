@@ -25,9 +25,7 @@ class EasyOLED
 {
 
   private:
-    const long _progressBarIntervalMs = 100;
-    const int _progressBarIncrement_1 = 10;
-    const int _progressBarIncrement_2 = 8;
+    const uint8_t _progressBarIncrement = 10;
     // index of ammo selections and ammo counters based on the config.h
     uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
 
@@ -38,23 +36,22 @@ class EasyOLED
     uint8_t _displayMode = 0;
     uint8_t _progressBar = 0;
 
-    long _lastProgressBarUpdate = 0;
     uint8_t _ammoSelection = 0;
     bool _blink = false;
     uint8_t _ammoCounts[4];
     char _buf[10];
 
   public:
-    const static uint8_t DISPLAY_LOGO       = 0;
-    const static uint8_t DISPLAY_COMM_CHK   = 1;
-    const static uint8_t DISPLAY_DNA_CHK    = 2;
-    const static uint8_t DISPLAY_DNA_PRG    = 3;
-    const static uint8_t DISPLAY_ID_OK      = 4;
-    const static uint8_t DISPLAY_ID_FAIL    = 5;
+    const static uint8_t DISPLAY_LOGO       = 1;
+    const static uint8_t DISPLAY_COMM_CHK   = 2;
+    const static uint8_t DISPLAY_DNA_CHK    = 3;
+    const static uint8_t DISPLAY_DNA_PRG    = 4;
+    const static uint8_t DISPLAY_ID_OK      = 5;
     const static uint8_t DISPLAY_ID_NAME    = 6;
     const static uint8_t DISPLAY_MAIN       = 7;
+    const static uint8_t DISPLAY_ID_FAIL    = 8;
 
-    EasyOLED(const char *name) : u8g2(U8G2_R0, /* clock=CL_PIN*/CL_PIN, /* data=DA_PIN*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+    EasyOLED(const char *name) : u8g2(U8G2_R0, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
       _name(name) {
     }
 
@@ -72,50 +69,43 @@ class EasyOLED
     }
 
     /**
-    */
+     * 
+     */
     void setDisplayMode(uint8_t displayMode) {
       _displayMode = displayMode;
     }
 
     /**
-    */
-    uint8_t currentDisplayMode() {
+     * 
+     */
+    uint8_t getDisplayMode() {
       return _displayMode;
     }
 
     /**
-        Refresh the component. This MUST be called continuously from
-        the main program loop
-
-        For this reason, don't add any debug logging in this method.
-    */
-    void updateDisplay(int ammoSelection, uint8_t ammoCounts[]) {
-#ifdef ENABLE_EASY_OLED
-      _blink = (millis() % (500 + 500) < 500);
-      // Comm OK Sequence
-      if (_displayMode == DISPLAY_COMM_CHK) {
-        if (millis() > _progressBarIntervalMs + _lastProgressBarUpdate) {
-          //debugLog("OLED display - COMM OK Progress");
-          _progressBar = _progressBar + _progressBarIncrement_1;
-          _lastProgressBarUpdate = millis();
-        }
-      }
-
-      // DNA Progress Sequence
-      if (_displayMode == DISPLAY_DNA_PRG) {
-        if (millis() > _progressBarIntervalMs + _lastProgressBarUpdate) {
-          //debugLog("OLED display - DNA Check Progress");
-          _progressBar = _progressBar + _progressBarIncrement_2;
-          _lastProgressBarUpdate = millis();
-        }
-      }
-
-      _ammoSelection = ammoSelection;
-      memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
+     * Refresh the component. This MUST be called continuously from
+     * the main program loop. For this reason, don't add any debug logging in this method.
+     *  
+     */
+    void startupDisplay(uint8_t displayMode, uint8_t progress) {
+      _displayMode = displayMode;
+      _progressBar = progress * _progressBarIncrement;
+      _blink = (millis() % 1000) < 500;
 
       drawDisplay(_displayMode, _progressBar);
+    }
+    
+    /**
+     * Refresh the component. This MUST be called continuously from
+     *  the main program loop
+     *  
+     *  For this reason, don't add any debug logging in this method.
+     */
+    void updateDisplay(int ammoSelection, uint8_t ammoCounts[]) {
+      _ammoSelection = ammoSelection;
+      memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
+      drawDisplay(_displayMode, _progressBar);
       delay(10);
-#endif
     }
 
     void drawFiringMode() {
@@ -132,14 +122,16 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       u8g2.setFont(u8g2_font_helvB18_tr);
       u8g2.setCursor(40, 42);
-      u8g2.print(F("3DProps Pro"));
+      u8g2.print(F("Props3D Pro"));
 #endif
     }
 
     void drawProgress(int progress) {
 #ifdef ENABLE_EASY_OLED
-      u8g2.drawBox(0, 0, progress , 7);
-      u8g2.drawDisc(progress, 3, 3);
+      if (progress > 0) {
+        u8g2.drawBox(0, 0, progress , 7);
+        u8g2.drawDisc(progress, 3, 3);
+      }
 #endif
     }
 
@@ -230,13 +222,13 @@ class EasyOLED
             // ID OK
             drawIDOk(progress);
             break;
-          case DISPLAY_ID_FAIL:
-            // ID OK
-            drawIDFail(progress);
-            break;
           case DISPLAY_ID_NAME:
             // ID NAME
             drawIDName(progress);
+            break;
+          case DISPLAY_ID_FAIL:
+            // ID FAIL
+            drawIDFail(progress);
             break;
           default:
             break;
@@ -392,11 +384,7 @@ class EasyOLED
       } else if (ammoCount == 0 ) {
         // Gun Empty - blink
         u8g2.setCursor(0, 42);
-        if (_blink) {
-          u8g2.print(F("EMPTY"));
-        } else {
-          u8g2.print(F(""));
-        }
+        u8g2.print(F("EMPTY"));
       }
       else
       {

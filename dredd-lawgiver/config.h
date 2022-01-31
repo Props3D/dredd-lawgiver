@@ -9,11 +9,9 @@
  */
 
 /** 
- * Enable debug logging:
- *    enabled == 1
- *    disabled == 0
+ * Enable debug logging by uncommenting this line
  */
-#define ENABLE_DEBUG                 0
+//#define ENABLE_DEBUG                 1
 
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO            1 //Enable all audio 
@@ -72,13 +70,15 @@
 /**
  * Timing Defintions for start up sequence timings
  */
-#define STARTUP_LOGO_MS           2000  // 2 sec
-#define STARTUP_COMM_OK_MS        3200  // 1.2 sec
-#define STARTUP_DNA_CHK_MS        4200  // 1 sec
-#define STARTUP_DNA_PRG_MS        5700  // 1.5 sec
-#define STARTUP_ID_OK_MS          7500  // 1.8 sec
-#define STARTUP_JUDGE_NAME_MS     9300  // 1.8 sec
-#define STARTUP_END_MS            10000
+#define STARTUP_LOGO_MS           2000
+#define STARTUP_COMM_OK_MS        1000
+#define STARTUP_DNA_CHK_MS        1000
+#define STARTUP_DNA_PRG_MS        1000
+#define STARTUP_ID_OK_MS          1800
+#define STARTUP_ID_FAIL_MS        2000
+#define STARTUP_ID_NAME_MS        1800
+#define STARTUP_END_MS            1000
+#define PROGRESS_INTERVAL_MS      100
 
 /**
  *  Voice Recognition Commands

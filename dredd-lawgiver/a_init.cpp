@@ -35,6 +35,7 @@ EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> o
 EasyVoice<VOICE_RECORDS_ARR, VOICE_RECORDS_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
 
 // function declarations
+void mainLoop(void);
 void initLedIndicators(void);
 void ammoIndicators(void);
 void startUpSequence(void);
@@ -56,7 +57,13 @@ uint8_t* getCounters(void);
  * - Main loop
  * - Fail / Stop
  */
-uint8_t loopStage = STARTUP_LOOP;
+uint8_t loopStage           = STARTUP_LOOP;
+
+/**
+ * Variables for tracking the start up sequence updates
+ */
+long lastDisplayUpdate      = 0;
+uint8_t progressBarUpdates  = 0;
 
 /**
  * Variables for tracking and updating ammo counts on the OLED
@@ -93,13 +100,14 @@ void setup() {
   // initialize all the leds
   initLedIndicators();
 
-  // init the display
-  selectedTriggerMode = SELECTOR_FMJ_MODE;
   // Initialize the clip counters for different modes
   apCounter.begin(0, 25, COUNTER_MODE_DOWN);
   inCounter.begin(0, 25, COUNTER_MODE_DOWN);
   heCounter.begin(0, 25, COUNTER_MODE_DOWN);
   fmjCounter.begin(0, 50, COUNTER_MODE_DOWN);
+  // select the initial ammo mode
+  selectedTriggerMode = SELECTOR_FMJ_MODE;
+  // init the display
   oled.begin(selectedTriggerMode, getCounters());
 
   // init the voice recog module
@@ -110,19 +118,23 @@ void setup() {
   debugLog("Attach Interrupts");
   pinMode(TRIGGER_PIN, INPUT_PULLUP);
   pinMode(RELOAD_PIN, INPUT_PULLUP);
-  noInterrupts();
   attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), ammoDownISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(RELOAD_PIN), reloadAmmoISR, FALLING);
   interrupts();
 }
 
 /**
- * Startup loop only needs to update OLED display and play audio tracks.
+ * The main loop.
  */
-void startUpLoop () {
-  startUpSequence();
-  audio.playQueuedTrack();
-  oled.updateDisplay(selectedTriggerMode, getCounters());
+void loop () {
+  // run the start up sequence first
+  if (STARTUP_LOOP == loopStage) {
+    startUpSequence();
+    audio.playQueuedTrack();
+  }
+  if (MAIN_LOOP == loopStage) {
+    mainLoop();
+  }
 }
 
 /**
@@ -133,7 +145,7 @@ void startUpLoop () {
  * - update OLED display on changes
  * - check the VR module for any commands
  */
-void mainLoop () {
+void mainLoop (void) {
   // always handle the activated components first, before processing new inputs
   if (activateAmmoDown == true) {
     handleAmmoDown();
@@ -149,93 +161,120 @@ void mainLoop () {
 }
 
 /**
- * The main loop.
- */
-void loop () {
-  // run the start up sequence first
-  if (loopStage == STARTUP_LOOP) {
-    startUpLoop();
-  }
-  if (loopStage == MAIN_LOOP) {
-    mainLoop();
-  }
-}
-
-/**
  * Routine for the startup sequence. Heavy OLED updates on startup.
- * - Flash 3d props logo
- * - Comm OK
- * - DNA Check
- * - ID OK or ID FAIL
- * - Flash Judge name
+ * - Props3D logo - (2000ms)
+ * - Comms OK - 90 pixels (900ms)
+ * - DNA Check - wait (1000ms)
+ * - DNA Check - 90 pixels (900ms)
+ * - ID FAIL - blink 3 times (1500ms) then solid
+ * - ID OK - wait - 1800ms
+ * - ID Judge - wait (1800ms)
+ * - Ammo display
  */
 void startUpSequence(void) {
-  // Logo
-  if (millis() < STARTUP_LOGO_MS) {
-    oled.setDisplayMode(oled.DISPLAY_LOGO);
+  uint8_t _sequenceMode = oled.getDisplayMode();
+  if (_sequenceMode == 0) {
+      oled.startupDisplay(oled.DISPLAY_LOGO, 0);
   }
-  // Comm OK Sequence
-  if (millis() > STARTUP_LOGO_MS && millis() < STARTUP_COMM_OK_MS) {
-    digitalWrite(RED_LED_PIN, HIGH);
-    oled.setDisplayMode(oled.DISPLAY_COMM_CHK);
+  if (_sequenceMode == oled.DISPLAY_LOGO) {
+      if (millis() > STARTUP_LOGO_MS + lastDisplayUpdate) {
+        oled.startupDisplay(oled.DISPLAY_COMM_CHK, 0);
+        // Red led on
+        digitalWrite(RED_LED_PIN, HIGH);
+      }
   }
-  // switch to DNA Check and wait a second
-  if (millis() > STARTUP_COMM_OK_MS && millis() < STARTUP_DNA_CHK_MS) {
-    oled.setDisplayMode(oled.DISPLAY_DNA_CHK);
+  if (_sequenceMode == oled.DISPLAY_COMM_CHK) {
+      if (millis() > PROGRESS_INTERVAL_MS + lastDisplayUpdate) {
+        oled.startupDisplay(oled.DISPLAY_COMM_CHK, progressBarUpdates);
+        progressBarUpdates++;
+        lastDisplayUpdate = millis();
+      }
+      if (progressBarUpdates > 9) {
+        oled.startupDisplay(oled.DISPLAY_DNA_CHK, progressBarUpdates);        
+        lastDisplayUpdate = millis();
+      }
   }
-
-  // DNA Check Sequence
-  // A trigger press is required to complete the DNA check
-  bool buttonState = (digitalRead(TRIGGER_PIN) == LOW);
-  if (buttonState && millis() > STARTUP_DNA_CHK_MS && millis() < STARTUP_DNA_PRG_MS) {
-    if (oled.currentDisplayMode() != oled.DISPLAY_DNA_PRG) {
-      audio.queuePlayback(TRACK_DNA_CHK);
-    }
-    oled.setDisplayMode(oled.DISPLAY_DNA_PRG);
+  if (_sequenceMode == oled.DISPLAY_DNA_CHK) {
+      if (millis() > (STARTUP_DNA_CHK_MS + lastDisplayUpdate)) {
+        // A trigger press is required to complete the DNA check
+        bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
+        if (buttonPressed) {
+          audio.queuePlayback(TRACK_DNA_CHK);
+          oled.startupDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
+        } else {
+          audio.queuePlayback(TRACK_DNA_FAIL);
+          oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
+        }
+        lastDisplayUpdate = millis();
+      }
   }
-  if (!buttonState && millis() > STARTUP_DNA_CHK_MS && millis() < STARTUP_DNA_PRG_MS) {
-    if (oled.currentDisplayMode() == oled.DISPLAY_DNA_PRG) {
-      audio.queuePlayback(TRACK_DNA_FAIL);
-    }
-    oled.setDisplayMode(oled.DISPLAY_ID_FAIL);
+  if (_sequenceMode == oled.DISPLAY_DNA_PRG) {
+      if (millis() > PROGRESS_INTERVAL_MS + lastDisplayUpdate) {
+        // A trigger press is required to complete the DNA check
+        bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
+        if (buttonPressed) {
+          oled.startupDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
+          progressBarUpdates++;
+          lastDisplayUpdate = millis();
+        } else {
+          audio.queuePlayback(TRACK_DNA_FAIL);
+          oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
+        }
+      }
+      if (progressBarUpdates > 18) {
+        oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
+        // RED off, Green on
+        digitalWrite(RED_LED_PIN, LOW);
+        digitalWrite(GREEN_LED_PIN, HIGH);
+        lastDisplayUpdate = millis();
+      }
   }
-
-  if (oled.currentDisplayMode() != oled.DISPLAY_ID_FAIL) {
-    if (millis() > STARTUP_DNA_PRG_MS && millis() < STARTUP_ID_OK_MS) {
-      oled.setDisplayMode(oled.DISPLAY_ID_OK);
-      // blink the green
-      bool _blink = (millis() % (500 + 500) < 500);
+  if (_sequenceMode == oled.DISPLAY_ID_OK) {
+      // blink the ID OK
+      oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
+      // blink the green led
+      bool _blink = (millis() % 1000 < 500);
       if (_blink) {
-          digitalWrite(RED_LED_PIN, LOW);
           digitalWrite(GREEN_LED_PIN, HIGH);
       } else {
-          digitalWrite(RED_LED_PIN, LOW);
           digitalWrite(GREEN_LED_PIN, LOW);
       }
-    }
-    // Display Judge Name
-    if (millis() > STARTUP_ID_OK_MS && millis() < STARTUP_JUDGE_NAME_MS) {
-      oled.setDisplayMode(oled.DISPLAY_ID_NAME);
-    }
-
-    // Firing Mode
-    if (millis() > STARTUP_JUDGE_NAME_MS) {
-      oled.setDisplayMode(oled.DISPLAY_MAIN);
-      digitalWrite(GREEN_LED_PIN, LOW);
-    }
-
-    if (millis() > STARTUP_END_MS) {
-      interrupts();
-      loopStage = MAIN_LOOP;
-    }
-
-  } else {
-    if (millis() > STARTUP_DNA_PRG_MS) {
-      oled.drawIDFail(0);
-      loopStage = STOP_LOOP;
-    }
+      if (millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
+        oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
+        lastDisplayUpdate = millis();
+      }
   }
+  if (_sequenceMode == oled.DISPLAY_ID_NAME) {
+      // blink the ID NAME
+      oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
+      if (millis() > (STARTUP_ID_NAME_MS + lastDisplayUpdate)) {
+        oled.startupDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
+        lastDisplayUpdate = millis();
+      }
+  }
+  if (_sequenceMode == oled.DISPLAY_MAIN) {
+      // wait a second
+      if (millis() > STARTUP_END_MS + lastDisplayUpdate) {
+        lastDisplayUpdate = millis();
+        // make sure the ISR didn't set that during the DNA Check
+        activateAmmoDown = false;
+        // let's turn off the ammo indicators
+        ammoIndicators();
+        // switch to main loop
+        loopStage = MAIN_LOOP;
+      }
+  }
+  if (_sequenceMode == oled.DISPLAY_ID_FAIL) {
+      // blink the ID FAIL
+      oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
+      if (millis() > STARTUP_ID_FAIL_MS + lastDisplayUpdate) {
+        // switch to main loop
+        loopStage = STOP_LOOP;
+      }
+  }
+
 }
+
 
 /**
  * Playback the next queued track

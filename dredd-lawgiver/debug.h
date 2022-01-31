@@ -39,7 +39,7 @@ class DebugLog
 };
 
 
-#ifdef ENABLE_DEBUG == 1
+#ifdef ENABLE_DEBUG
 static DebugLog<true> debug;
 #else
 static DebugLog<false> debug;
