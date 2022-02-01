@@ -223,7 +223,7 @@ to seem like it's not working. You'll need to use the terminal window to rm all 
 files and directories from the card.
 
 ## Example Wiring Diagram:
-![SampleWiring](https://user-images.githubusercontent.com/20442880/137413974-aae3f170-1d8a-4850-9287-8ae751f7e130.png)
+![SampleWiring](https://user-images.githubusercontent.com/88125656/151897932-dd6698a9-7f91-4609-b71c-de937fd8352a.png)
 
 ## Test Board Reference Design
 ![SE14r](https://user-images.githubusercontent.com/20442880/137375634-33618817-6704-49bb-8df2-a8f4f221b191.JPG)
