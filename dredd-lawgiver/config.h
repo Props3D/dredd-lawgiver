@@ -87,6 +87,18 @@
  */
 
 /**
+ *  Voice Recognition Commands.
+ *  IMPORTANT - The VR module must be trained this sequence.
+ */
+#define VR_CMD_AMMO_MODE_AP         0 // speak "Armor Piercing" or just "Armor"
+#define VR_CMD_AMMO_MODE_IN         1 // speak "Incendiary"
+#define VR_CMD_AMMO_MODE_HS         2 // speak "Hotshot"
+#define VR_CMD_AMMO_MODE_HE         3 // speak "High Ex"
+#define VR_CMD_AMMO_MODE_ST         4 // speak "Stun"
+#define VR_CMD_AMMO_MODE_FMJ        5 // speak "Full Metal"
+#define VR_CMD_AMMO_MODE_RAPID      6 // speak "Rapid"
+
+/**
  * Timing Defintions for start up sequence timings
  */
 #define TIMING_STARTUP_LOGO_MS           2000
@@ -100,19 +112,6 @@
 #define TIMING_LOW_AMMO_WAIT_MS          1000
 #define TIMING_FAST_BLINK_WAIT_MS        350
 
-/**
- *  Voice Recognition Commands
- *  Each command must be trained to follow this sequence.
- *  
- *  IMPORTANT - if you change this sequence, you must update the VOICE_RECORDS_ARR
- */
-#define VR_CMD_AMMO_MODE_AP         0 // speak "Armor Piercing" or just "Armor"
-#define VR_CMD_AMMO_MODE_IN         1 // speak "Incendiary"
-#define VR_CMD_AMMO_MODE_HS         2 // speak "Hotshot"
-#define VR_CMD_AMMO_MODE_HE         3 // speak "High Ex"
-#define VR_CMD_AMMO_MODE_ST         4 // speak "Stun"
-#define VR_CMD_AMMO_MODE_FMJ        5 // speak "Full Metal"
-#define VR_CMD_AMMO_MODE_RAPID      6 // speak "Rapid"
 
 /**
  * These are only useful if the autoload feature is not enabled.
