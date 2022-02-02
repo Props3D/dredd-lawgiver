@@ -11,7 +11,7 @@
 /** 
  * Enable debug logging by uncommenting this line
  */
-#define ENABLE_DEBUG          1
+//#define ENABLE_DEBUG          1
 
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO     1 //Enable audio 
@@ -64,15 +64,15 @@
 #define TRACK_AMMO_LOAD       4
 #define TRACK_AP_FIRE         5
 #define TRACK_IN_FIRE         6
-#define TRACK_HE_FIRE         7
-#define TRACK_HS_FIRE         8
+#define TRACK_HS_FIRE         7
+#define TRACK_HE_FIRE         8
 #define TRACK_ST_FIRE         9
 #define TRACK_FMJ_FIRE        10
 #define TRACK_RAPID_FIRE      11
 #define TRACK_AP_CHANGE       12
 #define TRACK_IN_CHANGE       13
-#define TRACK_HE_CHANGE       14
-#define TRACK_HS_CHANGE       15
+#define TRACK_HS_CHANGE       14
+#define TRACK_HE_CHANGE       15
 #define TRACK_ST_CHANGE       16
 #define TRACK_FMJ_CHANGE      17
 #define TRACK_RAPID_CHANGE    18
