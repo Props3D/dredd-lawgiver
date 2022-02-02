@@ -58,29 +58,28 @@
  * 1. Copy the audio file in each slot where you want to use it
  * 2. Change the index values below to match the files on the SD Card
  */
-#define TRACK_DNA_CHK         1
-#define TRACK_ID_OK           2
-#define TRACK_ID_FAIL         3
-#define TRACK_AMMO_LOAD       4
-#define TRACK_AP_FIRE         5
-#define TRACK_IN_FIRE         6
-#define TRACK_HS_FIRE         7
-#define TRACK_HE_FIRE         8
-#define TRACK_ST_FIRE         9
-#define TRACK_FMJ_FIRE        10
-#define TRACK_RAPID_FIRE      11
-#define TRACK_AP_CHANGE       12
-#define TRACK_IN_CHANGE       13
-#define TRACK_HS_CHANGE       14
-#define TRACK_HE_CHANGE       15
-#define TRACK_ST_CHANGE       16
-#define TRACK_FMJ_CHANGE      17
-#define TRACK_RAPID_CHANGE    18
-#define TRACK_AMMO_LOW        19
-#define TRACK_AMMO_EMPTY      20
-#define TRACK_AMMO_RELOAD     21
-#define TRACK_START_UP        22
-#define TRACK_THEME           23  // TODO: add feature to playback theme
+#define AUDIO_TRACK_DNA_CHK         1
+#define AUDIO_TRACK_ID_OK           2
+#define AUDIO_TRACK_ID_FAIL         3
+#define AUDIO_TRACK_AMMO_LOAD       4
+#define AUDIO_TRACK_AP_FIRE         5
+#define AUDIO_TRACK_IN_FIRE         6
+#define AUDIO_TRACK_HS_FIRE         7
+#define AUDIO_TRACK_HE_FIRE         8
+#define AUDIO_TRACK_ST_FIRE         9
+#define AUDIO_TRACK_FMJ_FIRE        10
+#define AUDIO_TRACK_RAPID_FIRE      11
+#define AUDIO_TRACK_AP_CHANGE       12
+#define AUDIO_TRACK_IN_CHANGE       13
+#define AUDIO_TRACK_HS_CHANGE       14
+#define AUDIO_TRACK_HE_CHANGE       15
+#define AUDIO_TRACK_ST_CHANGE       16
+#define AUDIO_TRACK_FMJ_CHANGE      17
+#define AUDIO_TRACK_RAPID_CHANGE    18
+#define AUDIO_TRACK_AMMO_LOW        19
+#define AUDIO_TRACK_AMMO_EMPTY      20
+#define AUDIO_TRACK_AMMO_RELOAD     21
+#define AUDIO_TRACK_THEME           22  // TODO: add feature to playback theme
 
 
 /**
@@ -90,16 +89,16 @@
 /**
  * Timing Defintions for start up sequence timings
  */
-#define STARTUP_LOGO_MS           2000
-#define STARTUP_COMM_OK_MS        1000
-#define STARTUP_DNA_CHK_MS        1200
-#define STARTUP_DNA_PRG_MS        1000
-#define STARTUP_ID_OK_MS          2400
-#define STARTUP_ID_FAIL_MS        1400
-#define STARTUP_ID_NAME_MS        1800
-#define PROGRESS_INTERVAL_MS      100
-#define LOW_AMMO_WAIT_MS          1000
-#define FAST_BLINK_WAIT_MS        350
+#define TIMING_STARTUP_LOGO_MS           2000
+#define TIMING_STARTUP_COMM_OK_MS        1000
+#define TIMING_STARTUP_DNA_CHK_MS        1200
+#define TIMING_STARTUP_DNA_PRG_MS        1000
+#define TIMING_STARTUP_ID_OK_MS          2400
+#define TIMING_STARTUP_ID_FAIL_MS        1400
+#define TIMING_STARTUP_ID_NAME_MS        1800
+#define TIMING_PROGRESS_INTERVAL_MS      100
+#define TIMING_LOW_AMMO_WAIT_MS          1000
+#define TIMING_FAST_BLINK_WAIT_MS        350
 
 /**
  *  Voice Recognition Commands
@@ -107,20 +106,20 @@
  *  
  *  IMPORTANT - if you change this sequence, you must update the VOICE_RECORDS_ARR
  */
-#define SELECTOR_AP_MODE         0 // speak "Armor Piercing" or just "Armor"
-#define SELECTOR_IN_MODE         1 // speak "Incendiary"
-#define SELECTOR_HS_MODE         2 // speak "Hotshot"
-#define SELECTOR_HE_MODE         3 // speak "High Ex"
-#define SELECTOR_ST_MODE         4 // speak "Stun"
-#define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
-#define SELECTOR_RAPID_MODE      6 // speak "Rapid"
+#define VR_CMD_AMMO_MODE_AP         0 // speak "Armor Piercing" or just "Armor"
+#define VR_CMD_AMMO_MODE_IN         1 // speak "Incendiary"
+#define VR_CMD_AMMO_MODE_HS         2 // speak "Hotshot"
+#define VR_CMD_AMMO_MODE_HE         3 // speak "High Ex"
+#define VR_CMD_AMMO_MODE_ST         4 // speak "Stun"
+#define VR_CMD_AMMO_MODE_FMJ        5 // speak "Full Metal"
+#define VR_CMD_AMMO_MODE_RAPID      6 // speak "Rapid"
 
 /**
  * These are only useful if the autoload feature is not enabled.
  * See code comments in the EasyVoice.begins() function.
  */
-static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
-static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HS_MODE, SELECTOR_HE_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
+static const uint8_t VOICE_CMD_ARR_SZ   = 7;
+static const uint8_t VOICE_CMD_ARR[]    = {VR_CMD_AMMO_MODE_AP, VR_CMD_AMMO_MODE_IN, VR_CMD_AMMO_MODE_HS, VR_CMD_AMMO_MODE_HE, VR_CMD_AMMO_MODE_ST, VR_CMD_AMMO_MODE_FMJ, VR_CMD_AMMO_MODE_RAPID};
 
 /**
  * Defintions for tracking startup sequence. DO NOT CHANGE
@@ -130,23 +129,23 @@ static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MOD
 #define LOOP_STATE_FAIL               0  // stop loop
 
 /**
- * Track index for ammo mode. DO NOT CHANGE
+ * Audio track index for lookup array. DO NOT CHANGE
  */
-#define AMMO_MODE_FIRE_IDX        0  // fire
-#define AMMO_MODE_EMTY_IDX        1  // empty clip
-#define AMMO_MODE_CHGE_IDX        2  // change mode
+#define AMMO_MODE_IDX_FIRE        0  // fire
+#define AMMO_MODE_IDX_EMTY        1  // empty clip
+#define AMMO_MODE_IDX_CHGE        2  // change mode
 
 /**
  * Lookup array for audio tracks based on ammo mode. DO NOT CHANGE
  */
-static const uint8_t TRACK_AMMO_MODE_ARR[7][3]  =  {
-  {TRACK_AP_FIRE,    TRACK_AMMO_EMPTY, TRACK_AP_CHANGE},
-  {TRACK_IN_FIRE,    TRACK_AMMO_EMPTY, TRACK_IN_CHANGE},
-  {TRACK_HS_FIRE,    TRACK_AMMO_EMPTY, TRACK_HS_CHANGE},
-  {TRACK_HE_FIRE,    TRACK_AMMO_EMPTY, TRACK_HE_CHANGE},
-  {TRACK_ST_FIRE,    TRACK_AMMO_EMPTY, TRACK_ST_CHANGE},
-  {TRACK_FMJ_FIRE,   TRACK_AMMO_EMPTY, TRACK_FMJ_CHANGE},
-  {TRACK_RAPID_FIRE, TRACK_AMMO_EMPTY, TRACK_RAPID_CHANGE}
+static const uint8_t AUDIO_TRACK_AMMO_MODE_ARR[7][3]  =  {
+  {AUDIO_TRACK_AP_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_AP_CHANGE},
+  {AUDIO_TRACK_IN_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_IN_CHANGE},
+  {AUDIO_TRACK_HS_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_HS_CHANGE},
+  {AUDIO_TRACK_HE_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_HE_CHANGE},
+  {AUDIO_TRACK_ST_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_ST_CHANGE},
+  {AUDIO_TRACK_FMJ_FIRE,   AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_FMJ_CHANGE},
+  {AUDIO_TRACK_RAPID_FIRE, AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_RAPID_CHANGE}
 };
 
 #endif
