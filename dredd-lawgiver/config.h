@@ -94,7 +94,7 @@
 #define STARTUP_COMM_OK_MS        1000
 #define STARTUP_DNA_CHK_MS        1200
 #define STARTUP_DNA_PRG_MS        1000
-#define STARTUP_ID_OK_MS          1350
+#define STARTUP_ID_OK_MS          2400
 #define STARTUP_ID_FAIL_MS        1400
 #define STARTUP_ID_NAME_MS        1800
 #define PROGRESS_INTERVAL_MS      100
