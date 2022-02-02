@@ -38,6 +38,7 @@ class EasyOLED
 
     uint8_t _ammoSelection = 0;
     bool _blink = false;
+    bool _ammoLow = false;
     uint8_t _ammoCounts[4];
     char _buf[10];
 
@@ -69,17 +70,20 @@ class EasyOLED
     }
 
     /**
-     * 
-     */
-    void setDisplayMode(uint8_t displayMode) {
-      _displayMode = displayMode;
-    }
-
-    /**
-     * 
+     * Return the current display mode
      */
     uint8_t getDisplayMode() {
       return _displayMode;
+    }
+
+    /**
+     * This needs to be called separately so the detection can be delayed after the shot.
+     */
+    void checkAmmoLevels() {
+#ifdef ENABLE_EASY_OLED
+      int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
+      _ammoLow = (ammoCount < 5 && ammoCount > 0);
+#endif
     }
 
     /**
@@ -87,11 +91,9 @@ class EasyOLED
      * the main program loop. For this reason, don't add any debug logging in this method.
      *  
      */
-    void startupDisplay(uint8_t displayMode, uint8_t progress, bool blink = false) {
+    void updateDisplay(uint8_t displayMode, uint8_t progress, bool blink = false) {
       _displayMode = displayMode;
       _progressBar = progress * _progressBarIncrement;
-      // blink rate every 500ms
-      //_blink = (millis() % 1000) < 500;
       _blink = blink;
       drawDisplay(_displayMode, _progressBar);
     }
@@ -104,7 +106,11 @@ class EasyOLED
      */
     void updateDisplay(int ammoSelection, uint8_t ammoCounts[], bool blink = false) {
       _blink = blink;
-      _ammoSelection = ammoSelection;
+      if (_ammoSelection != ammoSelection) {
+        _ammoSelection = ammoSelection;
+        // check switching to ammo that is already low
+        checkAmmoLevels();
+      }
       memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
       drawDisplay(_displayMode, _progressBar);
       delay(10);
@@ -112,7 +118,8 @@ class EasyOLED
 
     void drawFiringMode() {
 #ifdef ENABLE_EASY_OLED
-      // Standard
+      // check if ammo was low but got reset befeore drawing components
+      if (_ammoLow) checkAmmoLevels();
       drawGrid();
       drawAmmoMode();
       drawAmmoName();
@@ -338,6 +345,7 @@ class EasyOLED
 
     void drawAmmoMode() {
 #ifdef ENABLE_EASY_OLED
+      u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(180, 42);
       if (_displayMode < DISPLAY_MAIN) {
@@ -348,8 +356,8 @@ class EasyOLED
       }
 
       if (_displayMode == DISPLAY_MAIN) {
-        int ammoCount = _ammoCounts[_ammoSelection];
-        if (ammoCount < 4 && ammoCount > 0) {
+        int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
+        if (_ammoLow) {
           // low ammo
           u8g2.print(F("SEMI"));
         } else if (ammoCount == 0 ) {
@@ -380,7 +388,7 @@ class EasyOLED
       int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);
-      if (ammoCount < 5 && ammoCount > 0) {
+      if (_ammoLow) {
         u8g2.setCursor(0, 42);
         u8g2.print(F("AMMUNITION LOW"));
       } else if (ammoCount == 0 ) {

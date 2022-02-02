@@ -99,6 +99,9 @@
 #define STARTUP_ID_NAME_MS        1800
 #define STARTUP_END_MS            1000
 #define PROGRESS_INTERVAL_MS      100
+#define LOW_AMMO_WAIT_MS          1000
+#define FAST_BLINK_WAIT_MS        350
+#define SLOW_BLINK_WAIT_MS        500
 
 /**
  *  Voice Recognition Commands
