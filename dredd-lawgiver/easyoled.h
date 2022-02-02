@@ -23,25 +23,6 @@
 template <int CL_PIN, int DA_PIN, int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED
 {
-
-  private:
-    const uint8_t _progressBarIncrement = 10;
-    // index of ammo selections and ammo counters based on the config.h
-    uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
-
-    // See the instructions for optimizing the U8g2 lib.
-    U8G2_SH1122_256X64_2_4W_SW_SPI u8g2;
-
-    String _name;
-    uint8_t _displayMode = 0;
-    uint8_t _progressBar = 0;
-
-    uint8_t _ammoSelection = 0;
-    bool _blink = false;
-    bool _ammoLow = false;
-    uint8_t _ammoCounts[4];
-    char _buf[10];
-
   public:
     const static uint8_t DISPLAY_LOGO       = 1;
     const static uint8_t DISPLAY_COMM_CHK   = 2;
@@ -87,9 +68,9 @@ class EasyOLED
     }
 
     /**
-     * Refresh the component. This MUST be called continuously from
-     * the main program loop. For this reason, don't add any debug logging in this method.
-     *  
+     * This function is used only during the start up sequence.
+     * This does not need to be called continuously from the main loop.
+     * It's better to only call this when updates are necesary.
      */
     void updateDisplay(uint8_t displayMode, uint8_t progress, bool blink = false) {
       _displayMode = displayMode;
@@ -99,10 +80,9 @@ class EasyOLED
     }
     
     /**
-     * Refresh the component. This MUST be called continuously from
-     *  the main program loop
-     *  
-     *  For this reason, don't add any debug logging in this method.
+     * Update the OLED display.
+     * This does not need to be called continuously from the main loop.
+     * It's better to only call this when updates are necesary.
      */
     void updateDisplay(int ammoSelection, uint8_t ammoCounts[], bool blink = false) {
       _blink = blink;
@@ -113,7 +93,65 @@ class EasyOLED
       }
       memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
       drawDisplay(_displayMode, _progressBar);
-      delay(10);
+    }
+
+  private:
+    // number eof pixels to move the progress bar on startup
+    const uint8_t _progressBarIncrement = 10;
+    // index of ammo selections and ammo counters based on the config.h
+    uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
+
+    // See the instructions for optimizing the U8g2 lib.
+    U8G2_SH1122_256X64_2_4W_SW_SPI u8g2;
+    
+    String _name;                 // custom badge name to display 
+    uint8_t _displayMode = 0;     // tracking display modes during start up
+    uint8_t _progressBar = 0;     // tracking progress during startup sequence
+
+    uint8_t _ammoSelection = 0;   // ammo selecetor
+    uint8_t _ammoCounts[4];       // ammo counts
+    bool _blink = false;          // blink controller
+    bool _ammoLow = false;        // ammo low state
+    char _buf[10];                // print buffer for ammo counts
+
+
+    void drawDisplay(int displayMode, int progress) {
+#ifdef ENABLE_EASY_OLED
+      u8g2.firstPage();
+      do {
+        switch (displayMode) {
+          case DISPLAY_MAIN:
+            drawFiringMode();
+            break;
+          case DISPLAY_LOGO:
+            drawLogo();
+            break;
+          case DISPLAY_COMM_CHK:
+            // COMM OK
+            drawCommOk(progress);
+            break;
+          case DISPLAY_DNA_CHK:
+          case DISPLAY_DNA_PRG:
+            // DNA Check
+            drawDNACheck(progress);
+            break;
+          case DISPLAY_ID_OK:
+            // ID OK
+            drawIDOk(progress);
+            break;
+          case DISPLAY_ID_NAME:
+            // ID NAME
+            drawIDName(progress);
+            break;
+          case DISPLAY_ID_FAIL:
+            // ID FAIL
+            drawIDFail(progress);
+            break;
+          default:
+            break;
+        }
+      } while ( u8g2.nextPage() );
+#endif
     }
 
     void drawFiringMode() {
@@ -204,45 +242,6 @@ class EasyOLED
       u8g2.print(_name);
       drawAmmoMode();
       drawGrid();
-#endif
-    }
-
-    void drawDisplay(int displayMode, int progress) {
-#ifdef ENABLE_EASY_OLED
-      u8g2.firstPage();
-      do {
-        switch (displayMode) {
-          case DISPLAY_MAIN:
-            drawFiringMode();
-            break;
-          case DISPLAY_LOGO:
-            drawLogo();
-            break;
-          case DISPLAY_COMM_CHK:
-            // COMM OK
-            drawCommOk(progress);
-            break;
-          case DISPLAY_DNA_CHK:
-          case DISPLAY_DNA_PRG:
-            // DNA Check
-            drawDNACheck(progress);
-            break;
-          case DISPLAY_ID_OK:
-            // ID OK
-            drawIDOk(progress);
-            break;
-          case DISPLAY_ID_NAME:
-            // ID NAME
-            drawIDName(progress);
-            break;
-          case DISPLAY_ID_FAIL:
-            // ID FAIL
-            drawIDFail(progress);
-            break;
-          default:
-            break;
-        }
-      } while ( u8g2.nextPage() );
 #endif
     }
 

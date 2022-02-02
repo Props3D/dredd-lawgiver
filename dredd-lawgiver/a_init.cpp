@@ -121,8 +121,10 @@ void setup() {
   inCounter.begin(0, 25, COUNTER_MODE_DOWN);
   heCounter.begin(0, 25, COUNTER_MODE_DOWN);
   fmjCounter.begin(0, 50, COUNTER_MODE_DOWN);
+  
   // select the initial ammo mode
   selectedTriggerMode = SELECTOR_FMJ_MODE;
+  
   // init the display
   oled.begin(selectedTriggerMode, getCounters());
 
