@@ -87,11 +87,12 @@ class EasyOLED
      * the main program loop. For this reason, don't add any debug logging in this method.
      *  
      */
-    void startupDisplay(uint8_t displayMode, uint8_t progress) {
+    void startupDisplay(uint8_t displayMode, uint8_t progress, bool blink = false) {
       _displayMode = displayMode;
       _progressBar = progress * _progressBarIncrement;
-      _blink = (millis() % 1000) < 500;
-
+      // blink rate every 500ms
+      //_blink = (millis() % 1000) < 500;
+      _blink = blink;
       drawDisplay(_displayMode, _progressBar);
     }
     
@@ -101,7 +102,8 @@ class EasyOLED
      *  
      *  For this reason, don't add any debug logging in this method.
      */
-    void updateDisplay(int ammoSelection, uint8_t ammoCounts[]) {
+    void updateDisplay(int ammoSelection, uint8_t ammoCounts[], bool blink = false) {
+      _blink = blink;
       _ammoSelection = ammoSelection;
       memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
       drawDisplay(_displayMode, _progressBar);
@@ -263,7 +265,7 @@ class EasyOLED
 
       //Grid
       u8g2.drawBox(0, 44, 240, 2);
-      u8g2.drawBox(44, 44, 2, 20);
+      u8g2.drawBox(46, 44, 2, 20);
       u8g2.drawBox(92, 44, 2, 20);
       u8g2.drawBox(138, 44, 2, 20);
       u8g2.drawBox(184, 44, 2, 20);
@@ -280,7 +282,7 @@ class EasyOLED
       // Standard
       u8g2.setFont(u8g2_font_helvB12_tr);
       u8g2.setDrawColor(1);
-      u8g2.setCursor(47, 61);
+      u8g2.setCursor(48, 61);
       formatAmmo(_buf, 0);
       u8g2.print(_buf);
       u8g2.setCursor(95, 61);
@@ -295,9 +297,9 @@ class EasyOLED
       switch (_ammoSelection) {
         case 0: // armor piercing
           u8g2.setDrawColor(1);
-          u8g2.drawBox(44, 46, 46, 20);
+          u8g2.drawBox(46, 46, 46, 20);
           u8g2.setDrawColor(0);
-          u8g2.setCursor(47, 61);
+          u8g2.setCursor(48, 61);
           formatAmmo(_buf, 0);
           u8g2.print(_buf);
           u8g2.setDrawColor(1);
@@ -378,7 +380,7 @@ class EasyOLED
       int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);
-      if (ammoCount < 4 && ammoCount > 0) {
+      if (ammoCount < 5 && ammoCount > 0) {
         u8g2.setCursor(0, 42);
         u8g2.print(F("AMMUNITION LOW"));
       } else if (ammoCount == 0 ) {

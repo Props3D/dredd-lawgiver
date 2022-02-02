@@ -1,7 +1,6 @@
 #ifndef easyledv3_h
 #define easyledv3_h
 
-//#include <Arduino.h>
 #include <FastLED.h>
 #include "ezPattern.h"
 #include "debug.h"

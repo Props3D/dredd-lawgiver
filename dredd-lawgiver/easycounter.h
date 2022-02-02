@@ -5,7 +5,7 @@
 
 const static uint8_t STATE_ACTIVE      = 0;
 const static uint8_t STATE_EMPTY       = 1;
-const static uint8_t STATE_RELOAD      = 2;
+const static uint8_t STATE_RESET       = 2;
 
 const static int COUNTER_MODE_UP    =  1;
 const static int COUNTER_MODE_DOWN  = -1;
@@ -33,6 +33,7 @@ class EasyCounter
     int _low;
     int _high;
     bool _resetOnEmpty;
+    volatile int _state;
     volatile int _currentCounter;
  
     // helper functions
@@ -52,19 +53,23 @@ class EasyCounter
       setHigh(highNumber);
       setIncrement(increment);
       increment == COUNTER_MODE_UP ? setCount(_low) : setCount(_high);
+      _resetOnEmpty = resetOnEmpty;
+      _state = STATE_ACTIVE;
     }
 
-    EasyCounter* EasyCounter::tick() {
+    bool EasyCounter::tick() {
       if (isEmpty()) {
+        _state = STATE_EMPTY;
         if (_resetOnEmpty) resetCount();
-        return this;
+        return false;
       }
       if (_increment == COUNTER_MODE_UP) {
           _currentCounter = _currentCounter + 1;
       } else {
           _currentCounter = _currentCounter - 1;
       }
-      return this;
+      _state = STATE_ACTIVE;
+      return true;
     }
 
     bool isEmpty() {
@@ -83,12 +88,13 @@ class EasyCounter
       return false;
     }
 
-    // returns the reload state
+    // returns the current count
     int resetCount() {
       if (_increment == COUNTER_MODE_UP)
         setCount(_low);
       if (_increment == COUNTER_MODE_DOWN)
         setCount(_high);
+      _state = STATE_RESET;
       return this->_currentCounter;
     }
 
@@ -97,8 +103,7 @@ class EasyCounter
     }
 
     uint8_t getState() {
-      if (isEmpty()) return STATE_EMPTY;
-      return STATE_ACTIVE;
+      return _state;
     }
 };
 

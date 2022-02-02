@@ -69,34 +69,6 @@
  * to manually load each record on startup. Recommend avoiding this if possible, it may slow the startup sequence
  * or have other unintended problems. That part is untested.
  * 
- * The Main loop
- * =============
- * - check ISR inputs
- * - display LEDS if activated
- * - playback any queued audio 
- * - update OLED display on changes
- * - check the VR module for any commands
- * 1. Check the AmmoDownISR activation
- *   a. Toggles a clip counter
- *   b. Checks for an empty clip 
- *   c. If clip is not empty
- *      i. queue audio track for selected fire mode
- *     ii. activate front led with blaster shot
- *         1. Flash white
- *         2. Burn Red to orange, then fade as it cools
- *   d. Otherwise queue empty clip track
- * 2. Check the ReloadAmmoISR activation
- *   a. Resets all counters
- *   b. Queues reload audio track
- *   c. Resets the led indicators
- *   d. Activates OLED update
- * 3. Check if the leds have been activated
- *   a. update the leds following the pattern that has been set
- * 4. Check audio queue for playback
- * 5. Refresh or Update the OLED Display
- * 6. Check the recognition module for voice commands
- *     i. playback change mode track
- *    ii. toggle fire mode based on the recognized command
  * 
  */
  

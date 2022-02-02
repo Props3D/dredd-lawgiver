@@ -61,7 +61,7 @@ class EasyAudio
 #endif
     }
 
-    void playTrackNow(uint8_t track) {
+    void playTrack(uint8_t track) {
 #ifdef ENABLE_EASY_AUDIO
       debugLog("playing track ");
       player.playFromMP3Folder( track ); 

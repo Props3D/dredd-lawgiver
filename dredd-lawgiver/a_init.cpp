@@ -14,16 +14,11 @@
 #include "easyvoice.h"
 
 /**
-   All components are controlled or enabled by "config.h". Before running,
-   review and change all configurations based on your setup.
-
-   There's no need to change any of the following code or functions.
-*/
-// Counters for each firing mode
-EasyCounter apCounter("ap");
-EasyCounter inCounter("in");
-EasyCounter heCounter("he");
-EasyCounter fmjCounter("fmj");
+ * All components are controlled or enabled by "config.h". Before running,
+ * review and change all configurations based on your setup.
+ *
+ *  There's no need to change any of the following code or functions.
+ */
 // Audio setup
 EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 // LED setup
@@ -33,23 +28,37 @@ ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4 /*speed*/);  // initial
 EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled(DISPLAY_USER_ID);
 // VR module
 EasyVoice<VOICE_RECORDS_ARR, VOICE_RECORDS_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
+// Counters for each firing mode
+EasyCounter apCounter("ap");
+EasyCounter inCounter("in");
+EasyCounter heCounter("he");
+EasyCounter fmjCounter("fmj");
 
-// function declarations
-void mainLoop(void);
-void initLedIndicators(void);
-void ammoIndicators(void);
+/**
+ * function declarations 
+ */
+// program loop
 void startUpSequence(void);
-void runAudioPlayback(void);
-void runOledDisplay(void);
-void runLedDisplay(void);
-void handleSelectorMode(void);
+void mainLoop(void);
+
+// main loop functions
+void ammoIndicators(void);
+void handleVoiceCommands(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
-EasyCounter& getTriggerCounter(void);
-uint8_t getSelectedTrack(uint8_t idx);
+
+// ISR Functions for triggers
 void ammoDownISR(void);
 void reloadAmmoISR(void);
+
+// utility functions
+EasyCounter& getTriggerCounter(void);
+uint8_t getSelectedTrack(uint8_t idx);
 uint8_t* getCounters(void);
+void initLedIndicators(void);
+bool blinkNow();
+void setBlinkState(uint8_t pin);
+void toggleLED(uint8_t pin);
 
 /**
  * Variable for tracking stages through the main loop:
@@ -57,7 +66,7 @@ uint8_t* getCounters(void);
  * - Main loop
  * - Fail / Stop
  */
-uint8_t loopStage           = STARTUP_LOOP;
+uint8_t loopStage           = LOOP_STATE_START;
 
 /**
  * Variables for tracking the start up sequence updates
@@ -66,16 +75,23 @@ long lastDisplayUpdate      = 0;
 uint8_t progressBarUpdates  = 0;
 
 /**
+ * Variables for toggling an LED
+ */
+uint8_t blinkState          = LOW;
+uint8_t ledBlinks           = 0;
+long lastBlinkUpdate        = 0;
+
+/**
  * Variables for tracking and updating ammo counts on the OLED
  */
-static uint8_t counters[4];
+static uint8_t counters[4] = {25,25,25,50};
 volatile uint8_t screenUpdates   = 0;
 
 /**
  * Variables for tracking ISR 
  */
-volatile bool activateAmmoDown = false;
-volatile bool activateReload = false;
+volatile uint8_t activateAmmoDown = 0;
+volatile uint8_t activateReload   = 0;
 volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
 volatile long lastReloadTimeDebounce = 0;                     // handling reload bounce
 const static long debounceTriggerTimeField = 250;             // time measured between trigger bounces
@@ -127,49 +143,75 @@ void setup() {
  * The main loop.
  */
 void loop () {
+  // Shortcut the loop if it's failed
+  if (LOOP_STATE_FAIL == loopStage) return;
+
   // run the start up sequence first
-  if (STARTUP_LOOP == loopStage) {
+  if (LOOP_STATE_START == loopStage) {
     startUpSequence();
-    audio.playQueuedTrack();
-  }
-  if (MAIN_LOOP == loopStage) {
+  } else {
+    // run the main loop
     mainLoop();
   }
 }
 
 /**
- * Main loop routine:
- * - check ISR inputs
- * - display LEDS if activated
- * - playback any queued audio 
- * - update OLED display on changes
- * - check the VR module for any commands
+ * The Main loop Routine
+ * 1. Check the AmmoDownISR activation
+ *   a. Toggles a clip counter
+ *   b. Checks for an empty clip 
+ *   c. If clip is not empty
+ *      i. queue audio track for selected fire mode
+ *     ii. activate front led with blaster shot
+ *         1. Flash white
+ *         2. Burn Red to orange, then fade as it cools
+ *   d. Otherwise queue empty clip track
+ * 2. Check the ReloadAmmoISR activation
+ *   a. Resets all counters
+ *   b. Queues reload audio track
+ *   c. Resets the led indicators
+ *   d. Activates OLED update
+ * 3. Check if the leds have been activated
+ *   a. update the leds following the pattern that has been set
+ * 4. Check audio queue for playback
+ * 5. Refresh or Update the OLED Display
+ * 6. Check the recognition module for voice commands
+ *     i. playback change mode track
+ *    ii. toggle fire mode based on the recognized command
  */
 void mainLoop (void) {
   // always handle the activated components first, before processing new inputs
-  if (activateAmmoDown == true) {
+  // process trigger activation
+  if (activateAmmoDown) {
     handleAmmoDown();
   }
-  if (activateReload == true) {
+  // process reload activation
+  if (activateReload) {
     reloadAmmo();
   }
-  runLedDisplay();
-  runAudioPlayback();
-  runOledDisplay();
-  // check for new inputs
-  handleSelectorMode();
+  // display activated LEDS
+  fireLed.updateDisplay();
+  // playback queued tracks
+  audio.playQueuedTrack();
+  // update OLED
+  if (screenUpdates) {
+    oled.updateDisplay(selectedTriggerMode, getCounters());
+    screenUpdates--;
+  }
+  // check for new voice commands
+  handleVoiceCommands();
 }
 
 /**
  * Routine for the startup sequence. Heavy OLED updates on startup.
- * - Props3D logo - (2000ms)
- * - Comms OK - 90 pixels (900ms)
- * - DNA Check - wait (1000ms)
- * - DNA Check - 90 pixels (900ms)
- * - ID FAIL - blink 3 times (1500ms) then solid
- * - ID OK - wait - 1800ms
- * - ID Judge - wait (1800ms)
- * - Ammo display
+ * 1. Display Props3D logo - (2000ms)
+ * 2. Display Comms OK - 90 pixels (900ms)
+ * 3. Display DNA Check - wait for trigger press (1000ms)
+ * 4. Display DNA Check - 90 pixels (900ms)
+ * 5. Display ID FAIL - blink 3 times (1500ms) then solid
+ * 6. Display ID OK - blink 3 times with LED - 1800ms
+ * 7. Display Judge ID - wait (1800ms)
+ * 8. Display Ammo mode
  */
 void startUpSequence(void) {
   uint8_t _sequenceMode = oled.getDisplayMode();
@@ -182,7 +224,7 @@ void startUpSequence(void) {
         debugLog("Startup - Comm Ok");
         oled.startupDisplay(oled.DISPLAY_COMM_CHK, 0);
         // Red led on
-        digitalWrite(RED_LED_PIN, HIGH);
+        toggleLED(RED_LED_PIN);
       }
   }
   if (_sequenceMode == oled.DISPLAY_COMM_CHK) {
@@ -198,15 +240,15 @@ void startUpSequence(void) {
       }
   }
   if (_sequenceMode == oled.DISPLAY_DNA_CHK) {
-      if (millis() > (STARTUP_DNA_CHK_MS + lastDisplayUpdate)) {
-        // A trigger press is required to complete the DNA check
-        bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
+      // A trigger press is required to complete the DNA check
+      bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
+      if (buttonPressed || millis() > (STARTUP_DNA_CHK_MS + lastDisplayUpdate)) {
         if (buttonPressed) {
-          audio.queuePlayback(TRACK_DNA_CHK);
+          audio.playTrack(TRACK_DNA_CHK);
           oled.startupDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         } else {
           debugLog("Startup - ID FAIL");
-          audio.queuePlayback(TRACK_DNA_FAIL);
+          audio.playTrack(TRACK_ID_FAIL);
           oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
         lastDisplayUpdate = millis();
@@ -222,90 +264,68 @@ void startUpSequence(void) {
           lastDisplayUpdate = millis();
         } else {
           debugLog("Startup - ID FAIL");
-          audio.queuePlayback(TRACK_DNA_FAIL);
+          audio.playTrack(TRACK_ID_FAIL);
           oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
       }
       if (progressBarUpdates > 18) {
         debugLog("Startup - ID OK");
         oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
-        // RED off, Green on
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, HIGH);
+        // RED LED off
+        toggleLED(RED_LED_PIN);
         lastDisplayUpdate = millis();
       }
   }
   if (_sequenceMode == oled.DISPLAY_ID_OK) {
-      // blink the ID OK
-      oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
-      // blink the green led
-      bool _blink = (millis() % 1000 < 500);
-      if (_blink) {
-          digitalWrite(GREEN_LED_PIN, HIGH);
-      } else {
-          digitalWrite(GREEN_LED_PIN, LOW);
+      if (blinkNow()) {
+          // blink the ID OK when the Green LED is on
+          oled.startupDisplay(oled.DISPLAY_ID_OK, progressBarUpdates, blinkState == HIGH);
+          // toggle the LED after OLED update
+          setBlinkState(GREEN_LED_PIN);
+          // playback only when LED is on 
+          if (blinkState == HIGH) {
+            audio.playTrack(TRACK_ID_OK);
+            ledBlinks++;
+          }
       }
-      if (millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
+      // blink the green led three times before moving on
+      if (ledBlinks > 3 && millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
         debugLog("Startup - ID Name");
         oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
         lastDisplayUpdate = millis();
       }
   }
+  // Display ID Name for a fixed duration
   if (_sequenceMode == oled.DISPLAY_ID_NAME) {
-      // blink the ID NAME
-      oled.startupDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
       if (millis() > (STARTUP_ID_NAME_MS + lastDisplayUpdate)) {
-        debugLog("Startup - Name");
+        debugLog("Startup - Main loop");
+        audio.playTrack(TRACK_AMMO_LOAD);
         oled.startupDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
+        // let's turn off the ammo indicators
+        ammoIndicators();
+        // make sure the ISR doesn't trigger ammo shot during the DNA Check
+        activateAmmoDown = false;
+        // switch to main loop
+        loopStage = LOOP_STATE_MAIN;
         lastDisplayUpdate = millis();
       }
   }
-  if (_sequenceMode == oled.DISPLAY_MAIN) {
-      // wait a second
-      if (millis() > STARTUP_END_MS + lastDisplayUpdate) {
-        debugLog("Startup - Main loop");
-        audio.queuePlayback(getSelectedTrack(STATE_RELOAD));
-        // make sure the ISR doesn't trigger ammo shot during the DNA Check
-        activateAmmoDown = false;
-        // let's turn off the ammo indicators
-        ammoIndicators();
-        // switch to main loop
-        loopStage = MAIN_LOOP;
-      }
-  }
   if (_sequenceMode == oled.DISPLAY_ID_FAIL) {
-      // blink the ID FAIL
-      oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
-      if (millis() > STARTUP_ID_FAIL_MS + lastDisplayUpdate) {
-        // switch to main loop
-        loopStage = STOP_LOOP;
+      if (blinkNow()) {
+          // blink the ID FAIL when the RED LED is on
+          oled.startupDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates, blinkState == HIGH);
+          // toggle the LED after OLED update
+          setBlinkState(RED_LED_PIN);
+          // count only when LED is on 
+          if (blinkState == HIGH) {
+            ledBlinks++;
+          }
       }
-  }
-
-}
-
-
-/**
- * Playback the next queued track
- */
-void runAudioPlayback(void) {
-  audio.playQueuedTrack();
-}
-
-/**
- * Run the led pattern
- */
-void runLedDisplay(void) {
-  fireLed.updateDisplay();
-}
-
-/**
- * Run the oled pattern
- */
-void runOledDisplay(void) {
-  if (screenUpdates > 0) {
-    oled.updateDisplay(selectedTriggerMode, getCounters());
-    screenUpdates--;
+      // blink the red LED four times before moving on
+      if (ledBlinks > 4 && millis() > STARTUP_ID_FAIL_MS + lastDisplayUpdate) {
+        // switch to main loop
+        loopStage = LOOP_STATE_FAIL;
+      }
   }
 }
 
@@ -315,7 +335,7 @@ void runOledDisplay(void) {
 void ammoDownISR(void) {
   if ((millis() - lastTriggerTimeDebounce) > debounceTriggerTimeField) {
     if (digitalRead(TRIGGER_PIN) == LOW) {
-      activateAmmoDown = true;
+      activateAmmoDown++;
     }
     lastTriggerTimeDebounce = millis();
   }
@@ -327,7 +347,7 @@ void ammoDownISR(void) {
 void reloadAmmoISR(void) {
   if ((millis() - lastReloadTimeDebounce) > debounceReloadTimeField) {
     if (digitalRead(RELOAD_PIN) == LOW) {
-        activateReload = true;
+        activateReload++;
     }
     lastReloadTimeDebounce = millis();
   }
@@ -337,17 +357,18 @@ void reloadAmmoISR(void) {
  * Routine for resetting the ammo counters
  */
 void reloadAmmo(void) {
-  activateReload = false;
+  activateReload--;
   debugLog("Reloading all counters");
   apCounter.resetCount();
   inCounter.resetCount();
   heCounter.resetCount();
   fmjCounter.resetCount();
-  // trigger the low-ammo indicators
+  // Reset the low-ammo indicator
   ammoIndicators();
   //queue the track
-  audio.queuePlayback(getSelectedTrack(STATE_RELOAD));
-  screenUpdates = 1;
+  audio.queuePlayback(TRACK_AMMO_RELOAD);
+  // Refresh the display at least once
+  screenUpdates++;
 }
 
 /**
@@ -361,22 +382,24 @@ void reloadAmmo(void) {
      4. Otherwise play empty clip track
 */
 void handleAmmoDown(void) {
-  activateAmmoDown = false;
-  debugLog("send led pulse");
+  activateAmmoDown--;
   bool emptyClip = getTriggerCounter().isEmpty();
-  // check the track number before ticking, in case it's the last round
-  int trackIdx = getTriggerCounter().getState(); // returns the approapriate track, or empty clip
-  // move the counter, if possible
+  if (emptyClip) {
+     debugLog("Empty clip");
+     audio.queuePlayback(getSelectedTrack(AMMO_MODE_EMTY_IDX));
+     return;
+  }
+  debugLog("Ammo fire sequence");
+  // move the counter
   getTriggerCounter().tick();
-
+  //queue the track
+  audio.queuePlayback(getSelectedTrack(AMMO_MODE_FIRE_IDX));
+  // activate the led pulse
+  fireLed.activate(blasterShot);
   // trigger the low-ammo indicators
   ammoIndicators();
-  //queue the track
-  audio.queuePlayback(getSelectedTrack(trackIdx));
-  if (emptyClip == false) {
-    fireLed.activate(blasterShot);
-  }
-  screenUpdates = 1;
+  // Refresh the display at least once
+  screenUpdates++;
 }
 
 /**
@@ -384,19 +407,7 @@ void handleAmmoDown(void) {
  * trigger mode and a state variable
  */
 uint8_t getSelectedTrack(uint8_t trackIdx) {
-  if (selectedTriggerMode == SELECTOR_AP_MODE)
-    return TRACK_AP_ARR[trackIdx];
-  if (selectedTriggerMode == SELECTOR_IN_MODE)
-    return TRACK_IN_ARR[trackIdx];
-  if (selectedTriggerMode == SELECTOR_HE_MODE)
-    return TRACK_HE_ARR[trackIdx];
-  if (selectedTriggerMode == SELECTOR_HS_MODE)
-    return TRACK_HS_ARR[trackIdx];
-  if (selectedTriggerMode == SELECTOR_ST_MODE)
-    return TRACK_ST_ARR[trackIdx];
-  if (selectedTriggerMode == SELECTOR_RAPID_MODE)
-    return TRACK_RAPID_ARR[trackIdx];
-  return TRACK_FMJ_ARR[trackIdx];
+  return TRACK_AMMO_MODE_ARR[selectedTriggerMode][trackIdx];
 }
 
 /**
@@ -405,9 +416,8 @@ uint8_t getSelectedTrack(uint8_t trackIdx) {
 EasyCounter& getTriggerCounter(void) {
   if (selectedTriggerMode == SELECTOR_AP_MODE)
     return apCounter;
-  if (selectedTriggerMode == SELECTOR_IN_MODE)
-    return inCounter;
-  if (selectedTriggerMode == SELECTOR_HS_MODE)
+  if (selectedTriggerMode == SELECTOR_IN_MODE ||
+      selectedTriggerMode == SELECTOR_HS_MODE)
     return inCounter;
   if (selectedTriggerMode == SELECTOR_HE_MODE)
     return heCounter;
@@ -415,13 +425,13 @@ EasyCounter& getTriggerCounter(void) {
 }
 
 /**
-   Checks the selector mode momentary switch.
-   1. if a long preess plackback the theme track
-   2. If a short press
-     a. playback changee mode track
-     b. toggle fire mode
-*/
-void handleSelectorMode(void) {
+ * Checks the voice recognition module for new voice commands
+ * 1. change the selected ammo mode
+ * 2. initialize the LED sequence
+ * 3. queue playback
+ * 4. set screen refresh
+ */
+void handleVoiceCommands(void) {
   int cmd = voice.readCommand();
   
   if (cmd > -1) {
@@ -455,8 +465,9 @@ void handleSelectorMode(void) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       debugLog("FMJ Mode selected");
     }
-    audio.playTrackNow(TRACK_CHANGE_MODE);
-    screenUpdates = 1;
+    audio.queuePlayback(getSelectedTrack(AMMO_MODE_CHGE_IDX));
+    // Refresh the display at least once
+    screenUpdates++;
   }
 }
 
@@ -487,11 +498,43 @@ void initLedIndicators(void) {
  */
 void ammoIndicators(void) {
   int ammo = getTriggerCounter().getCount();
-  if (ammo < 4) {
+  if (ammo == 4) {
     digitalWrite(RED_LED_PIN, HIGH);
-    digitalWrite(GREEN_LED_PIN, LOW);    
+    digitalWrite(GREEN_LED_PIN, LOW);
+    // queue playback for low ammo
+    audio.queuePlayback(TRACK_AMMO_LOW);
+    // let's make sure the screen redraws to count the low ammo
+    screenUpdates++;
   } else {
     digitalWrite(RED_LED_PIN, LOW);
     digitalWrite(GREEN_LED_PIN, LOW);
   }
+}
+
+/**
+ * Blink controller.
+ * Returns true when it's time to toggle state every 500ms
+ */
+bool blinkNow() {
+  if (millis() > lastBlinkUpdate + 500) {
+    lastBlinkUpdate = millis();
+    blinkState = !blinkState;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Sets the state of the LED pin
+ */
+void setBlinkState(uint8_t pin) {
+  digitalWrite(pin, blinkState);
+}
+
+/**
+ * Toggles LED state immediately
+ */
+void toggleLED(uint8_t pin) {
+  blinkState = !blinkState;
+  digitalWrite(pin, blinkState);
 }

@@ -64,14 +64,19 @@ class EasyVoice
     EasyVoice(uint8_t rxPin, uint8_t txPin) : _myVR(rxPin, txPin) {
     };
 
+    /** 
+     *  Use this to initialize the module. Must be called in setup
+     *  and before readComamand() is used.
+     */
     void begin(void) {
 #ifdef ENABLE_EASY_VOICE
       debugLog("setup voice");
       _myVR.begin(9600);
-/**
- * Only uncomment this code if you can't enable the autoload feature on the VR module.
- * Startup sequence is untested with this code.
- */
+
+       // *** IMPORTANT ***
+       // Only uncomment this code if you can't enable the autoload feature on the VR module.
+       // This should be a last resort, the startup sequence is untested with this code.
+       // i.e. this might affect the timing of the startup sequence
 //      if (_myVR.clear() == 0) {
 //        debugLog("Recognizer cleared.");
 //      }
@@ -81,7 +86,11 @@ class EasyVoice
 #endif
     }
     
-
+    /**
+     * Check the senors buffer for recognized commands.
+     * Returns the index of the recognized command.
+     * Otherwise returns -1
+     */
     int readCommand()
     {
 #ifdef ENABLE_EASY_VOICE

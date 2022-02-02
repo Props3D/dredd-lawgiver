@@ -11,70 +11,90 @@
 /** 
  * Enable debug logging by uncommenting this line
  */
-//#define ENABLE_DEBUG                 1
+#define ENABLE_DEBUG          1
 
 // Comment out if you want to disable any component
-#define ENABLE_EASY_AUDIO            1 //Enable all audio 
-#define ENABLE_EASY_LED              1 //Enable LEDs
-#define ENABLE_EASY_OLED             1 //Enable OLED Display
-#define ENABLE_EASY_VOICE            1 //Enable Voice Recognition Display
+#define ENABLE_EASY_AUDIO     1 //Enable audio 
+#define ENABLE_EASY_LED       1 //Enable LEDs
+#define ENABLE_EASY_OLED      1 //Enable OLED Display
+#define ENABLE_EASY_VOICE     1 //Enable Voice Recognition Display
 
 // Customizable ID badge for DNA Check sequence 
-#define DISPLAY_USER_ID              "Dredd"
-
-// Pin configuration for MP3 Player
-#define AUDIO_RX_PIN        4
-#define AUDIO_TX_PIN        5
-
-// Pin configuration for MP3 Player
-#define VOICE_RX_PIN        6
-#define VOICE_TX_PIN        7
+#define DISPLAY_USER_ID       "Dredd"
 
 // Pin configuration for all momentary triggers
-#define TRIGGER_PIN         2
-#define RELOAD_PIN          3
+#define TRIGGER_PIN           2
+#define RELOAD_PIN            3
+
+// Pin configuration for MP3 Player
+#define AUDIO_RX_PIN          4
+#define AUDIO_TX_PIN          5
+
+// Pin configuration for MP3 Player
+#define VOICE_RX_PIN          6
+#define VOICE_TX_PIN          7
+
+// Pin configuration for oled display
+#define OLED_SCL_PIN          13
+#define OLED_SDA_PIN          11
+#define OLED_RESET_PIN        9
+#define OLED_DC_PIN           10
+#define OLED_CS_PIN           8
 
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
-#define FIRE_LED_PIN        12
-#define FIRE_LED_CNT        7
+#define FIRE_LED_PIN          12
+#define FIRE_LED_CNT          7
 
 // Pin Configuration for 3mm LEDs
-#define RED_LED_PIN         14
-#define GREEN_LED_PIN       15
+#define RED_LED_PIN           14
+#define GREEN_LED_PIN         15
 
-// Pin configuration for oled display
-#define OLED_SCL_PIN        13
-#define OLED_SDA_PIN        11
-#define OLED_RESET_PIN      9
-#define OLED_DC_PIN         10
-#define OLED_CS_PIN         8
-
-// track by file index - upload these to the SD card in the correct order
+/**
+ * Audio tracks by file index - upload these to the SD card in the correct order.
+ * See the instructions on the Github page about loading the SD card.
+ * 
+ * You can reuse sound effects for each slot with two options:
+ * 1. Copy the audio file in each slot where you want to use it
+ * 2. Change the index values below to match the files on the SD Card
+ */
 #define TRACK_DNA_CHK         1
-#define TRACK_CHANGE_MODE     2
-#define TRACK_AP_FIRE         3
-#define TRACK_IN_FIRE         4
-#define TRACK_HE_FIRE         5
-#define TRACK_HS_FIRE         6
-#define TRACK_ST_FIRE         7
-#define TRACK_FMJ_FIRE        8
-#define TRACK_RAPID_FIRE      9
-#define TRACK_CLIP_EMPTY      10
-#define TRACK_CLIP_RELOAD     11
-#define TRACK_DNA_FAIL        12
-#define TRACK_START_UP        99
-#define TRACK_ID_OK           99
-#define TRACK_THEME           99  // TODO: add feature to playback theme
+#define TRACK_ID_OK           2
+#define TRACK_ID_FAIL         3
+#define TRACK_AMMO_LOAD       4
+#define TRACK_AP_FIRE         5
+#define TRACK_IN_FIRE         6
+#define TRACK_HE_FIRE         7
+#define TRACK_HS_FIRE         8
+#define TRACK_ST_FIRE         9
+#define TRACK_FMJ_FIRE        10
+#define TRACK_RAPID_FIRE      11
+#define TRACK_AP_CHANGE       12
+#define TRACK_IN_CHANGE       13
+#define TRACK_HE_CHANGE       14
+#define TRACK_HS_CHANGE       15
+#define TRACK_ST_CHANGE       16
+#define TRACK_FMJ_CHANGE      17
+#define TRACK_RAPID_CHANGE    18
+#define TRACK_AMMO_LOW        19
+#define TRACK_AMMO_EMPTY      20
+#define TRACK_AMMO_RELOAD     21
+#define TRACK_START_UP        22
+#define TRACK_THEME           23  // TODO: add feature to playback theme
+
+
+/**
+ *  Common constant definitions - DO NOT CHANGE
+ */
 
 /**
  * Timing Defintions for start up sequence timings
  */
 #define STARTUP_LOGO_MS           2000
 #define STARTUP_COMM_OK_MS        1000
-#define STARTUP_DNA_CHK_MS        1000
+#define STARTUP_DNA_CHK_MS        1200
 #define STARTUP_DNA_PRG_MS        1000
-#define STARTUP_ID_OK_MS          1800
+#define STARTUP_ID_OK_MS          2500
 #define STARTUP_ID_FAIL_MS        2000
 #define STARTUP_ID_NAME_MS        1800
 #define STARTUP_END_MS            1000
@@ -94,24 +114,38 @@
 #define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
 #define SELECTOR_RAPID_MODE      6 // speak "Rapid"
 
+/**
+ * These are only useful if the autoload feature is not enabled.
+ * See code comments in the EasyVoice.begins() function.
+ */
 static const uint8_t VOICE_RECORDS_ARR_SZ   = 7;
 static const uint8_t VOICE_RECORDS_ARR[]    = {SELECTOR_AP_MODE, SELECTOR_IN_MODE, SELECTOR_HS_MODE, SELECTOR_HE_MODE, SELECTOR_ST_MODE, SELECTOR_FMJ_MODE, SELECTOR_RAPID_MODE};
-
 
 /**
  * Defintions for tracking startup sequence. DO NOT CHANGE
  */
-#define STARTUP_LOOP              2  // Startup sequence
-#define MAIN_LOOP                 1  // main loop
-#define STOP_LOOP                 0  // stop loop
+#define LOOP_STATE_START              2  // Startup sequence
+#define LOOP_STATE_MAIN               1  // main loop
+#define LOOP_STATE_FAIL               0  // stop loop
 
-// Common constant definitions - DO NOT CHANGE
-static const uint8_t TRACK_AP_ARR[]       = {TRACK_AP_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_IN_ARR[]       = {TRACK_IN_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_HS_ARR[]       = {TRACK_HS_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_HE_ARR[]       = {TRACK_HE_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_ST_ARR[]       = {TRACK_ST_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_FMJ_ARR[]      = {TRACK_FMJ_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
-static const uint8_t TRACK_RAPID_ARR[]    = {TRACK_RAPID_FIRE, TRACK_CLIP_EMPTY, TRACK_CLIP_RELOAD};
+/**
+ * Track index for ammo mode. DO NOT CHANGE
+ */
+#define AMMO_MODE_FIRE_IDX        0  // fire
+#define AMMO_MODE_EMTY_IDX        1  // empty clip
+#define AMMO_MODE_CHGE_IDX        2  // change mode
+
+/**
+ * Lookup array for audio tracks based on ammo mode. DO NOT CHANGE
+ */
+static const uint8_t TRACK_AMMO_MODE_ARR[7][3]  =  {
+  {TRACK_AP_FIRE,    TRACK_AMMO_EMPTY, TRACK_AP_CHANGE},
+  {TRACK_IN_FIRE,    TRACK_AMMO_EMPTY, TRACK_IN_CHANGE},
+  {TRACK_HS_FIRE,    TRACK_AMMO_EMPTY, TRACK_HS_CHANGE},
+  {TRACK_HE_FIRE,    TRACK_AMMO_EMPTY, TRACK_HE_CHANGE},
+  {TRACK_ST_FIRE,    TRACK_AMMO_EMPTY, TRACK_ST_CHANGE},
+  {TRACK_FMJ_FIRE,   TRACK_AMMO_EMPTY, TRACK_FMJ_CHANGE},
+  {TRACK_RAPID_FIRE, TRACK_AMMO_EMPTY, TRACK_RAPID_CHANGE}
+};
 
 #endif
