@@ -92,20 +92,16 @@ volatile uint8_t activateLowAmmo = 0;
 
 
 /**
- * Variables for tracking ISR 
- */
-volatile uint8_t activateAmmoDown = 0;
-volatile uint8_t activateReload   = 0;
-volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
-volatile long lastReloadTimeDebounce = 0;                     // handling reload bounce
-const static long debounceTriggerTimeField = 250;             // time measured between trigger bounces
-const static long debounceReloadTimeField = 1000;             // time measured between reload bounces
-
-/**
- *  Variables for tracking selected trigger mode.
+ *  Variables for tracking ISR 
  *  Variables must be marked as volatile because they are updated in the ISR.
  */
-volatile uint8_t selectedTriggerMode   = SELECTOR_FMJ_MODE;   // sets the fire mode to blaster to start
+const static long debounceTriggerTimeField = 200;             // time measured between trigger bounces
+const static long debounceReloadTimeField = 1000;             // time measured between reload bounces
+volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
+volatile long lastReloadTimeDebounce  = 0;                    // handling reload bounce
+volatile uint8_t selectedTriggerMode  = SELECTOR_FMJ_MODE;    // sets the ammo mode to start
+volatile uint8_t activateAmmoDown = 0;                        // sets main loop to fire a round
+volatile uint8_t activateReload   = 0;                        // sets main loop to reload ammo
 
 void setup() {
   Serial.begin (115200);
@@ -120,7 +116,7 @@ void setup() {
   // initialize all the leds
   initLedIndicators();
 
-  // Initialize the clip counters for different modes
+  // Initialize the ammo counters for different modes
   apCounter.begin(0, 25, COUNTER_MODE_DOWN);
   inCounter.begin(0, 25, COUNTER_MODE_DOWN);
   heCounter.begin(0, 25, COUNTER_MODE_DOWN);
@@ -185,8 +181,10 @@ void loop () {
  */
 void mainLoop (void) {
   // always handle the activated components first, before processing new inputs
-  // trigger the low-ammo indicators
+
+  // trigger the low-ammo indicator
   if (activateLowAmmo && !activateAmmoDown) {
+      // small delay so not to collide with ammo playback
       if (millis() > lowAmmoChangeTime + LOW_AMMO_WAIT_MS) {
         updateAmmoIndicators();
       }
@@ -199,11 +197,11 @@ void mainLoop (void) {
   if (activateReload) {
     reloadAmmo();
   }
-  // display activated LEDS
+  // display LEDS if activated
   fireLed.updateDisplay();
-  // playback queued tracks
+  // playback tracks if queued
   audio.playQueuedTrack();
-  // update OLED
+  // update OLED if there are changes
   if (screenUpdates) {
     oled.updateDisplay(selectedTriggerMode, getCounters());
     screenUpdates--;
@@ -218,8 +216,8 @@ void mainLoop (void) {
  * 2. Display Comms OK - 90 pixels (900ms)
  * 3. Display DNA Check - wait for trigger press (1000ms)
  * 4. Display DNA Check - 90 pixels (900ms)
- * 5. Display ID FAIL - blink 3 times (1500ms) then solid
- * 6. Display ID OK - blink 3 times with LED - 1800ms
+ * 5. Display ID FAIL - blink 4 times (1500ms) then solid
+ * 6. Display ID OK - blink 3 times with LED - 1000ms
  * 7. Display Judge ID - wait (1800ms)
  * 8. Display Ammo mode
  */
@@ -287,7 +285,7 @@ void startUpSequence(void) {
       }
   }
   if (_sequenceMode == oled.DISPLAY_ID_OK) {
-      if (blinkNow()) {
+      if (ledBlinks < 3 && blinkNow()) {
           // blink the ID OK when the Green LED is on
           oled.updateDisplay(oled.DISPLAY_ID_OK, progressBarUpdates, blinkState == HIGH);
           // toggle the LED after OLED update
@@ -299,7 +297,7 @@ void startUpSequence(void) {
           }
       }
       // blink the green led three times before moving on
-      if (ledBlinks > 3 && millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
+      if (ledBlinks > 2 && millis() > (STARTUP_ID_OK_MS + lastDisplayUpdate)) {
         debugLog("Startup - ID Name");
         oled.updateDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
         lastDisplayUpdate = millis();
@@ -313,7 +311,7 @@ void startUpSequence(void) {
         oled.updateDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
         // let's turn off the ammo indicators
         updateAmmoIndicators();
-        // make sure the ISR doesn't trigger ammo shot during the DNA Check
+        // make sure the ISR routne didn't trigger an ammo shot during the DNA Check
         activateAmmoDown = false;
         // switch to main loop
         loopStage = LOOP_STATE_MAIN;
@@ -321,7 +319,7 @@ void startUpSequence(void) {
       }
   }
   if (_sequenceMode == oled.DISPLAY_ID_FAIL) {
-      if (blinkNow()) {
+      if (ledBlinks < 4 && blinkNow()) {
           // blink the ID FAIL when the RED LED is on
           oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates, blinkState == HIGH);
           // toggle the LED after OLED update
@@ -332,7 +330,7 @@ void startUpSequence(void) {
           }
       }
       // blink the red LED four times before moving on
-      if (ledBlinks > 4 && millis() > STARTUP_ID_FAIL_MS + lastDisplayUpdate) {
+      if (ledBlinks > 3 && millis() > STARTUP_ID_FAIL_MS + lastDisplayUpdate) {
         // switch to main loop
         loopStage = LOOP_STATE_FAIL;
       }
@@ -365,6 +363,10 @@ void reloadAmmoISR(void) {
 
 /**
  * Routine for resetting the ammo counters
+ * 1. all counters are reset
+ * 2. leds are turned off
+ * 3. queue audio track
+ * 4. activate oled refresh
  */
 void reloadAmmo(void) {
   activateReload--;
@@ -385,11 +387,12 @@ void reloadAmmo(void) {
    Sends a blaster pulse.
      1. Toggles a clip counter
      2. Checks for an empty clip
+        a. play empty clip track
      3. If clip is not empty
-        a. play audio track
-        b. update led strip
-        c. update led counter to the current clip counter
-     4. Otherwise play empty clip track
+        a. queue audio track
+        b. activate led strip
+        c. activate oled refresh
+        d. Check for low ammo
 */
 void handleAmmoDown(void) {
   activateAmmoDown--;
