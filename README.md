@@ -79,6 +79,22 @@ a few tips to make you successful:
     - This step is crucual to make the VR module work with this sketch.
 
 #### Training commands
+The voice commands must be trained in the expected slots. This is defined in the config.h file
+and should not be changed. For reference, see below:
+```c++
+/**
+ *  Voice Recognition Commands.
+ *  IMPORTANT - The VR module must be trained this sequence.
+ */
+#define VR_CMD_AMMO_MODE_AP         0 // speak "Armor Piercing" or just "Armor"
+#define VR_CMD_AMMO_MODE_IN         1 // speak "Incendiary"
+#define VR_CMD_AMMO_MODE_HS         2 // speak "Hotshot"
+#define VR_CMD_AMMO_MODE_HE         3 // speak "High Ex"
+#define VR_CMD_AMMO_MODE_ST         4 // speak "Stun"
+#define VR_CMD_AMMO_MODE_FMJ        5 // speak "Full Metal"
+#define VR_CMD_AMMO_MODE_RAPID      6 // speak "Rapid"
+```
+
 You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](https://github.com/elechouse/VoiceRecognitionV3) page.
  1. Open vr_sample_train (File -> Examples -> VoiceRecognitionV3 -> vr_sample_train)
  2. Choose right Arduino board (Tool -> Board, UNO recommended), Choose right serial port.
@@ -124,8 +140,7 @@ The component configurations can be easily customized by updating the values in 
 wiring, and audio tracks.
 
 ```c++
-
-/** 
+ /** 
  * Enable debug logging by uncommenting this line
  */
 //#define ENABLE_DEBUG          1
@@ -167,57 +182,8 @@ wiring, and audio tracks.
 #define RED_LED_PIN           14
 #define GREEN_LED_PIN         15
 
-/**
- * Audio tracks by file index - upload these to the SD card in the correct order.
- * See the instructions on the Github page about loading the SD card.
- * 
- * You can reuse sound effects for each slot with two options:
- * 1. Copy the audio file in each slot where you want to use it
- * 2. Change the index values below to match the files on the SD Card
- */
-#define TRACK_DNA_CHK         1
-#define TRACK_ID_OK           2
-#define TRACK_ID_FAIL         3
-#define TRACK_AMMO_LOAD       4
-#define TRACK_AP_FIRE         5
-#define TRACK_IN_FIRE         6
-#define TRACK_HS_FIRE         7
-#define TRACK_HE_FIRE         8
-#define TRACK_ST_FIRE         9
-#define TRACK_FMJ_FIRE        10
-#define TRACK_RAPID_FIRE      11
-#define TRACK_AP_CHANGE       12
-#define TRACK_IN_CHANGE       13
-#define TRACK_HS_CHANGE       14
-#define TRACK_HE_CHANGE       15
-#define TRACK_ST_CHANGE       16
-#define TRACK_FMJ_CHANGE      17
-#define TRACK_RAPID_CHANGE    18
-#define TRACK_AMMO_LOW        19
-#define TRACK_AMMO_EMPTY      20
-#define TRACK_AMMO_RELOAD     21
-#define TRACK_START_UP        22
-#define TRACK_THEME           23  // TODO: add feature to playback theme
-
-/**
- *  Common constant definitions - DO NOT CHANGE
- */
-
-/**
- *  Voice Recognition Commands
- *  Each command must be trained to follow this sequence.
- *  
- *  IMPORTANT - if you change this sequence, you must update the VOICE_RECORDS_ARR
- */
-#define SELECTOR_AP_MODE         0 // speak "Armor Piercing" or just "Armor"
-#define SELECTOR_IN_MODE         1 // speak "Incendiary"
-#define SELECTOR_HS_MODE         2 // speak "Hotshot"
-#define SELECTOR_HE_MODE         3 // speak "High Ex"
-#define SELECTOR_ST_MODE         4 // speak "Stun"
-#define SELECTOR_FMJ_MODE        5 // speak "Full Metal"
-#define SELECTOR_RAPID_MODE      6 // speak "Rapid"
-
 ```
+
 
 ## Audio File Setup
 The DF Mini Player will play back both mp3 and wav files. However, the program play
@@ -228,6 +194,42 @@ called "/mp3".
 When using a MAC to load files, it will create hidden files that will cause the playback
 to seem like it's not working. You'll need to use the terminal window to rm all of these
 files and directories from the card.
+
+The audio file indices are listed in the config.h file. Do not remove any of the entries.
+You can reuse sound effects for each slot with two options:
+1. Copy the audio file in each slot where you want to use it
+2. Change the index values below to match the files on the SD Card
+
+I followed option 1 for the included audio files in this repo, it's just easier and there's
+plenty of room on the micro SD card.
+ 
+```c++
+/**
+ * Audio tracks by file index - upload these to the SD card in the correct order.
+ */
+#define AUDIO_TRACK_DNA_CHK         1
+#define AUDIO_TRACK_ID_OK           2
+#define AUDIO_TRACK_ID_FAIL         3
+#define AUDIO_TRACK_AMMO_LOAD       4
+#define AUDIO_TRACK_AP_FIRE         5
+#define AUDIO_TRACK_IN_FIRE         6
+#define AUDIO_TRACK_HS_FIRE         7
+#define AUDIO_TRACK_HE_FIRE         8
+#define AUDIO_TRACK_ST_FIRE         9
+#define AUDIO_TRACK_FMJ_FIRE        10
+#define AUDIO_TRACK_RAPID_FIRE      11
+#define AUDIO_TRACK_AP_CHANGE       12
+#define AUDIO_TRACK_IN_CHANGE       13
+#define AUDIO_TRACK_HS_CHANGE       14
+#define AUDIO_TRACK_HE_CHANGE       15
+#define AUDIO_TRACK_ST_CHANGE       16
+#define AUDIO_TRACK_FMJ_CHANGE      17
+#define AUDIO_TRACK_RAPID_CHANGE    18
+#define AUDIO_TRACK_AMMO_LOW        19
+#define AUDIO_TRACK_AMMO_EMPTY      20
+#define AUDIO_TRACK_AMMO_RELOAD     21
+#define AUDIO_TRACK_THEME           22  // TODO: add feature to playback theme
+```
 
 ## Example Wiring Diagram:
 ![SampleWiring](https://user-images.githubusercontent.com/88125656/151897932-dd6698a9-7f91-4609-b71c-de937fd8352a.png)
