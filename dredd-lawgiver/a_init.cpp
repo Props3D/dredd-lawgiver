@@ -95,7 +95,7 @@ volatile uint8_t activateLowAmmo = 0;
  *  Variables for tracking ISR 
  *  Variables must be marked as volatile because they are updated in the ISR.
  */
-const static long debounceTriggerTimeField = 100;             // time measured between trigger bounces
+const static long debounceTriggerTimeField = 200;             // time measured between trigger bounces
 const static long debounceReloadTimeField  = 1000;            // time measured between reload bounces
 volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
 volatile long lastReloadTimeDebounce  = 0;                    // handling reload bounce
@@ -111,7 +111,7 @@ void setup() {
   fireLed.begin(75);
 
   //initializes the audio player and sets the volume
-  audio.begin(25);
+  audio.begin(28);
 
   // initialize all the leds
   initLedIndicators();
@@ -121,15 +121,15 @@ void setup() {
   inCounter.begin(0, 25, COUNTER_MODE_DOWN);
   heCounter.begin(0, 25, COUNTER_MODE_DOWN);
   fmjCounter.begin(0, 50, COUNTER_MODE_DOWN);
+
+  // init the voice recognition module
+  voice.begin();
   
   // select the initial ammo mode
   selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;
   
   // init the display
   oled.begin(selectedTriggerMode, getCounters());
-
-  // init the voice recognition module
-  voice.begin();
 
   // set up the fire trigger and the debounce threshold
   // attach the interrupts

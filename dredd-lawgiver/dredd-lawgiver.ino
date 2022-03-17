@@ -37,6 +37,16 @@
  *    b. #define U8G2_WITH_CLIP_WINDOW_SUPPORT
  *    c. #define U8G2_WITH_FONT_ROTATION
  * 
+ * If you are using the sanme SH1122 OLED compoment, you'll want to try an minimize 
+ * the noise of the OLED by reducing it's refresh rate and various voltages. Spec 
+ * sheet include the supported commands: https://www.displayfuture.com/Display/datasheet/controller/SH1122.pdf
+ * 1. Open <intall directory>/Arduino/libraries/u8g2/clib/u8x8_d_sh1122.c
+ * 2. Find and replace the setting for clock divide ratio and fosc (0xD5)
+ *    a. U8X8_CA(0xd5, 0x50) should be U8X8_CA(0xd5, 0x31)
+ * 3. Find and replace the setting for pre-charge (0xDC)
+ *    a. U8X8_CA(0xdc, 0x35) should be U8X8_CA(0xdc, 0x1a)
+ * 
+ * 
  * Voice Recognition module
  * ========================
  * The voice recognition module is from Elechouse. This library has to be installed 
@@ -69,6 +79,8 @@
  * to manually load each record on startup. Recommend avoiding this if possible, it may slow the startup sequence
  * or have other unintended problems. That part is untested.
  * 
- * 
+ * NOTE: The VR module is very sensitive to the voltage, and will not work properly if the voltage is not
+ * within the proper range 4.5v-5.0v. If the voltage is out of range then the led will be solid or slow
+ * blinking.
  */
  

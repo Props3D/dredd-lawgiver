@@ -71,18 +71,19 @@ class EasyVoice
     void begin(void) {
 #ifdef ENABLE_EASY_VOICE
       debugLog("setup voice");
+      // This can be changed using VR bridge command: 11 00
       _myVR.begin(9600);
 
        // *** IMPORTANT ***
        // Only uncomment this code if you can't enable the autoload feature on the VR module.
        // This should be a last resort, the startup sequence is untested with this code.
        // i.e. this might affect the timing of the startup sequence
-//      if (_myVR.clear() == 0) {
-//        debugLog("Recognizer cleared.");
-//      }
-//      if (_myVR.load(_records, _recordCnt) >= 0) {
-//        debugLog("Record Autoload");
-//      }
+      //if (_myVR.clear() == 0) {
+      //  debugLog("Recognizer cleared.");
+      //}
+      //if (_myVR.load(_records, _recordCnt) >= 0) {
+      //  debugLog("Record Autoload");
+      //}
 #endif
     }
     

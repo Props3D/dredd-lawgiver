@@ -33,7 +33,7 @@ class EasyOLED
     const static uint8_t DISPLAY_MAIN       = 7;
     const static uint8_t DISPLAY_ID_FAIL    = 8;
 
-    EasyOLED(const char *name) : u8g2(U8G2_R0, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+    EasyOLED(const char *name) : u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
       _name(name) {
     }
 

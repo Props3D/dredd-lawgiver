@@ -27,28 +27,28 @@
 #define RELOAD_PIN            3
 
 // Pin configuration for MP3 Player
-#define AUDIO_RX_PIN          4
-#define AUDIO_TX_PIN          5
+#define AUDIO_TX_PIN          4
+#define AUDIO_RX_PIN          5
 
-// Pin configuration for MP3 Player
-#define VOICE_RX_PIN          6
-#define VOICE_TX_PIN          7
+// Pin configuration for voice recognition module
+#define VOICE_TX_PIN          6
+#define VOICE_RX_PIN          7
 
 // Pin configuration for oled display
 #define OLED_SCL_PIN          13
-#define OLED_SDA_PIN          11
-#define OLED_RESET_PIN        9
+#define OLED_SDA_PIN          12
+#define OLED_RESET_PIN        11
 #define OLED_DC_PIN           10
-#define OLED_CS_PIN           8
+#define OLED_CS_PIN           9
 
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
-#define FIRE_LED_PIN          12
+#define FIRE_LED_PIN          8
 #define FIRE_LED_CNT          7
 
 // Pin Configuration for 3mm LEDs
-#define RED_LED_PIN           14
-#define GREEN_LED_PIN         15
+#define RED_LED_PIN           A1
+#define GREEN_LED_PIN         A0
 
 /**
  * Audio tracks by file index - upload these to the SD card in the correct order.
