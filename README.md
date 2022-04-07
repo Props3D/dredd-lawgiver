@@ -61,7 +61,7 @@ minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2
     - #define U8G2_WITH_CLIP_WINDOW_SUPPORT
     - #define U8G2_WITH_FONT_ROTATION
 
-If you are using the sanme SH1122 OLED compoment, you'll want to try an minimize 
+If you are using the same SH1122 OLED compoment, you'll want to try an minimize 
 the noise of the OLED by reducing it's refresh rate and various voltages. Spec 
 sheet include the supported commands: https://www.displayfuture.com/Display/datasheet/controller/SH1122.pdf
  1. Open <intall directory>/Arduino/libraries/u8g2/src/clib/u8x8_d_sh1122.c
