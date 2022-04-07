@@ -18,6 +18,7 @@
 #define ENABLE_EASY_LED       1 //Enable LEDs
 #define ENABLE_EASY_OLED      1 //Enable OLED Display
 #define ENABLE_EASY_VOICE     1 //Enable Voice Recognition Display
+#define ENABLE_EASY_BUTTON    1 //Enable triggers
 
 // Customizable ID badge for DNA Check sequence 
 #define DISPLAY_USER_ID       "Dredd"

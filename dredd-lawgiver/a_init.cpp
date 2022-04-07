@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include "config.h"
 #include "debug.h"
+#include "easybutton.h"
 #include "easycounter.h"
 #include "easyaudio.h"
 #include "easyledv3.h"
@@ -34,6 +35,9 @@ EasyCounter inCounter("in");
 EasyCounter heCounter("he");
 EasyCounter fmjCounter("fmj");
 
+EasyButton trigger(TRIGGER_PIN);
+EasyButton reload(RELOAD_PIN);
+
 /**
  * function declarations 
  */
@@ -47,10 +51,9 @@ void handleVoiceCommands(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
 bool lowAmmoReached(void);
+void handleTrigger(void);
+void handleReload(void);
 
-// ISR Functions for triggers
-void ammoDownISR(void);
-void reloadAmmoISR(void);
 
 // utility functions
 EasyCounter& getTriggerCounter(void);
@@ -92,13 +95,9 @@ volatile uint8_t activateLowAmmo = 0;
 
 
 /**
- *  Variables for tracking ISR 
+ *  Variables for tracking trigger state
  *  Variables must be marked as volatile because they are updated in the ISR.
  */
-const static long debounceTriggerTimeField = 200;             // time measured between trigger bounces
-const static long debounceReloadTimeField  = 1000;            // time measured between reload bounces
-volatile long lastTriggerTimeDebounce = 0;                    // handling trigger bounce
-volatile long lastReloadTimeDebounce  = 0;                    // handling reload bounce
 volatile uint8_t selectedTriggerMode  = VR_CMD_AMMO_MODE_FMJ; // sets the ammo mode to start
 volatile uint8_t activateAmmoDown = 0;                        // sets main loop to fire a round
 volatile uint8_t activateReload   = 0;                        // sets main loop to reload ammo
@@ -131,14 +130,10 @@ void setup() {
   // init the display
   oled.begin(selectedTriggerMode, getCounters());
 
+  // set up all the triggers as pullup inputs
   // set up the fire trigger and the debounce threshold
-  // attach the interrupts
-  debugLog("Attach Interrupts");
-  pinMode(TRIGGER_PIN, INPUT_PULLUP);
-  pinMode(RELOAD_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(TRIGGER_PIN), ammoDownISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(RELOAD_PIN), reloadAmmoISR, FALLING);
-  interrupts();
+  trigger.begin(25);
+  reload.begin(25);
 }
 
 /**
@@ -210,6 +205,37 @@ void mainLoop (void) {
   }
   // check for new voice commands
   handleVoiceCommands();
+  handleTrigger();
+  handleReload();
+}
+
+
+/**
+ * Checks the fire trigger momentary switch.
+ * Short press should activate the blast sequence.
+ */
+void handleTrigger(void) {
+  // check trigger button
+  int buttonStateFire = trigger.checkState();
+  // check if a trigger is pressed.
+  if (buttonStateFire == BUTTON_SHORT_PRESS) {
+      //handleAmmoDown();
+      activateAmmoDown++;
+  }
+}
+
+/**
+ * Checks the fire trigger momentary switch.
+ * Short press should activate the reload sequence.
+ */
+void handleReload(void) {
+  // check trigger button
+  int buttonStateFire = reload.checkState();
+  // check if a trigger is pressed.
+  if (buttonStateFire == BUTTON_SHORT_PRESS || buttonStateFire == BUTTON_LONG_PRESS) {
+      //reloadAmmo();
+      activateReload++;
+  }
 }
 
 /**
@@ -340,30 +366,6 @@ void startUpSequence(void) {
 }
 
 /**
- * Checks the fire trigger momentary switch.
- */
-void ammoDownISR(void) {
-  if ((millis() - lastTriggerTimeDebounce) > debounceTriggerTimeField) {
-    if (digitalRead(TRIGGER_PIN) == LOW) {
-      activateAmmoDown++;
-    }
-    lastTriggerTimeDebounce = millis();
-  }
-}
-
-/**
- * Checks the reload micro-switch.
- */
-void reloadAmmoISR(void) {
-  if ((millis() - lastReloadTimeDebounce) > debounceReloadTimeField) {
-    if (digitalRead(RELOAD_PIN) == LOW) {
-        activateReload++;
-    }
-    lastReloadTimeDebounce = millis();
-  }
-}
-
-/**
  * Routine for resetting the ammo counters
  * 1. all counters are reset
  * 2. leds are turned off
@@ -371,7 +373,9 @@ void reloadAmmoISR(void) {
  * 4. activate oled refresh
  */
 void reloadAmmo(void) {
-  activateReload--;
+  activateReload = 0;
+  activateLowAmmo = 0;
+
   debugLog("Reloading all counters");
   apCounter.resetCount();
   inCounter.resetCount();
@@ -397,7 +401,7 @@ void reloadAmmo(void) {
         d. Check for low ammo
 */
 void handleAmmoDown(void) {
-  activateAmmoDown--;
+  activateAmmoDown = 0;
   // move the counter
   bool emptyClip = !getTriggerCounter().tick();
   if (emptyClip) {
@@ -482,6 +486,14 @@ void handleVoiceCommands(void) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       debugLog("FMJ Mode selected");
     }
+    // check for low ammo, and set the timer
+    if (lowAmmoReached()) {
+      activateLowAmmo++;
+      lowAmmoChangeTime = millis();
+    } else {
+      // Reset the low-ammo indicator
+      updateAmmoIndicators();
+    }
     audio.queuePlayback(getSelectedTrack(AMMO_MODE_IDX_CHGE));
     // Refresh the display at least once
     screenUpdates++;
@@ -511,17 +523,17 @@ void initLedIndicators(void) {
 }
 
 /**
- * Test whether we've reacheed low ammo condition
+ * Test whether we've reached low ammo condition
  */
 bool lowAmmoReached(void) {
-  return getTriggerCounter().getCount() == 4;
+  return getTriggerCounter().getCount() < 5;
 }
 /**
  * Set Red/Green leds when low on ammo
  */
 void updateAmmoIndicators(void) {
   if (activateLowAmmo) {
-    activateLowAmmo--;
+    activateLowAmmo = 0;
     // let's make sure the screen redraws to count the low ammo before switching the LEDs
     oled.checkAmmoLevels();
     oled.updateDisplay(selectedTriggerMode, getCounters());
