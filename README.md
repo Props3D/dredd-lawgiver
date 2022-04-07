@@ -55,11 +55,20 @@ There's are number of libraries that you will need to install using the Arduino 
 ### Installing U8g2lib and required modifications
 The U8g2 library has a pretty large program foot print, so we need to make a number of changes to
 minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2optimization for details.
- 1. Open <intall directory>/Arduino/libraries/u8g2/clib/u8g2.h
+ 1. Open <intall directory>/Arduino/libraries/u8g2/src/clib/u8g2.h
  2. Comment out following lines to reduce program size
     - #define U8G2_WITH_INTERSECTION
     - #define U8G2_WITH_CLIP_WINDOW_SUPPORT
     - #define U8G2_WITH_FONT_ROTATION
+
+If you are using the sanme SH1122 OLED compoment, you'll want to try an minimize 
+the noise of the OLED by reducing it's refresh rate and various voltages. Spec 
+sheet include the supported commands: https://www.displayfuture.com/Display/datasheet/controller/SH1122.pdf
+ 1. Open <intall directory>/Arduino/libraries/u8g2/src/clib/u8x8_d_sh1122.c
+ 2. Find and replace the setting for clock divide ratio and fosc (0xD5)
+    - U8X8_CA(0xd5, 0x50) should be U8X8_CA(0xd5, 0x31)
+ 3. Find and replace the setting for pre-charge (0xDC)
+    - U8X8_CA(0xdc, 0x35) should be U8X8_CA(0xdc, 0x1a)
 
 ### Voice Recognition module
 The voice recognition module is from Elechouse. Their library has to be installed
