@@ -23,33 +23,34 @@
 // Customizable ID badge for DNA Check sequence 
 #define DISPLAY_USER_ID       "Dredd"
 
-// Pin configuration for all momentary triggers
-#define TRIGGER_PIN           2
-#define RELOAD_PIN            3
+
+// Pin configuration for voice recognition module
+#define VOICE_RX_PIN          2
+#define VOICE_TX_PIN          3
 
 // Pin configuration for MP3 Player
 #define AUDIO_TX_PIN          4
 #define AUDIO_RX_PIN          5
 
-// Pin configuration for voice recognition module
-#define VOICE_TX_PIN          6
-#define VOICE_RX_PIN          7
+// Pin Configuration for 3mm LEDs
+#define GREEN_LED_PIN         6
+#define RED_LED_PIN           7
+
+// Pin configuration for all momentary triggers
+#define TRIGGER_PIN           8
+#define RELOAD_PIN            9
 
 // Pin configuration for oled display
-#define OLED_SCL_PIN          13
-#define OLED_SDA_PIN          12
-#define OLED_RESET_PIN        11
-#define OLED_DC_PIN           10
-#define OLED_CS_PIN           9
+#define OLED_SCL_PIN          A5
+#define OLED_SDA_PIN          A4
+#define OLED_RESET_PIN        10
+#define OLED_DC_PIN           11
+#define OLED_CS_PIN           12
 
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
-#define FIRE_LED_PIN          8
+#define FIRE_LED_PIN          13
 #define FIRE_LED_CNT          7
-
-// Pin Configuration for 3mm LEDs
-#define RED_LED_PIN           A1
-#define GREEN_LED_PIN         A0
 
 /**
  * Audio tracks by file index - upload these to the SD card in the correct order.
@@ -86,6 +87,13 @@
 /**
  *  Common constant definitions - DO NOT CHANGE
  */
+
+/**
+ * Disables features in U8g2 to reduce it's overall size
+ */
+#define U8G2_WITHOUT_INTERSECTION
+#define U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
+#define U8G2_WITHOUT_FONT_ROTATION
 
 /**
  *  Voice Recognition Commands.
