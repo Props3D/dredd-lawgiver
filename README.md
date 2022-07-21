@@ -54,7 +54,7 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 * D6 3mm LED GREEN
 * D7 3mm LED RED
 * D8 Trigger
-* D9 Reoload
+* D9 Reload
 * D10 OLED RST
 * D11 OLED DC
 * D12 OLED CS
