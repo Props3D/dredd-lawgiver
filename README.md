@@ -47,20 +47,20 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 
 
 ## Arduino Pinout
-D2 Voice Recognition TX
-D3 Voice Recognition RX
-D4 DF Player Mini TX
-D5 DF Player Mini RX
-D6 3mm LED GREEN
-D7 3mm LED RED
-D8 Trigger
-D9 Reoload
-D10 OLED RST
-D11 OLED DC
-D12 OLED CS
-A4 OLED SDA
-A5 OLED SCL
-D13 FIRE LED
+* D2 Voice Recognition TX
+* D3 Voice Recognition RX
+* D4 DF Player Mini TX
+* D5 DF Player Mini RX
+* D6 3mm LED GREEN
+* D7 3mm LED RED
+* D8 Trigger
+* D9 Reoload
+* D10 OLED RST
+* D11 OLED DC
+* D12 OLED CS
+* A4 OLED SDA
+* A5 OLED SCL
+* D13 FIRE LED
 
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
