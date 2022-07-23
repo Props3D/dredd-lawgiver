@@ -47,8 +47,8 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 
 
 ## Arduino Pinout
-* D2 Voice Recognition TX
-* D3 Voice Recognition RX
+* D2 Voice Recognition RX
+* D3 Voice Recognition TX
 * D4 DF Player Mini TX
 * D5 DF Player Mini RX
 * D6 3mm LED GREEN
