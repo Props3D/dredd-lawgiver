@@ -52,13 +52,15 @@ class EasyAudio
 #endif
     }
 
-    void playQueuedTrack() {
+    bool playQueuedTrack() {
 #ifdef ENABLE_EASY_AUDIO
       if (!tracks.empty()) {
         debugLog("playing queued track ");
         player.playFromMP3Folder( tracks.pop() ); 
+        return true;
       }
 #endif
+      return false;
     }
 
     void playTrack(uint8_t track) {

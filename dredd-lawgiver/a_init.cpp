@@ -46,7 +46,7 @@ void startUpSequence(void);
 void mainLoop(void);
 
 // main loop functions
-void updateAmmoIndicators(void);
+bool updateAmmoIndicators(void);
 void handleVoiceCommands(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
@@ -178,12 +178,12 @@ void loop () {
  */
 void mainLoop (void) {
   // always handle the activated components first, before processing new inputs
-
+  bool audioPlayed = false;
   // trigger the low-ammo indicator
   if (activateLowAmmo && !activateAmmoDown) {
       // small delay so not to collide with ammo playback
       if (millis() > lowAmmoChangeTime + TIMING_LOW_AMMO_WAIT_MS) {
-        updateAmmoIndicators();
+        audioPlayed = updateAmmoIndicators();
       }
   }
   // process trigger activation
@@ -197,14 +197,16 @@ void mainLoop (void) {
   // display LEDS if activated
   fireLed.updateDisplay();
   // playback tracks if queued
-  audio.playQueuedTrack();
+  audioPlayed = audio.playQueuedTrack();
   // update OLED if there are changes
   if (screenUpdates) {
     oled.updateDisplay(selectedTriggerMode, getCounters());
     screenUpdates--;
   }
-  // check for new voice commands
-  handleVoiceCommands();
+  // check for new voice commands, only if no audio sounds were triggered
+  if (!audioPlayed)
+    handleVoiceCommands();
+  // always check the triggers
   handleTrigger();
   handleReload();
 }
@@ -531,7 +533,7 @@ bool lowAmmoReached(void) {
 /**
  * Set Red/Green leds when low on ammo
  */
-void updateAmmoIndicators(void) {
+bool updateAmmoIndicators(void) {
   if (activateLowAmmo) {
     activateLowAmmo = 0;
     // let's make sure the screen redraws to count the low ammo before switching the LEDs
@@ -542,10 +544,12 @@ void updateAmmoIndicators(void) {
     digitalWrite(GREEN_LED_PIN, LOW);
     // playback for low ammo immediately
     audio.playTrack(AUDIO_TRACK_AMMO_LOW);
-  } else {
-    digitalWrite(RED_LED_PIN, LOW);
-    digitalWrite(GREEN_LED_PIN, LOW);
+    return true;
   }
+  // if low ammo is not activated, turn off leds
+  digitalWrite(RED_LED_PIN, LOW);
+  digitalWrite(GREEN_LED_PIN, LOW);
+  return false;
 }
 
 /**
