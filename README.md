@@ -45,14 +45,31 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 * 5/16 X 1 1/8 Extension Spring - Cocking Mechanism
 * 20mm Compression Spring - Magazine latch 
 
+
+## Arduino Pinout
+* D2 Voice Recognition RX
+* D3 Voice Recognition TX
+* D4 DF Player Mini TX
+* D5 DF Player Mini RX
+* D6 3mm LED GREEN
+* D7 3mm LED RED
+* D8 Trigger
+* D9 Reload
+* D10 OLED RST
+* D11 OLED DC
+* D12 OLED CS
+* A4 OLED SDA
+* A5 OLED SCL
+* D13 FIRE LED
+
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
- 1. U8g2lib
+ 1. U8g2
  2. FastLED
  3. VoiceRecognitionV3
  4. DFPlayerMini_Fast
 
-### Installing U8g2lib and required modifications
+### Installing U8g2 and required modifications
 The U8g2 library has a pretty large program foot print, so we need to make a number of changes to
 minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2optimization for details.
  1. Open <intall directory>/Arduino/libraries/u8g2/src/clib/u8g2.h
