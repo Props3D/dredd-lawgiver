@@ -30,7 +30,7 @@ Mini 560 DC-DC Buck Converter | Lipo 7.4v
 ![Blue OLED 2.08" 256x64](https://user-images.githubusercontent.com/88125656/151882739-797e3aff-45a8-403a-9b00-b62ded0c7fb2.png) | ![Voice Recognition Module V3](https://user-images.githubusercontent.com/88125656/151881080-59063635-61f9-4151-8e54-19e14b0e2d9f.jpeg)
 Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elechouse
 ![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![3mm LED Diode](https://user-images.githubusercontent.com/88125656/151883361-de0aba59-4e1e-45c2-bd5d-a0d0c10af270.png)
-4 X 1K Resister | 3mm LED Diode x 2 
+1 X 1K Resister, 2 X 25ohm Resister | 3mm LED Diode x 2 
 ## Assembly Parts
 
 * M3X12mm Flat x 1 - Top Rear Sight
