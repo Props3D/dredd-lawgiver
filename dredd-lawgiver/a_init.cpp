@@ -46,13 +46,14 @@ void startUpSequence(void);
 void mainLoop(void);
 
 // main loop functions
-bool updateAmmoIndicators(void);
-void handleVoiceCommands(void);
+void activateLowAmmoIndicators(void);
+void resetAmmoIndicators(void);
+void checkVoiceCommands(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
 bool lowAmmoReached(void);
-void handleTrigger(void);
-void handleReload(void);
+bool checkTriggerSwitch(bool runNow);
+bool checkReloadSwitch(bool runNow);
 
 
 // utility functions
@@ -154,7 +155,7 @@ void loop () {
 
 /**
  * The Main loop Routine
- * 1. Check the AmmoDownISR activation
+ * 1. Check the AmmoDown activation
  *   a. Toggles a clip counter
  *   b. Checks for an empty clip 
  *   c. If clip is not empty
@@ -163,81 +164,87 @@ void loop () {
  *         1. Flash white
  *         2. Burn Red to orange, then fade as it cools
  *   d. Otherwise queue empty clip track
- * 2. Check the ReloadAmmoISR activation
+ * 2. Check the ReloadAmmo activation
  *   a. Resets all counters
  *   b. Queues reload audio track
  *   c. Resets the led indicators
  *   d. Activates OLED update
- * 3. Check if the leds have been activated
+ * 3. Check if the front leds have been activated
  *   a. update the leds following the pattern that has been set
  * 4. Check audio queue for playback
- * 5. Refresh or Update the OLED Display
+ * 5. Check low ammo mode has been activated
+ *   a. Update the led indicators
+ *   b. playback low ammo track
  * 6. Check the recognition module for voice commands
- *     i. playback change mode track
- *    ii. toggle fire mode based on the recognized command
+ *   a. playback change mode track
+ *   b. toggle fire mode based on the recognized command
+ * 7. Refresh or Update the OLED Display
  */
 void mainLoop (void) {
-  // always handle the activated components first, before processing new inputs
-  bool audioPlayed = false;
-  // trigger the low-ammo indicator
-  if (activateLowAmmo && !activateAmmoDown) {
-      // small delay so not to collide with ammo playback
-      if (millis() > lowAmmoChangeTime + TIMING_LOW_AMMO_WAIT_MS) {
-        audioPlayed = updateAmmoIndicators();
-      }
-  }
-  // process trigger activation
-  if (activateAmmoDown) {
-    handleAmmoDown();
-  }
-  // process reload activation
-  if (activateReload) {
-    reloadAmmo();
-  }
-  // display LEDS if activated
-  fireLed.updateDisplay();
+  // always check the triggers first
+  if (!checkTriggerSwitch(true))
+    // check reload only if fire was not triggered
+    checkReloadSwitch(true);
+
   // playback tracks if queued
-  audioPlayed = audio.playQueuedTrack();
-  // update OLED if there are changes
+  bool audioPlayed = audio.playQueuedTrack();
+  if (!audioPlayed) {
+    // check the low-ammo indicator
+    if (activateLowAmmo) {
+        // small delay so not to collide with ammo playback
+        if (millis() > lowAmmoChangeTime + TIMING_LOW_AMMO_WAIT_MS) {
+          activateLowAmmoIndicators();
+        }
+    } else {
+      // check for new voice commands, only if no audio sounds were triggered
+      checkVoiceCommands();
+    }
+  }
+  // update OLED if there are changes from any of the above operations
   if (screenUpdates) {
     oled.updateDisplay(selectedTriggerMode, getCounters());
     screenUpdates--;
   }
-  // check for new voice commands, only if no audio sounds were triggered
-  if (!audioPlayed)
-    handleVoiceCommands();
-  // always check the triggers
-  handleTrigger();
-  handleReload();
 }
-
-
 /**
  * Checks the fire trigger momentary switch.
  * Short press should activate the blast sequence.
  */
-void handleTrigger(void) {
+bool checkTriggerSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
   // check if a trigger is pressed.
   if (buttonStateFire == BUTTON_SHORT_PRESS) {
-      //handleAmmoDown();
-      activateAmmoDown++;
+      if (runNow) {
+        handleAmmoDown();
+        // display LEDS
+        fireLed.updateDisplay();
+        return true;
+      } else {
+        activateAmmoDown++;
+      }
   }
+  return false;
 }
 
 /**
- * Checks the fire trigger momentary switch.
+ * Checks the reload trigger momentary switch.
  * Short press should activate the reload sequence.
  */
-void handleReload(void) {
+bool checkReloadSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = reload.checkState();
   // check if a trigger is pressed.
   if (buttonStateFire == BUTTON_SHORT_PRESS || buttonStateFire == BUTTON_LONG_PRESS) {
-      //reloadAmmo();
-      activateReload++;
+      if (runNow) {
+        reloadAmmo();
+        
+        return true;
+      } else {
+        activateReload++;
+      }
   }
+  return false;
 }
 
 /**
@@ -340,7 +347,7 @@ void startUpSequence(void) {
         audio.playTrack(AUDIO_TRACK_AMMO_LOAD);
         oled.updateDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
         // let's turn off the ammo indicators
-        updateAmmoIndicators();
+        resetAmmoIndicators();
         // make sure the ISR routne didn't trigger an ammo shot during the DNA Check
         activateAmmoDown = false;
         // switch to main loop
@@ -384,7 +391,7 @@ void reloadAmmo(void) {
   heCounter.resetCount();
   fmjCounter.resetCount();
   // Reset the low-ammo indicator
-  updateAmmoIndicators();
+  resetAmmoIndicators();
   //queue the track
   audio.queuePlayback(AUDIO_TRACK_AMMO_RELOAD);
   // Refresh the display at least once
@@ -454,7 +461,7 @@ EasyCounter& getTriggerCounter(void) {
  * 3. queue playback
  * 4. set screen refresh
  */
-void handleVoiceCommands(void) {
+void checkVoiceCommands(void) {
   int cmd = voice.readCommand();
   
   if (cmd > -1) {
@@ -494,9 +501,9 @@ void handleVoiceCommands(void) {
       lowAmmoChangeTime = millis();
     } else {
       // Reset the low-ammo indicator
-      updateAmmoIndicators();
+      resetAmmoIndicators();
     }
-    audio.queuePlayback(getSelectedTrack(AMMO_MODE_IDX_CHGE));
+    audio.playTrack(getSelectedTrack(AMMO_MODE_IDX_CHGE));
     // Refresh the display at least once
     screenUpdates++;
   }
@@ -530,28 +537,29 @@ void initLedIndicators(void) {
 bool lowAmmoReached(void) {
   return getTriggerCounter().getCount() < 5;
 }
+
 /**
  * Set Red/Green leds when low on ammo
  */
-bool updateAmmoIndicators(void) {
-  if (activateLowAmmo) {
-    activateLowAmmo = 0;
-    // let's make sure the screen redraws to count the low ammo before switching the LEDs
-    oled.checkAmmoLevels();
-    oled.updateDisplay(selectedTriggerMode, getCounters());
-    // set the LED
-    digitalWrite(RED_LED_PIN, HIGH);
-    digitalWrite(GREEN_LED_PIN, LOW);
-    // playback for low ammo immediately
-    audio.playTrack(AUDIO_TRACK_AMMO_LOW);
-    return true;
-  }
-  // if low ammo is not activated, turn off leds
-  digitalWrite(RED_LED_PIN, LOW);
+void activateLowAmmoIndicators(void) {
+  activateLowAmmo = 0;
+  // let's make sure the screen redraws to count the low ammo before switching the LEDs
+  oled.checkAmmoLevels();
+  oled.updateDisplay(selectedTriggerMode, getCounters());
+  // set the LED
+  digitalWrite(RED_LED_PIN, HIGH);
   digitalWrite(GREEN_LED_PIN, LOW);
-  return false;
+  // playback for low ammo immediately
+  audio.playTrack(AUDIO_TRACK_AMMO_LOW);
 }
 
+/**
+ * Set Red/Green leds when low on ammo
+ */
+void resetAmmoIndicators(void) {
+  digitalWrite(RED_LED_PIN, LOW);
+  digitalWrite(GREEN_LED_PIN, LOW);
+}
 /**
  * Blink controller.
  * Returns true when it's time to toggle state every 500ms
