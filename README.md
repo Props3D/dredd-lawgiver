@@ -22,10 +22,11 @@ Electronic | Components
 Arduino Nano v3 | DF Player Mini + 64mb Micro SD Card
 ![PAM8302A Amp](https://user-images.githubusercontent.com/20442880/137374587-abdad903-b008-4d2e-830e-c8b3c6a2c837.jpg) | ![7 bit LED - Neopixel](https://user-images.githubusercontent.com/20442880/137374620-dca6e2eb-40d9-4092-86c2-f67ab250e8d5.jpg)
 Speaker Amp - PAM8302A | 7 bit LED - Neopixel (circular, NOT the ring)
-![20mm 2W speaker](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
-2 X 30mm 8ohn 2W speaker | 7mm momentary switch
-![Mini 360 DC-DC Buck Converter](https://user-images.githubusercontent.com/20442880/137374870-9687ea11-6a7c-48f6-8c0b-2ff4e34c62d3.jpg) | ![Lipo 7 4v](https://user-images.githubusercontent.com/20442880/137374882-cb61cde1-8c05-4817-9e06-7526e851bfad.jpg)
-Mini 560 DC-DC Buck Converter | Lipo 7.4v
+![30mm 8ohm 2W](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
+2 X 30mm 8ohm 2W speaker | 7mm momentary switch
+![Mini 360 DC-DC Buck Converter](https://user-images.githubusercontent.com/20442880/137374870-9687ea11-6a7c-48f6-8c0b-2ff4e34c62d3.jpg) | ![LG_Battery](https://user-images.githubusercontent.com/20442880/182526300-c6b9f371-2000-4e31-8856-fb4e421f89de.jpg)
+
+Mini 560 DC-DC Buck Converter | Lipo 7.4v 800mAh
 ![Blue OLED 2.08" 256x64](https://user-images.githubusercontent.com/88125656/151882739-797e3aff-45a8-403a-9b00-b62ded0c7fb2.png) | ![Voice Recognition Module V3](https://user-images.githubusercontent.com/88125656/151881080-59063635-61f9-4151-8e54-19e14b0e2d9f.jpeg)
 Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elechouse
 ![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![3mm LED Diode](https://user-images.githubusercontent.com/88125656/151883361-de0aba59-4e1e-45c2-bd5d-a0d0c10af270.png)
