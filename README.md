@@ -1,6 +1,8 @@
-## dredd-lawgiver V0.1 - Prerelease
+## dredd-lawgiver V0.9 - Release Candidate
 
-Repository for the Dredd Lawgiver from Props3D. 
+Repository for the Fully Interactive 3D Printable Dredd Lawgiver 2012 from https://www.Props3D.pro/
+
+Download the 3D Models here https://www.thingiverse.com/thing:5199144
 
 Licensed under the Creative Commons - Attribution - Non-Commercial - Share Alike license. https://creativecommons.org/licenses/by-nc-sa/4.0/
 
