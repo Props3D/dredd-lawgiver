@@ -33,17 +33,21 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 ## Assembly Parts
 
 Hex Flat Head
-* M3X12mm x 2 - Sight2
+* M3X12mm x 2 - Sights
 * M3X18mm X 2 Electronics Caddy
+* 
 Hex Cap Head
 * M3X4mm X 6 - Fire LED / Electronics Caddy Voice Reg
 * M3X16mm X3 - Trigger Group, Reload
 * M3X20mm	X1 -	Reload
+
 Hex CM Flat Head
 * M3X18mm	1	Battery Cap (can be flat head too)
+
 Hex Button Head		
 * M3X8mm	X2	- Trigger Group to Frame
 * M4X12mm	X2	- Barrel
+
 Any head bolt		
 * M1.4X4	X4 -	Electronics Caddy Arduino
 
