@@ -57,6 +57,39 @@ Other Parts
 * 5/16 X 1 1/8 Extension Spring - Cocking Mechanism
 * 20mm Compression Spring - Magazine latch 
 
+## Module Assemboly
+
+1. OLED
+![1 OLED](https://user-images.githubusercontent.com/20442880/184989292-28ad2735-731c-40bc-a2e4-f167b7549781.jpg)
+* 1mm Heat Shrink 6mm X7		
+* 2.54 JST M/F 7pin + Pins									
+* Wire Black	44mm	103mm	
+* Wire Red	41.5mm	81mm	
+* Wire Green	39mm	99mm	
+* Wire Yellow	36.5mm	95mm
+* Wire White	33mm	90mm	
+* Wire Blue	30.5mm	85mm	
+* Wire Gray	28mm	83			
+
+2. Action Module
+![2 Action Module](https://user-images.githubusercontent.com/20442880/184989565-ae0ec016-eeab-46af-b463-64f283933d35.jpg)
+* 7mm momentary switch		
+* 2.54 JST 2pin F	
+* 2.54 JST 2 pin M + Pins	
+* Wire White 42mm 50mm		
+* Wire Gray 43mm 99mm
+* Wire Black 86mm		123mm		
+* 1mm Heat Shrink 6mm X4			
+* Micro Switch R Lever 16mm		
+* 2.54 JST 2pin F	
+* 2mm Heat Shrink 8mm X2		
+* 1mm Heat Shrink 6mm X2	
+				
+more soon
+
+
+
+
 
 ## Arduino Pinout
 * D2 Voice Recognition RX
