@@ -8,7 +8,7 @@ Licensed under the Creative Commons - Attribution - Non-Commercial - Share Alike
 
 ***DO NOT SELL OR DISTRIBUTE MODELS OR CODE WITHOUT PERMISSION***
 
-Note that prerelease models have been tested and work, but do not come with instructions or guarantee that everything fits together properly. If you want have feedback please post on our discord(https://discord.gg/NSfZcCfJU6) on the #project-starwars-se14r channel
+Note that prerelease models have been tested and work, but do not come with instructions or guarantee that everything fits together properly. If you want have feedback please post on our discord(https://discord.gg/NSfZcCfJU6) on the #project-lawgiver channel
 
 ## Props 3D
 * Join the Props3D Discord: https://discord.gg/NSfZcCfJU6
