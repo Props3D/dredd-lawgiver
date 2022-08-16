@@ -32,13 +32,22 @@ Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elech
 1 X 1K Resister, 2 X 25ohm Resister | 3mm LED Diode (Red/Green) x 2 
 ## Assembly Parts
 
-* M3X12mm Flat x 1 - Top Rear Sight
-* M3X8mm Flat x 1 - Top Front Sight
-* M4X10mm Button X 2 - Top Cover through Frame and Barrel
-* M3X16mm Cap X 3 - Rear Mag Cover, Trigger Group
-* M4X12mm Cap X 2 - Trigger Group to Cocking Mechanism
-* M3X8mm Cap X 2 - Trigger Group to Frame
-* M2.5X12mm Cap X 2 -  Microswitch in Cocking Mechanism
+Hex Flat Head
+* M3X12mm x 2 - Sight2
+* M3X18mm X 2 Electronics Caddy
+Hex Cap Head
+* M3X4mm X 6 - Fire LED / Electronics Caddy Voice Reg
+* M3X16mm X3 - Trigger Group, Reload
+* M3X20mm	X1 -	Reload
+Hex CM Flat Head
+* M3X18mm	1	Battery Cap (can be flat head too)
+Hex Button Head		
+* M3X8mm	X2	- Trigger Group to Frame
+* M4X12mm	X2	- Barrel
+Any head bolt		
+* M1.4X4	X4 -	Electronics Caddy Arduino
+
+Other Parts
 * 1/8in rod X 9mm X 1 - Trigger axle
 * 1/8in rod x 54mm x 2 - Cocking Mechanism
 * 5/16 X 1 1/8 Extension Spring - Cocking Mechanism
