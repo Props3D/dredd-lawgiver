@@ -63,33 +63,103 @@ Other Parts
 ![1 OLED](https://user-images.githubusercontent.com/20442880/184989292-28ad2735-731c-40bc-a2e4-f167b7549781.jpg)
 * 1mm Heat Shrink 6mm X7		
 * 2.54 JST M/F 7pin + Pins									
-* Wire Black	44mm	103mm	
-* Wire Red	41.5mm	81mm	
-* Wire Green	39mm	99mm	
-* Wire Yellow	36.5mm	95mm
-* Wire White	33mm	90mm	
-* Wire Blue	30.5mm	85mm	
-* Wire Gray	28mm	83			
+* Wire Black 44mm 103mm	
+* Wire Red 41.5mm 81mm	
+* Wire Green 39mm 99mm	
+* Wire Yellow 36.5mm 95mm
+* Wire White 33mm 90mm	
+* Wire Blue 30.5mm 85mm	
+* Wire Gray 28mm 83mm		
 
 2. Action Module
 ![2 Action Module](https://user-images.githubusercontent.com/20442880/184989565-ae0ec016-eeab-46af-b463-64f283933d35.jpg)
-* 7mm momentary switch		
-* 2.54 JST 2pin F	
-* 2.54 JST 2 pin M + Pins	
-* Wire White 42mm 50mm		
+* 7mm momentary switch
+* 2.54 JST 2pin F
+* 2.54 JST 2 pin M + Pins
+* Wire White 42mm 50mm	
 * Wire Gray 43mm 99mm
-* Wire Black 86mm		123mm		
-* 1mm Heat Shrink 6mm X4			
-* Micro Switch R Lever 16mm		
-* 2.54 JST 2pin F	
-* 2mm Heat Shrink 8mm X2		
-* 1mm Heat Shrink 6mm X2	
-				
-more soon
+* Wire Black 86mm 123mm		
+* 1mm Heat Shrink 6mm X4
+* Micro Switch R Lever 16mm
+* 2.54 JST 2pin F
+* 2mm Heat Shrink 8mm X2	
+* 1mm Heat Shrink 6mm X2
 
+3 Fire LED
+![3 Fire LED](https://user-images.githubusercontent.com/20442880/184990745-328f94e9-eae4-4caa-99df-e06618a88422.jpg)
 
+* 7 segment LED round
+* 2.54 JST 3pin M + Pins
+* 2.54 JST 2pin M + Pins
+* 90deg IC Pin
+* 1mm Heat Shrink 6mm X5
+* Wire Yellow 112mm, 25mm
+* Wire Black 65mm,25mm
+* Wire Red 65mm, 25mm
 
+4 Boot LEDs
+![4 Boot LEDs](https://user-images.githubusercontent.com/20442880/184990757-6f610c06-b977-40df-9ede-e0e545017bff.jpg)
+* 3mm Red LED
+* 3mm Green LED
+* 2.54 JST 3pin F
+* 1mm Heat Shrink 6mm X7
+* 1mm Heat Shrink 3mm
+* Wire Black 27mm 66mm
+* Wire Red 26mm 65mm
 
+5 Power
+![5 Power](https://user-images.githubusercontent.com/20442880/184990781-61e106b8-f74a-45a3-bfd1-771d3d705b59.jpg)
+* Deans Plug M
+* Mini 560 Buck
+* 15X10mm Rocker Switch
+* 3mm Heat Shrink 10mm X2
+* 3mm Heat Shrink 8mm X2
+* 23mm Heat Shrink 27mm
+* Wire Black 70mm 310mm
+* Wire Red 14mm 64mm 310mm
+
+6 Sound
+![6 Sound](https://user-images.githubusercontent.com/20442880/184990844-4677f888-c8b6-4adb-89bd-e41251ae8c9a.jpg)
+* DF Player Mini
+* 64MB+ Micro SD
+* 1k Resister
+* 1mm Heat Shrink 6mm X2
+* Wire Gray 42mm
+* Wire White 43mm 
+* Wire Purple 26mm
+* Wire Blue 26mm
+* Amp PAM8302A
+* 2.54 JST 2pin M + Pins
+* Wire Black 22mm 66mm
+* Wire Red 33mm 67mm
+	
+7 Power Junction Box
+![7 Power Junction Box](https://user-images.githubusercontent.com/20442880/184990857-5b788776-0133-4732-bf34-bf710d6a2dd5.jpg)
+* Breadboard
+* 2.54 JST 2pin F X6
+* 22 AWG Solid Copper Wire 49mm 44mm
+
+8 Voice Recognition
+![8 Voice Recognition](https://user-images.githubusercontent.com/20442880/184990871-c6286a8e-e6a3-48a0-b278-90cdc86a7506.jpg)
+* Voice Recognition Module V3
+* 2.54 JST 2pin M + Pins
+* Wire Black 35mm
+* Wire Red 36mm
+* Wire Gray 40mm
+* Wire White 44mm
+
+9 Arduino
+![9 Arduino](https://user-images.githubusercontent.com/20442880/184990887-b98d7ab3-e10c-4255-a280-b22f1a91747c.jpg)
+* Arduino 328p
+* 2.54 JST 2pin M + Pins
+* Wire Black 56mm
+* Wire Red 56mm
+
+10 Speaker
+![10 Speaker](https://user-images.githubusercontent.com/20442880/184990908-1e231949-3156-4de5-b826-2551cb7ed430.jpg)
+* 30mm Speaker X2
+* Wire Purple 25mm 65mm
+* Wire Blue 25mm 65mm
 
 ## Arduino Pinout
 * D2 Voice Recognition RX
