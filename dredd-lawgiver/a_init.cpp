@@ -48,12 +48,14 @@ void mainLoop(void);
 // main loop functions
 void activateLowAmmoIndicators(void);
 void resetAmmoIndicators(void);
-void checkVoiceCommands(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
 bool lowAmmoReached(void);
 bool checkTriggerSwitch(bool runNow);
 bool checkReloadSwitch(bool runNow);
+void checkVoiceCommands(void);
+void setNextAmmoMode(void);
+void changeAmmoMode(int mode);
 
 
 // utility functions
@@ -208,7 +210,8 @@ void mainLoop (void) {
 }
 /**
  * Checks the fire trigger momentary switch.
- * Short press should activate the blast sequence.
+ *  - Short press should activate the blast sequence.
+ *  - Long press will change modes
  */
 bool checkTriggerSwitch(bool runNow) {
   // check trigger button
@@ -224,6 +227,11 @@ bool checkTriggerSwitch(bool runNow) {
         activateAmmoDown++;
       }
   }
+  // Long press for change mode
+  if (buttonStateFire == BUTTON_LONG_PRESS) {
+    setNextAmmoMode();
+    return true;
+  }
   return false;
 }
 
@@ -238,7 +246,6 @@ bool checkReloadSwitch(bool runNow) {
   if (buttonStateFire == BUTTON_SHORT_PRESS || buttonStateFire == BUTTON_LONG_PRESS) {
       if (runNow) {
         reloadAmmo();
-        
         return true;
       } else {
         activateReload++;
@@ -455,6 +462,21 @@ EasyCounter& getTriggerCounter(void) {
 }
 
 /**
+ * Change to the next ammo mode in the cycle
+ * 1. change the selected ammo mode
+ * 2. initialize the LED sequence
+ * 3. queue playback
+ * 4. set screen refresh
+ */
+void setNextAmmoMode(void) {
+  // Increment the trigger mode index or reset to 0
+  selectedTriggerMode++;
+  if (selectedTriggerMode == 7)
+    selectedTriggerMode = 0;
+  changeAmmoMode(selectedTriggerMode);
+}
+
+/**
  * Checks the voice recognition module for new voice commands
  * 1. change the selected ammo mode
  * 2. initialize the LED sequence
@@ -465,7 +487,19 @@ void checkVoiceCommands(void) {
   int cmd = voice.readCommand();
   
   if (cmd > -1) {
-    selectedTriggerMode = cmd;
+    changeAmmoMode(cmd);
+  }
+}
+
+/**
+ * 1. Set the selected ammo mode
+ * 2. Initialize the LED sequence
+ * 3. Queue playback
+ * 4. Set screen refresh
+ */
+void changeAmmoMode(int mode) {
+  if (mode > -1 && mode < 7) {
+    selectedTriggerMode = mode;
     // Check for Switching modes
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
@@ -508,7 +542,6 @@ void checkVoiceCommands(void) {
     screenUpdates++;
   }
 }
-
 
 /**
  * Convenient method for collecting ammo counters for display updates.

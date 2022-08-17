@@ -38,7 +38,7 @@ class EasyButton
     bool isPressing = false;
     bool isLongDetected = false;
     const uint8_t SHORT_PRESS_TIME = 200;  // 200 milliseconds
-    const uint8_t LONG_PRESS_TIME  = 1000; // 1000 milliseconds
+    const uint8_t LONG_PRESS_TIME  = 2000; // 1000 milliseconds
 
   public:
 #ifdef ENABLE_EASY_BUTTON
