@@ -1,13 +1,14 @@
-## dredd-lawgiver V0.1 - Prerelease
+## dredd-lawgiver V0.9 - Release Candidate
 
+Repository for the Fully Interactive 3D Printable Dredd Lawgiver 2012 from https://www.Props3D.pro/
 
-Repository for the Dredd Lawgiver from Props3D. 
+Download the 3D Models here https://www.thingiverse.com/thing:5199144
 
 Licensed under the Creative Commons - Attribution - Non-Commercial - Share Alike license. https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 ***DO NOT SELL OR DISTRIBUTE MODELS OR CODE WITHOUT PERMISSION***
 
-Note that prerelease models have been tested and work, but do not come with instructions or guarantee that everything fits together properly. If you want have feedback please post on our discord(https://discord.gg/NSfZcCfJU6) on the #project-starwars-se14r channel
+Note that prerelease models have been tested and work, but do not come with instructions or guarantee that everything fits together properly. If you want have feedback please post on our discord(https://discord.gg/NSfZcCfJU6) on the #project-lawgiver channel
 
 ## Props 3D
 * Join the Props3D Discord: https://discord.gg/NSfZcCfJU6
@@ -23,28 +24,144 @@ Electronic | Components
 Arduino Nano v3 | DF Player Mini + 64mb Micro SD Card
 ![PAM8302A Amp](https://user-images.githubusercontent.com/20442880/137374587-abdad903-b008-4d2e-830e-c8b3c6a2c837.jpg) | ![7 bit LED - Neopixel](https://user-images.githubusercontent.com/20442880/137374620-dca6e2eb-40d9-4092-86c2-f67ab250e8d5.jpg)
 Speaker Amp - PAM8302A | 7 bit LED - Neopixel (circular, NOT the ring)
-![20mm 2W speaker](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
-20mm 2W speaker | 7mm momentary switch
-![Mini 360 DC-DC Buck Converter](https://user-images.githubusercontent.com/20442880/137374870-9687ea11-6a7c-48f6-8c0b-2ff4e34c62d3.jpg) | ![Lipo 7 4v](https://user-images.githubusercontent.com/20442880/137374882-cb61cde1-8c05-4817-9e06-7526e851bfad.jpg)
-Mini 560 DC-DC Buck Converter | Lipo 7.4v
+![30mm 8ohm 2W](https://user-images.githubusercontent.com/20442880/137374750-e579754a-7173-41bb-a8a1-b5eaa5d234b1.jpg) | ![7mm Momentary Switch](https://user-images.githubusercontent.com/20442880/137374760-36ab96b2-bcd5-487a-a510-a3efed1216dc.jpg)
+2 X 30mm 8ohm 2W speaker | 7mm momentary switch
+![Hdffe15eda27b49ba97ad490bd8b2de15D](https://user-images.githubusercontent.com/20442880/182526580-1f583d36-dbea-4a45-8db2-4190c60dd473.jpg) | ![LG_Battery](https://user-images.githubusercontent.com/20442880/182526300-c6b9f371-2000-4e31-8856-fb4e421f89de.jpg)
+Mini 560 DC-DC Buck Converter | Lipo 7.4v 800mAh
 ![Blue OLED 2.08" 256x64](https://user-images.githubusercontent.com/88125656/151882739-797e3aff-45a8-403a-9b00-b62ded0c7fb2.png) | ![Voice Recognition Module V3](https://user-images.githubusercontent.com/88125656/151881080-59063635-61f9-4151-8e54-19e14b0e2d9f.jpeg)
 Blue OLED Display 2.08" 256x64 7Pin SPI | Voice Recognition Module V3 from Elechouse
 ![1K Resister](https://user-images.githubusercontent.com/20442880/137374919-023f0bea-65f6-46a1-9d45-69f5a79e6916.jpg) | ![3mm LED Diode](https://user-images.githubusercontent.com/88125656/151883361-de0aba59-4e1e-45c2-bd5d-a0d0c10af270.png)
-4 X 1K Resister | 3mm LED Diode x 2 
+1 X 1K Resister, 2 X 25ohm Resister | 3mm LED Diode (Red/Green) x 2 
 ## Assembly Parts
 
-* M3X12mm Flat x 1 - Top Rear Sight
-* M3X8mm Flat x 1 - Top Front Sight
-* M4X10mm Button X 2 - Top Cover through Frame and Barrel
-* M3X16mm Cap X 3 - Rear Mag Cover, Trigger Group
-* M4X12mm Cap X 2 - Trigger Group to Cocking Mechanism
-* M3X8mm Cap X 2 - Trigger Group to Frame
-* M2.5X12mm Cap X 2 -  Microswitch in Cocking Mechanism
+Hex Flat Head
+* M3X12mm x 2 - Sights
+* M3X18mm X 2 Electronics Caddy
+* 
+Hex Cap Head
+* M3X4mm X 6 - Fire LED / Electronics Caddy Voice Reg
+* M3X16mm X3 - Trigger Group, Reload
+* M3X20mm	X1 -	Reload
+
+Hex CM Flat Head
+* M3X18mm	1	Battery Cap (can be flat head too)
+
+Hex Button Head		
+* M3X8mm	X2	- Trigger Group to Frame
+* M4X12mm	X2	- Barrel
+
+Any head bolt		
+* M1.4X4	X4 -	Electronics Caddy Arduino
+
+Other Parts
 * 1/8in rod X 9mm X 1 - Trigger axle
 * 1/8in rod x 54mm x 2 - Cocking Mechanism
 * 5/16 X 1 1/8 Extension Spring - Cocking Mechanism
 * 20mm Compression Spring - Magazine latch 
 
+## Module Assemboly
+
+### 1 OLED
+![1 OLED](https://user-images.githubusercontent.com/20442880/184989292-28ad2735-731c-40bc-a2e4-f167b7549781.jpg)
+* 1mm Heat Shrink 6mm X7		
+* 2.54 JST M/F 7pin + Pins									
+* Wire Black 44mm 103mm	
+* Wire Red 41.5mm 81mm	
+* Wire Green 39mm 99mm	
+* Wire Yellow 36.5mm 95mm
+* Wire White 33mm 90mm	
+* Wire Blue 30.5mm 85mm	
+* Wire Gray 28mm 83mm		
+
+### 2 Action Module
+![2 Action Module](https://user-images.githubusercontent.com/20442880/184989565-ae0ec016-eeab-46af-b463-64f283933d35.jpg)
+* 7mm momentary switch
+* 2.54 JST 2pin F
+* 2.54 JST 2 pin M + Pins
+* Wire White 42mm 50mm	
+* Wire Gray 43mm 99mm
+* Wire Black 86mm 123mm		
+* 1mm Heat Shrink 6mm X4
+* Micro Switch R Lever 16mm
+* 2.54 JST 2pin F
+* 2mm Heat Shrink 8mm X2	
+* 1mm Heat Shrink 6mm X2
+
+### 3 Fire LED
+![3 Fire LED](https://user-images.githubusercontent.com/20442880/184990745-328f94e9-eae4-4caa-99df-e06618a88422.jpg)
+
+* 7 segment LED round
+* 2.54 JST 3pin M + Pins
+* 2.54 JST 2pin M + Pins
+* 90deg IC Pin
+* 1mm Heat Shrink 6mm X5
+* Wire Yellow 112mm, 25mm
+* Wire Black 65mm,25mm
+* Wire Red 65mm, 25mm
+
+### 4 Boot LEDs
+![4 Boot LEDs](https://user-images.githubusercontent.com/20442880/184990757-6f610c06-b977-40df-9ede-e0e545017bff.jpg)
+* 3mm Red LED
+* 3mm Green LED
+* 2.54 JST 3pin F
+* 1mm Heat Shrink 6mm X7
+* 1mm Heat Shrink 3mm
+* Wire Black 27mm 66mm
+* Wire Red 26mm 65mm
+
+### 5 Power
+![5 Power](https://user-images.githubusercontent.com/20442880/184990781-61e106b8-f74a-45a3-bfd1-771d3d705b59.jpg)
+* Deans Plug M
+* Mini 560 Buck
+* 15X10mm Rocker Switch
+* 3mm Heat Shrink 10mm X2
+* 3mm Heat Shrink 8mm X2
+* 23mm Heat Shrink 27mm
+* Wire Black 70mm 310mm
+* Wire Red 14mm 64mm 310mm
+
+### 6 Sound
+![6 Sound](https://user-images.githubusercontent.com/20442880/184990844-4677f888-c8b6-4adb-89bd-e41251ae8c9a.jpg)
+* DF Player Mini
+* 64MB+ Micro SD
+* 1k Resister
+* 1mm Heat Shrink 6mm X2
+* Wire Gray 42mm
+* Wire White 43mm 
+* Wire Purple 26mm
+* Wire Blue 26mm
+* Amp PAM8302A
+* 2.54 JST 2pin M + Pins
+* Wire Black 22mm 66mm
+* Wire Red 33mm 67mm
+	
+### 7 Power Junction Box
+![7 Power Junction Box](https://user-images.githubusercontent.com/20442880/184990857-5b788776-0133-4732-bf34-bf710d6a2dd5.jpg)
+* Breadboard
+* 2.54 JST 2pin F X6
+* 22 AWG Solid Copper Wire 49mm 44mm
+
+### 8 Voice Recognition
+![8 Voice Recognition](https://user-images.githubusercontent.com/20442880/184990871-c6286a8e-e6a3-48a0-b278-90cdc86a7506.jpg)
+* Voice Recognition Module V3
+* 2.54 JST 2pin M + Pins
+* Wire Black 35mm
+* Wire Red 36mm
+* Wire Gray 40mm
+* Wire White 44mm
+
+### 9 Arduino
+![9 Arduino](https://user-images.githubusercontent.com/20442880/184990887-b98d7ab3-e10c-4255-a280-b22f1a91747c.jpg)
+* Arduino 328p
+* 2.54 JST 2pin M + Pins
+* Wire Black 56mm
+* Wire Red 56mm
+
+### 10 Speaker
+![10 Speaker](https://user-images.githubusercontent.com/20442880/184990908-1e231949-3156-4de5-b826-2551cb7ed430.jpg)
+* 30mm Speaker X2
+* Wire Purple 25mm 65mm
+* Wire Blue 25mm 65mm
 
 ## Arduino Pinout
 * D2 Voice Recognition RX
