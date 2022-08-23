@@ -188,6 +188,9 @@ void mainLoop (void) {
     // check reload only if fire was not triggered
     checkReloadSwitch(true);
 
+  // Update the triggers LEDS in case they were activated. This should lways be run in the min loop.
+  fireLed.updateDisplay();
+
   // playback tracks if queued
   bool audioPlayed = audio.playQueuedTrack();
   if (!audioPlayed) {
@@ -220,8 +223,6 @@ bool checkTriggerSwitch(bool runNow) {
   if (buttonStateFire == BUTTON_SHORT_PRESS) {
       if (runNow) {
         handleAmmoDown();
-        // display LEDS
-        fireLed.updateDisplay();
         return true;
       } else {
         activateAmmoDown++;
@@ -470,10 +471,9 @@ EasyCounter& getTriggerCounter(void) {
  */
 void setNextAmmoMode(void) {
   // Increment the trigger mode index or reset to 0
-  selectedTriggerMode++;
-  if (selectedTriggerMode == 7)
-    selectedTriggerMode = 0;
-  changeAmmoMode(selectedTriggerMode);
+  int mode = selectedTriggerMode+1;
+  if (mode == 7) mode = 0;
+  changeAmmoMode(mode);
 }
 
 /**
