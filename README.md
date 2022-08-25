@@ -1,4 +1,4 @@
-## dredd-lawgiver V0.9 - Release Candidate
+## dredd-lawgiver V1 - Tested Release
 
 Repository for the Fully Interactive 3D Printable Dredd Lawgiver 2012 from https://www.Props3D.pro/
 
@@ -379,3 +379,28 @@ plenty of room on the micro SD card.
 
 ## Test Board Reference Design
 ![Lawgiver]()
+
+## Painting Guide
+
+### Top:
+Base: Matte Black Primer
+Underlayer: Tamiya Gun Metal
+Primary: Tamiya Semi-Gloss Black
+Top Coat: Satin
+
+### Body:
+Base: Matte Black Primer
+Primary: Tamiya Flat Black
+Top Coat: Matte
+
+### Barrel/Trigger/Suppressor:
+Base: Matte Black Primer
+Primary: Tamiya Semi-Gloss Black
+Top Coat: Satin
+
+### Bullets:
+Base: Matte Black Primer
+Underlayer: Antique Brass (only bullets)
+Primary: Brass
+Primary: Copper (only rings)
+Top Coat: Satin
