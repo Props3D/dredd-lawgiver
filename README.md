@@ -383,24 +383,24 @@ plenty of room on the micro SD card.
 ## Painting Guide
 
 ### Top:
-Base: Matte Black Primer
-Underlayer: Tamiya Gun Metal
-Primary: Tamiya Semi-Gloss Black
-Top Coat: Satin
+* Base: Matte Black Primer
+* Underlayer: Tamiya Gun Metal
+* Primary: Tamiya Semi-Gloss Black
+* Top Coat: Satin
 
 ### Body:
-Base: Matte Black Primer
-Primary: Tamiya Flat Black
-Top Coat: Matte
+* Base: Matte Black Primer
+* Primary: Tamiya Flat Black
+* Top Coat: Matte
 
 ### Barrel/Trigger/Suppressor:
-Base: Matte Black Primer
-Primary: Tamiya Semi-Gloss Black
-Top Coat: Satin
+* Base: Matte Black Primer
+* Primary: Tamiya Semi-Gloss Black
+* Top Coat: Satin
 
 ### Bullets:
-Base: Matte Black Primer
-Underlayer: Antique Brass (only bullets)
-Primary: Brass
-Primary: Copper (only rings)
-Top Coat: Satin
+* Base: Matte Black Primer
+* Underlayer: Antique Brass (only bullets)
+* Primary: Brass
+* Primary: Copper (only rings)
+* Top Coat: Satin
