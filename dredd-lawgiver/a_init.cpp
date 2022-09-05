@@ -25,6 +25,7 @@ EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 // LED setup
 EasyLedv3<FIRE_LED_CNT, FIRE_LED_PIN> fireLed;
 ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4 /*speed*/);  // initialize colors to starting fire mode
+ezBlasterRepeatingShot repeatingShot(6 /*reps*/, 4 /*speed*/);
 // OLED Display
 EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled(DISPLAY_USER_ID);
 // VR module
@@ -430,7 +431,11 @@ void handleAmmoDown(void) {
   //queue the track
   audio.queuePlayback(getSelectedTrack(AMMO_MODE_IDX_FIRE));
   // activate the led pulse
-  fireLed.activate(blasterShot);
+  if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID)
+      fireLed.activate(repeatingShot);  // rapid shot - mulitple flashes with fade
+  else 
+      fireLed.activate(blasterShot);
+  
   // check for low ammo, and set the timer
   if (lowAmmoReached()) {
     activateLowAmmo++;
@@ -526,7 +531,7 @@ void changeAmmoMode(int mode) {
       debugLog("FMJ Mode selected");
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID) {
-      blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
+      repeatingShot.initialize(fireLed.WHITE, fireLed.BLACK);  // shot - flash with color fade
       debugLog("FMJ Mode selected");
     }
     // check for low ammo, and set the timer

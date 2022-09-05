@@ -68,7 +68,7 @@ class ezPattern {
  */
 class ezBlasterShot : public ezPattern
 {
-  private:
+  protected:
     CRGB _currentColor;  // color
     CRGB _startColor;    // starting color
     CRGB _targetColor;   // target color
@@ -221,6 +221,67 @@ class ezBlasterShot : public ezPattern
           debugLog("BlasterShot - checking white flash");
         }
       }
+    }
+};
+
+/**
+ * Repeating blaster shot
+ * 1. Flash Color
+ * 2. Black out and repeat 6 times
+ * 3. Fade to black after number of repitions
+ */
+class ezBlasterRepeatingShot : public ezBlasterShot
+{
+  protected:
+    const uint8_t _maxRepetitions   = 6;   // Number of times to fire
+
+    // processing variables
+    uint8_t _repetitions   = _maxRepetitions;   // 
+
+    bool blendingShot(CRGB *leds, uint8_t count) {
+      return false;
+    }
+   
+    bool checkWhiteFlash(CRGB *leds, uint8_t count) {
+      if (_activated == 3) {
+        this->whiteflash(leds, count);
+        _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
+        _activated = 2;   // hold the flash
+        return true;
+      }
+      if (_activated == 2) {
+        long duration = millis() - _flashTimer;
+        if (duration > _flashDuration) {
+          if (_repetitions > 0) {
+            _activated = 3;   // clear and flash again
+            _repetitions--;
+            this->clear(leds, count);
+            this->show();
+          } else if (_repetitions == 0) {
+            _activated = 1;   // fade to black
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+
+  public:
+    ezBlasterRepeatingShot(uint8_t reps = 6, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
+    ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 6, uint8_t speed = 6, callback_function callback = 0) : ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
+      _repetitions = reps;
+    }
+    ~ezBlasterRepeatingShot() {
+        _callbackPtr = 0;
+    }
+
+    void activate(CRGB *leds, uint8_t count) {
+      debugLog("BlasterShot - activated");
+      _repetitions = 4;
+      _activated = 2;    // start with white flash
+      //reset the current color to the start
+      _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
+      this->whiteflash(leds, count);
     }
 };
 
