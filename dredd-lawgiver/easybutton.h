@@ -62,14 +62,14 @@ class EasyButton
       button.loop(); // MUST call the loop() function first
     
       if(button.isPressed()){
-        debugLog("button pressed");
+        //debugLog("button pressed");
         pressedTime = millis();
         isPressing = true;
         isLongDetected = false;
       }
     
       if(button.isReleased() && isPressing == true) {
-        debugLog("button released");
+        //debugLog("button released");
         releasedTime = millis();
         long pressDuration = releasedTime - pressedTime;
 
@@ -77,19 +77,19 @@ class EasyButton
         if( pressDuration <= LONG_PRESS_TIME ) {
           isPressing = false;
           isLongDetected = false;
-          debugLog("A short press is detected");
+          //debugLog("A short press is detected");
           return BUTTON_SHORT_PRESS;
         }
         // when configured, return long press on release
         if(longPressOnRelease && (pressDuration >= LONG_PRESS_TIME)) {
           isPressing = false;
           isLongDetected = true;
-          debugLog("A long press is detected");
+          //debugLog("A long press is detected");
           return BUTTON_LONG_PRESS;
         }
         if(!longPressOnRelease && isLongDetected) {
           isPressing = false;
-          debugLog("A long press released");
+          //debugLog("A long press released");
         }
       }
 
@@ -98,7 +98,7 @@ class EasyButton
         long pressDuration = millis() - pressedTime;
     
         if( pressDuration > LONG_PRESS_TIME ) {
-          debugLog("A long press is detected");
+          //debugLog("A long press is detected");
           isLongDetected = true;
           return BUTTON_LONG_PRESS;
         }
@@ -109,7 +109,7 @@ class EasyButton
         long pressDuration = millis() - pressedTime;
         // looping is fast, so release may not be detected
         if (pressDuration > 500) {
-          debugLog("Button press held");
+          //debugLog("Button press held");
           return BUTTON_HOLD_PRESS;
         }
       }

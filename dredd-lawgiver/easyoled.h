@@ -42,9 +42,9 @@ class EasyOLED
     */
     void begin(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
-      debugLog("Initializing OLED display");
+      //debugLog("Initializing OLED display");
       u8g2.begin();
-      u8g2.setBusClock(8000000);
+      //u8g2.setBusClock(8000000);
       _ammoSelection = ammoSelection;
       memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
 #endif

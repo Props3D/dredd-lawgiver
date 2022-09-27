@@ -39,7 +39,7 @@ class EasyAudio
 
     void begin(uint8_t vol) {
 #ifdef ENABLE_EASY_AUDIO
-      debugLog("setup audio");
+      //debugLog("setup audio");
       mySerial.begin(9600);
       player.begin(mySerial, 100); //set Serial for DFPlayer-mini mp3 module 
       player.volume (vol);         //initial volume, 30 is max, 3 makes the wife not angry
@@ -55,7 +55,7 @@ class EasyAudio
     bool playQueuedTrack() {
 #ifdef ENABLE_EASY_AUDIO
       if (!tracks.empty()) {
-        debugLog("playing queued track ");
+        //debugLog("playing queued track ");
         player.playFromMP3Folder( tracks.pop() ); 
         return true;
       }
@@ -65,7 +65,7 @@ class EasyAudio
 
     void playTrack(uint8_t track) {
 #ifdef ENABLE_EASY_AUDIO
-      debugLog("playing track ");
+      //debugLog("playing track ");
       player.playFromMP3Folder( track ); 
       delay(playbackDelay);
 #endif
