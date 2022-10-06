@@ -233,32 +233,33 @@ class ezBlasterShot : public ezPattern
 class ezBlasterRepeatingShot : public ezBlasterShot
 {
   protected:
-    const uint8_t _maxRepetitions   = 6;   // Number of times to fire
+    const uint8_t _maxRepetitions;   // Number of times to fire
 
     // processing variables
-    uint8_t _repetitions   = _maxRepetitions;   // 
+    uint8_t _repetitions  = _maxRepetitions;
 
     bool blendingShot(CRGB *leds, uint8_t count) {
       return false;
     }
    
     bool checkWhiteFlash(CRGB *leds, uint8_t count) {
-      if (_activated == 3) {
+      if (_activated == 4) {
         this->whiteflash(leds, count);
         _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
-        _activated = 2;   // hold the flash
+        _activated = 3;   // hold the flash
         return true;
       }
       if (_activated == 2) {
         long duration = millis() - _flashTimer;
         if (duration > _flashDuration) {
           if (_repetitions > 0) {
-            _activated = 3;   // clear and flash again
+            _activated = 4;   // clear and flash again
             _repetitions--;
             this->clear(leds, count);
             this->show();
-          } else if (_repetitions == 0) {
-            _activated = 1;   // fade to black
+            if (_repetitions == 0) {
+              _activated = 1;   // fade to black
+            }
           }
         }
         return true;
@@ -267,9 +268,9 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     }
 
   public:
-    ezBlasterRepeatingShot(uint8_t reps = 6, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
-    ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 6, uint8_t speed = 6, callback_function callback = 0) : ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
-      _repetitions = reps;
+    ezBlasterRepeatingShot(uint8_t reps = 12, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
+    ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 12, uint8_t speed = 6, callback_function callback = 0) : _maxRepetitions(reps), ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
+      _repetitions = _maxRepetitions;
     }
     ~ezBlasterRepeatingShot() {
         _callbackPtr = 0;
@@ -277,12 +278,24 @@ class ezBlasterRepeatingShot : public ezBlasterShot
 
     void activate(CRGB *leds, uint8_t count) {
       //debugLog("BlasterShot - activated");
-      _repetitions = 4;
-      _activated = 2;    // start with white flash
+      _repetitions = _maxRepetitions;
       //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
       this->whiteflash(leds, count);
+      _activated = 3;    // start with white flash and hold
     }
-};
+
+    void updateDisplay(CRGB *leds, uint8_t count) {
+      EVERY_N_MILLISECONDS(_frameRate) {
+        // stop fading and clear
+        if (checkShotCooled(leds, count)) return;
+        
+        // fade to black
+        if (coolingShot(leds, count)) return;
+
+        // strobe the flash
+        checkWhiteFlash(leds, count);
+      }
+    }};
 
 #endif
