@@ -1,8 +1,6 @@
 #ifndef easycounter_h
 #define easycounter_h
 
-#include "debug.h"
-
 const static uint8_t STATE_ACTIVE      = 0;
 const static uint8_t STATE_EMPTY       = 1;
 const static uint8_t STATE_RESET       = 2;

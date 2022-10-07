@@ -3,8 +3,6 @@
 
 #include <SoftwareSerial.h>
 #include <DFPlayerMini_Fast.h>
-#include "easyqueue.h"
-#include "debug.h"
 
 /**
  * EasyAudio is based on DF Player Mini, and provides simple setup, and easy track playback.
@@ -30,46 +28,44 @@ class EasyAudio
 {
   private:
     SoftwareSerial mySerial;
-    DFPlayerMini_Fast player;
-    EasyQueue<uint8_t> tracks;
-    const uint8_t playbackDelay = 100;
+    DFPlayerMini_Fast _player;
+    long lastPlaybackTime            = 0;
+    const uint8_t _playbackDelay     = 100;
 
   public:
-    EasyAudio(uint8_t rxPin, uint8_t txPin) : mySerial(rxPin, txPin), tracks(5) {};
+    EasyAudio(uint8_t rxPin, uint8_t txPin) : mySerial(rxPin, txPin) {};
 
     void begin(uint8_t vol) {
 #ifdef ENABLE_EASY_AUDIO
-      //debugLog("setup audio");
+      //Serial.println(F("setup audio"));
       mySerial.begin(9600);
-      player.begin(mySerial, 100); //set Serial for DFPlayer-mini mp3 module 
-      player.volume (vol);         //initial volume, 30 is max, 3 makes the wife not angry
+      _player.begin(mySerial, 100); //set Serial for DFPlayer-mini mp3 module 
+      _player.volume (vol);         //initial volume, 30 is max, 3 makes the wife not angry
 #endif
     }
 
-    void queuePlayback(uint8_t track) {
-#ifdef ENABLE_EASY_AUDIO
-      tracks.push(track);
-#endif
-    }
-
-    bool playQueuedTrack() {
-#ifdef ENABLE_EASY_AUDIO
-      if (!tracks.empty()) {
-        //debugLog("playing queued track ");
-        player.playFromMP3Folder( tracks.pop() ); 
-        return true;
-      }
-#endif
-      return false;
+    /**
+     * Poor version of checking playback instead of adding delays.
+     * THe proper solution would be to check whether the component is busy.
+     * Our wiring doesn't support it at the moment
+     */
+    bool isBusy() {
+      return millis() < (lastPlaybackTime + _playbackDelay);
     }
 
     void playTrack(uint8_t track) {
 #ifdef ENABLE_EASY_AUDIO
-      //debugLog("playing track ");
-      player.playFromMP3Folder( track ); 
-      delay(playbackDelay);
+      lastPlaybackTime = millis();
+      _player.playFromMP3Folder( track );
 #endif
     }
-};
+
+    void playTrack(uint8_t track, bool wait) {
+#ifdef ENABLE_EASY_AUDIO
+      lastPlaybackTime = millis();
+      _player.playFromMP3Folder( track );
+      if (wait) delay(_playbackDelay);
+#endif
+    }};
 
 #endif

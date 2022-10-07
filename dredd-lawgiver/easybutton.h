@@ -3,12 +3,14 @@
 
 #include <Arduino.h>
 #include <ezButton.h>
-#include "debug.h"
 
 const static int BUTTON_NOT_PRESSED  = 0;
 const static int BUTTON_SHORT_PRESS  = 1;
 const static int BUTTON_HOLD_PRESS   = 2;
 const static int BUTTON_LONG_PRESS   = 3;
+
+static const uint8_t SHORT_PRESS_TIME = 200;  // 200 milliseconds
+static const uint8_t LONG_PRESS_TIME  = 3000; // 3 seconds
 
 /**
  * Use EasyButton to track state on a specific pin.
@@ -37,8 +39,6 @@ class EasyButton
     unsigned long releasedTime = 0;
     bool isPressing = false;
     bool isLongDetected = false;
-    const uint8_t SHORT_PRESS_TIME = 200;  // 200 milliseconds
-    const uint8_t LONG_PRESS_TIME  = 3000; // 1000 milliseconds
 
   public:
 #ifdef ENABLE_EASY_BUTTON
@@ -62,14 +62,14 @@ class EasyButton
       button.loop(); // MUST call the loop() function first
     
       if(button.isPressed()){
-        //debugLog("button pressed");
+        //Serial.println(F("button pressed"));
         pressedTime = millis();
         isPressing = true;
         isLongDetected = false;
       }
     
       if(button.isReleased() && isPressing == true) {
-        //debugLog("button released");
+        //Serial.println(F("button released"));
         releasedTime = millis();
         long pressDuration = releasedTime - pressedTime;
 
@@ -77,19 +77,19 @@ class EasyButton
         if( pressDuration <= LONG_PRESS_TIME ) {
           isPressing = false;
           isLongDetected = false;
-          //debugLog("A short press is detected");
+          //Serial.println(F("A short press is detected"));
           return BUTTON_SHORT_PRESS;
         }
         // when configured, return long press on release
         if(longPressOnRelease && (pressDuration >= LONG_PRESS_TIME)) {
           isPressing = false;
           isLongDetected = true;
-          //debugLog("A long press is detected");
+          //Serial.println(F("A long press is detected");
           return BUTTON_LONG_PRESS;
         }
         if(!longPressOnRelease && isLongDetected) {
           isPressing = false;
-          //debugLog("A long press released");
+          //Serial.println(F("A long press released");
         }
       }
 
@@ -98,7 +98,7 @@ class EasyButton
         long pressDuration = millis() - pressedTime;
     
         if( pressDuration > LONG_PRESS_TIME ) {
-          //debugLog("A long press is detected");
+          //Serial.println(F("A long press is detected");
           isLongDetected = true;
           return BUTTON_LONG_PRESS;
         }
@@ -109,7 +109,7 @@ class EasyButton
         long pressDuration = millis() - pressedTime;
         // looping is fast, so release may not be detected
         if (pressDuration > 500) {
-          //debugLog("Button press held");
+          //Serial.println(F("Button press held");
           return BUTTON_HOLD_PRESS;
         }
       }

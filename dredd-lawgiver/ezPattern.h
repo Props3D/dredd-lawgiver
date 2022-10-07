@@ -2,7 +2,6 @@
 #define ezpattern_h
 
 #include <FastLED.h>
-#include "debug.h"
 
 typedef void (*callback_function)(void); // type for conciseness
 
@@ -31,7 +30,7 @@ class ezPattern {
     uint8_t _frameRate             = 16;    // larger number is a slower fade
     unsigned long _flashTimer      = 0;     // time when the white flash started
 
-    static const uint8_t _flashDuration = 50;    // larger number will hold a white flash longer
+    uint8_t _flashDuration              = 50;    // larger number will hold a white flash longer
     static const uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
     static const uint8_t _fadeRate      = 220;   // How fast to fade out tail. [0-255]
 
@@ -194,7 +193,7 @@ class ezBlasterShot : public ezPattern
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      //debugLog("BlasterShot - activated");
+      //Serial.println(F("BlasterShot - activated"));
       _activated = 3;    // start with white flash and color fade
       //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
@@ -205,20 +204,20 @@ class ezBlasterShot : public ezPattern
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) {
-            //debugLog("BlasterShot - ending blaster shot");
+            //Serial.println(F("BlasterShot - ending blaster shot"));
         }
         // fade to black
         if (checkShotBlended(leds, count)) {
-          //debugLog("BlasterShot - fade to black on blaster shot");
+          //Serial.println(F("BlasterShot - fade to black on blaster shot"));
         }
         if (coolingShot(leds, count)) {
-          //debugLog("BlasterShot - Cooling off blaster shot");
+          //Serial.println(F("BlasterShot - Cooling off blaster shot"));
         }
         if (blendingShot(leds, count)) {
-          //debugLog("BlasterShot - blending colors on blaster shot");
+          //Serial.println(F("BlasterShot - blending colors on blaster shot"));
         }
         if (checkWhiteFlash(leds, count)) {
-          //debugLog("BlasterShot - checking white flash");
+          //Serial.println(F("BlasterShot - checking white flash"));
         }
       }
     }
@@ -249,7 +248,7 @@ class ezBlasterRepeatingShot : public ezBlasterShot
         _activated = 3;   // hold the flash
         return true;
       }
-      if (_activated == 2) {
+      if (_activated == 3) {
         long duration = millis() - _flashTimer;
         if (duration > _flashDuration) {
           if (_repetitions > 0) {
@@ -268,21 +267,23 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     }
 
   public:
-    ezBlasterRepeatingShot(uint8_t reps = 12, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
-    ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 12, uint8_t speed = 6, callback_function callback = 0) : _maxRepetitions(reps), ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
+    ezBlasterRepeatingShot(uint8_t reps = 8, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
+    ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 8, uint8_t speed = 6, callback_function callback = 0) : _maxRepetitions(reps), ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
       _repetitions = _maxRepetitions;
+      _flashDuration = 25;
+      _frameRate = 5;
     }
     ~ezBlasterRepeatingShot() {
         _callbackPtr = 0;
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      //debugLog("BlasterShot - activated");
+      //Serial.println(F("StrobeShot - activated"));
       _repetitions = _maxRepetitions;
       //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
-      this->whiteflash(leds, count);
-      _activated = 3;    // start with white flash and hold
+      //this->whiteflash(leds, count);
+      _activated = 4;    // start with white flash and hold
     }
 
     void updateDisplay(CRGB *leds, uint8_t count) {

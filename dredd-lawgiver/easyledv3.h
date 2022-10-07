@@ -3,7 +3,6 @@
 
 #include <FastLED.h>
 #include "ezPattern.h"
-#include "debug.h"
 
 
 /**
@@ -54,7 +53,7 @@ class EasyLedv3
     void begin(int brightness) {
 #ifdef ENABLE_EASY_LED
       if (LED_COUNT > 0 && LED_PIN_IN > 0) {
-        //debugLog("Initializing leds");
+        //Serial.println(F("Initializing leds"));
         FastLED.addLeds<WS2812, LED_PIN_IN, GRB>(leds, LED_COUNT);
         FastLED.setBrightness(brightness);
         FastLED.setMaxPowerInVoltsAndMilliamps(5, 450); //5v and 450mA
@@ -102,7 +101,7 @@ class EasyLedv3
      */
     void activate(ezPattern &ptn) {
 #ifdef ENABLE_EASY_LED
-      //debugLog("activating led pattern");
+      //Serial.println(F("activating led pattern"));
       pattern = &ptn;
       if (pattern)
         pattern->activate(leds, LED_COUNT);

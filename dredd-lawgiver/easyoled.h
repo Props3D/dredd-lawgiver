@@ -2,7 +2,6 @@
 #define easyoled_h
 
 #include <U8g2lib.h>
-#include "debug.h"
 
 /**
  * A simple class for managing an LED display. It's mainly based on
@@ -42,7 +41,7 @@ class EasyOLED
     */
     void begin(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
-      //debugLog("Initializing OLED display");
+      //Serial.println(F("Initializing OLED display"));
       u8g2.begin();
       //u8g2.setBusClock(8000000);
       _ammoSelection = ammoSelection;

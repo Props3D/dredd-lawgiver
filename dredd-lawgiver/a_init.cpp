@@ -6,7 +6,6 @@
 */
 #include <Arduino.h>
 #include "config.h"
-#include "debug.h"
 #include "easybutton.h"
 #include "easycounter.h"
 #include "easyaudio.h"
@@ -25,7 +24,7 @@ EasyAudio audio(AUDIO_RX_PIN, AUDIO_TX_PIN);
 // LED setup
 EasyLedv3<FIRE_LED_CNT, FIRE_LED_PIN> fireLed;
 ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4 /*speed*/);  // initialize colors to starting fire mode
-ezBlasterRepeatingShot repeatingShot(6 /*reps*/, 4 /*speed*/);
+ezBlasterRepeatingShot repeatingShot(8 /*reps*/, 4 /*speed*/);
 // OLED Display
 EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled(DISPLAY_USER_ID);
 // VR module
@@ -102,13 +101,13 @@ volatile uint8_t activateLowAmmo = 0;
  *  Variables for tracking trigger state
  *  Variables must be marked as volatile because they are updated in the ISR.
  */
-volatile uint8_t selectedTriggerMode  = VR_CMD_AMMO_MODE_FMJ; // sets the ammo mode to start
-volatile uint8_t activateAmmoDown = 0;                        // sets main loop to fire a round
-volatile uint8_t activateReload   = 0;                        // sets main loop to reload ammo
+volatile uint8_t selectedTriggerMode  = VR_CMD_AMMO_MODE_FMJ;     // sets the ammo mode to start
+volatile uint8_t activateAmmoDown     = 0;                        // sets main loop to fire a round
+volatile uint8_t activateReload       = 0;                        // sets main loop to reload ammo
 
 void setup() {
   Serial.begin (115200);
-  debugLog("Starting setup");
+  //Serial.println(F("Starting setup"));
 
   // initialize the trigger led and set brightness
   fireLed.begin(75);
@@ -185,16 +184,13 @@ void loop () {
  */
 void mainLoop (void) {
   // always check the triggers first
-  if (!checkTriggerSwitch(true))
-    // check reload only if fire was not triggered
-    checkReloadSwitch(true);
-
-  // Update the triggers LEDS in case they were activated. This should lways be run in the min loop.
+  bool audioPlayed = !checkTriggerSwitch(true) ? checkReloadSwitch(true) : true;
+  // Update the triggers LEDS in case they were activated. This should always be run in the main loop.
+  //if (audioPlayed)   Serial.println(F("main - led update"));
   fireLed.updateDisplay();
 
-  // playback tracks if queued
-  bool audioPlayed = audio.playQueuedTrack();
-  if (!audioPlayed) {
+  // check low ammo or voice commands if no audio was played
+  if (!audio.isBusy()) {
     // check the low-ammo indicator
     if (activateLowAmmo) {
         // small delay so not to collide with ammo playback
@@ -203,14 +199,18 @@ void mainLoop (void) {
         }
     } else {
       // check for new voice commands, only if no audio sounds were triggered
+      //Serial.println(F("main - check VR"));
       checkVoiceCommands();
     }
+
+    // update OLED if there are changes from any of the above operations
+    if (screenUpdates) {
+      //Serial.println(F("main - screen update"));
+      oled.updateDisplay(selectedTriggerMode, getCounters());
+      screenUpdates--;
+    }
   }
-  // update OLED if there are changes from any of the above operations
-  if (screenUpdates) {
-    oled.updateDisplay(selectedTriggerMode, getCounters());
-    screenUpdates--;
-  }
+
 }
 /**
  * Checks the fire trigger momentary switch.
@@ -222,12 +222,8 @@ bool checkTriggerSwitch(bool runNow) {
   int buttonStateFire = trigger.checkState();
   // check if a trigger is pressed.
   if (buttonStateFire == BUTTON_SHORT_PRESS) {
-      if (runNow) {
-        handleAmmoDown();
-        return true;
-      } else {
-        activateAmmoDown++;
-      }
+    handleAmmoDown();
+    return true;
   }
   // Long press for change mode
   if (buttonStateFire == BUTTON_LONG_PRESS) {
@@ -246,12 +242,8 @@ bool checkReloadSwitch(bool runNow) {
   int buttonStateFire = reload.checkState();
   // check if a trigger is pressed.
   if (buttonStateFire == BUTTON_SHORT_PRESS || buttonStateFire == BUTTON_LONG_PRESS) {
-      if (runNow) {
-        reloadAmmo();
-        return true;
-      } else {
-        activateReload++;
-      }
+    reloadAmmo();
+    return true;
   }
   return false;
 }
@@ -270,12 +262,12 @@ bool checkReloadSwitch(bool runNow) {
 void startUpSequence(void) {
   uint8_t _sequenceMode = oled.getDisplayMode();
   if (_sequenceMode == 0) {
-      debugLog("Startup - Logo");
+      //Serial.println(F("Startup - Logo"));
       oled.updateDisplay(oled.DISPLAY_LOGO, 0);
   }
   if (_sequenceMode == oled.DISPLAY_LOGO) {
       if (millis() > TIMING_STARTUP_LOGO_MS + lastDisplayUpdate) {
-        debugLog("Startup - Comm Ok");
+        //Serial.println(F("Startup - Comm Ok"));
         oled.updateDisplay(oled.DISPLAY_COMM_CHK, 0);
         // Red led on
         toggleLED(RED_LED_PIN);
@@ -288,7 +280,7 @@ void startUpSequence(void) {
         lastDisplayUpdate = millis();
       }
       if (progressBarUpdates > 9) {
-        debugLog("Startup - DNA Chk");
+        //Serial.println(F("Startup - DNA Chk"));
         oled.updateDisplay(oled.DISPLAY_DNA_CHK, progressBarUpdates);        
         lastDisplayUpdate = millis();
       }
@@ -301,7 +293,7 @@ void startUpSequence(void) {
           audio.playTrack(AUDIO_TRACK_DNA_CHK);
           oled.updateDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         } else {
-          debugLog("Startup - ID FAIL");
+          //Serial.println(F("Startup - ID FAIL"));
           audio.playTrack(AUDIO_TRACK_ID_FAIL);
           oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
@@ -317,13 +309,13 @@ void startUpSequence(void) {
           progressBarUpdates++;
           lastDisplayUpdate = millis();
         } else {
-          debugLog("Startup - ID FAIL");
+          //Serial.println(F("Startup - ID FAIL"));
           audio.playTrack(AUDIO_TRACK_ID_FAIL);
           oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         }
       }
       if (progressBarUpdates > 18) {
-        debugLog("Startup - ID OK");
+        //Serial.println(F("Startup - ID OK"));
         oled.updateDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
         // RED LED off
         toggleLED(RED_LED_PIN);
@@ -344,7 +336,7 @@ void startUpSequence(void) {
       }
       // blink the green led three times before moving on
       if (ledBlinks > 2 && millis() > (TIMING_STARTUP_ID_OK_MS + lastDisplayUpdate)) {
-        debugLog("Startup - ID Name");
+        //Serial.println(F("Startup - ID Name"));
         oled.updateDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
         lastDisplayUpdate = millis();
       }
@@ -352,7 +344,7 @@ void startUpSequence(void) {
   // Display ID Name for a fixed duration
   if (_sequenceMode == oled.DISPLAY_ID_NAME) {
       if (millis() > (TIMING_STARTUP_ID_NAME_MS + lastDisplayUpdate)) {
-        debugLog("Startup - Main loop");
+        //Serial.println(F("Startup - Main loop"));
         audio.playTrack(AUDIO_TRACK_AMMO_LOAD);
         oled.updateDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
         // let's turn off the ammo indicators
@@ -394,15 +386,15 @@ void reloadAmmo(void) {
   activateReload = 0;
   activateLowAmmo = 0;
 
-  debugLog("Reloading all counters");
+  //Serial.println(F("Reloading all counters"));
   apCounter.resetCount();
   inCounter.resetCount();
   heCounter.resetCount();
   fmjCounter.resetCount();
   // Reset the low-ammo indicator
   resetAmmoIndicators();
-  //queue the track
-  audio.queuePlayback(AUDIO_TRACK_AMMO_RELOAD);
+  //play the track
+  audio.playTrack(AUDIO_TRACK_AMMO_RELOAD);
   // Refresh the display at least once
   screenUpdates++;
 }
@@ -423,14 +415,15 @@ void handleAmmoDown(void) {
   // move the counter
   bool emptyClip = !getTriggerCounter().tick();
   if (emptyClip) {
-     debugLog("Empty clip");
-     audio.queuePlayback(getSelectedTrack(AMMO_MODE_IDX_EMTY));
+     //Serial.println(F("Empty clip"));
+     audio.playTrack(getSelectedTrack(AMMO_MODE_IDX_EMTY));
      return;
   }
-  debugLog("Ammo fire sequence");
-  //queue the track
-  audio.queuePlayback(getSelectedTrack(AMMO_MODE_IDX_FIRE));
+  //Serial.println(F("Ammo fire sequence"));
+  //play the track
+  audio.playTrack(getSelectedTrack(AMMO_MODE_IDX_FIRE));
   // activate the led pulse
+  Serial.println(F("handleAmmo - activate leds"));
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID)
       fireLed.activate(repeatingShot);  // rapid shot - mulitple flashes with fade
   else 
@@ -508,31 +501,31 @@ void changeAmmoMode(int mode) {
     // Check for Switching modes
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      debugLog("Armor Piercing Mode selected");
+      Serial.println(F("Armor Piercing Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
-      debugLog("Incendiary Mode selected");
+      Serial.println(F("Incendiary Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_HE) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
-      debugLog("High Ex Mode selected");
+      Serial.println(F("High Ex Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_HS) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      debugLog("Hotshot Mode selected");
+      Serial.println(F("Hotshot Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_ST) {
       blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
-      debugLog("Stun Mode selected");
+      Serial.println(F("Stun Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_FMJ) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      debugLog("FMJ Mode selected");
+      Serial.println(F("FMJ Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID) {
       repeatingShot.initialize(fireLed.WHITE, fireLed.BLACK);  // shot - flash with color fade
-      debugLog("FMJ Mode selected");
+      Serial.println(F("Rapid Mode selected"));
     }
     // check for low ammo, and set the timer
     if (lowAmmoReached()) {
