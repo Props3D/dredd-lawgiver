@@ -9,8 +9,8 @@ const static int BUTTON_SHORT_PRESS  = 1;
 const static int BUTTON_HOLD_PRESS   = 2;
 const static int BUTTON_LONG_PRESS   = 3;
 
-static const uint8_t SHORT_PRESS_TIME = 200;  // 200 milliseconds
-static const uint8_t LONG_PRESS_TIME  = 3000; // 3 seconds
+static const uint8_t   SHORT_PRESS_TIME = 200;  // 200 milliseconds
+static const uint16_t  LONG_PRESS_TIME  = 2000; // 2 seconds
 
 /**
  * Use EasyButton to track state on a specific pin.
@@ -72,24 +72,25 @@ class EasyButton
         //Serial.println(F("button released"));
         releasedTime = millis();
         long pressDuration = releasedTime - pressedTime;
+        //Serial.println(pressDuration);
 
         // check if we have a short press
         if( pressDuration <= LONG_PRESS_TIME ) {
           isPressing = false;
           isLongDetected = false;
-          //Serial.println(F("A short press is detected"));
+          //Serial.println(F("A short press is released"));
           return BUTTON_SHORT_PRESS;
         }
         // when configured, return long press on release
         if(longPressOnRelease && (pressDuration >= LONG_PRESS_TIME)) {
           isPressing = false;
           isLongDetected = true;
-          //Serial.println(F("A long press is detected");
+          //Serial.println(F("A long press is released"));
           return BUTTON_LONG_PRESS;
         }
         if(!longPressOnRelease && isLongDetected) {
           isPressing = false;
-          //Serial.println(F("A long press released");
+          //Serial.println(F("A long press released"));
         }
       }
 
@@ -98,7 +99,7 @@ class EasyButton
         long pressDuration = millis() - pressedTime;
     
         if( pressDuration > LONG_PRESS_TIME ) {
-          //Serial.println(F("A long press is detected");
+          //Serial.println(F("A long press is detected"));
           isLongDetected = true;
           return BUTTON_LONG_PRESS;
         }

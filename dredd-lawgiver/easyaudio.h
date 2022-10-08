@@ -30,7 +30,7 @@ class EasyAudio
     SoftwareSerial mySerial;
     DFPlayerMini_Fast _player;
     long lastPlaybackTime            = 0;
-    const uint8_t _playbackDelay     = 100;
+    const uint16_t _playbackDelay     = 100;
 
   public:
     EasyAudio(uint8_t rxPin, uint8_t txPin) : mySerial(rxPin, txPin) {};

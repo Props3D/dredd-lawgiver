@@ -8,10 +8,13 @@
  * configuration section.
  */
 
-/** 
- * Enable debug logging by uncommenting this line
+/**
+ * Disables features in U8g2 to reduce it's overall size
  */
-//#define ENABLE_DEBUG          1
+#define U8G2_WITHOUT_INTERSECTION
+#define U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
+#define U8G2_WITHOUT_FONT_ROTATION
+#define U8G2_WITHOUT_UNICODE
 
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO     1 //Enable audio 
@@ -23,14 +26,13 @@
 // Customizable ID badge for DNA Check sequence 
 #define DISPLAY_USER_ID       "Dredd"
 
-
 // Pin configuration for voice recognition module
-#define VOICE_RX_PIN          2
 #define VOICE_TX_PIN          3
+#define VOICE_RX_PIN          2
 
 // Pin configuration for MP3 Player
-#define AUDIO_TX_PIN          4
-#define AUDIO_RX_PIN          5
+#define AUDIO_TX_PIN          5
+#define AUDIO_RX_PIN          4
 
 // Pin Configuration for 3mm LEDs
 #define GREEN_LED_PIN         6
@@ -53,6 +55,10 @@
 #define FIRE_LED_CNT          7
 
 /**
+ *  Common constant definitions - DO NOT CHANGE
+ */
+
+/**
  * Audio tracks by file index - upload these to the SD card in the correct order.
  * See the instructions on the Github page about loading the SD card.
  * 
@@ -60,66 +66,55 @@
  * 1. Copy the audio file in each slot where you want to use it
  * 2. Change the index values below to match the files on the SD Card
  */
-#define AUDIO_TRACK_DNA_CHK         1
-#define AUDIO_TRACK_ID_OK           2
-#define AUDIO_TRACK_ID_FAIL         3
-#define AUDIO_TRACK_AMMO_LOAD       4
-#define AUDIO_TRACK_AP_FIRE         5
-#define AUDIO_TRACK_IN_FIRE         6
-#define AUDIO_TRACK_HS_FIRE         7
-#define AUDIO_TRACK_HE_FIRE         8
-#define AUDIO_TRACK_ST_FIRE         9
-#define AUDIO_TRACK_FMJ_FIRE        10
-#define AUDIO_TRACK_RAPID_FIRE      11
-#define AUDIO_TRACK_AP_CHANGE       12
-#define AUDIO_TRACK_IN_CHANGE       13
-#define AUDIO_TRACK_HS_CHANGE       14
-#define AUDIO_TRACK_HE_CHANGE       15
-#define AUDIO_TRACK_ST_CHANGE       16
-#define AUDIO_TRACK_FMJ_CHANGE      17
-#define AUDIO_TRACK_RAPID_CHANGE    18
-#define AUDIO_TRACK_AMMO_LOW        19
-#define AUDIO_TRACK_AMMO_EMPTY      20
-#define AUDIO_TRACK_AMMO_RELOAD     21
-#define AUDIO_TRACK_THEME           22  // TODO: add feature to playback theme
+static const uint8_t  AUDIO_TRACK_DNA_CHK      =   1;
+static const uint8_t  AUDIO_TRACK_ID_OK        =   2;
+static const uint8_t  AUDIO_TRACK_ID_FAIL      =   3;
+static const uint8_t  AUDIO_TRACK_AMMO_LOAD    =   4;
+static const uint8_t  AUDIO_TRACK_AP_FIRE      =   5;
+static const uint8_t  AUDIO_TRACK_IN_FIRE      =   6;
+static const uint8_t  AUDIO_TRACK_HS_FIRE      =   7;
+static const uint8_t  AUDIO_TRACK_HE_FIRE      =   8;
+static const uint8_t  AUDIO_TRACK_ST_FIRE      =   9;
+static const uint8_t  AUDIO_TRACK_FMJ_FIRE     =   10;
+static const uint8_t  AUDIO_TRACK_RAPID_FIRE   =   11;
+static const uint8_t  AUDIO_TRACK_AP_CHANGE    =   12;
+static const uint8_t  AUDIO_TRACK_IN_CHANGE    =   13;
+static const uint8_t  AUDIO_TRACK_HS_CHANGE    =   14;
+static const uint8_t  AUDIO_TRACK_HE_CHANGE    =   15;
+static const uint8_t  AUDIO_TRACK_ST_CHANGE    =   16;
+static const uint8_t  AUDIO_TRACK_FMJ_CHANGE   =   17;
+static const uint8_t  AUDIO_TRACK_RAPID_CHANGE =   18;
+static const uint8_t  AUDIO_TRACK_AMMO_LOW     =   19;
+static const uint8_t  AUDIO_TRACK_AMMO_EMPTY   =   20;
+static const uint8_t  AUDIO_TRACK_AMMO_RELOAD  =   21;
+static const uint8_t  AUDIO_TRACK_THEME        =   22;  // TODO: add feature to playback theme
 
-
-/**
- *  Common constant definitions - DO NOT CHANGE
- */
-
-/**
- * Disables features in U8g2 to reduce it's overall size
- */
-#define U8G2_WITHOUT_INTERSECTION
-#define U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
-#define U8G2_WITHOUT_FONT_ROTATION
 
 /**
  *  Voice Recognition Commands.
  *  IMPORTANT - The VR module must be trained this sequence.
  */
-#define VR_CMD_AMMO_MODE_AP         0 // speak "Armor Piercing" or just "Armor"
-#define VR_CMD_AMMO_MODE_IN         1 // speak "Incendiary"
-#define VR_CMD_AMMO_MODE_HS         2 // speak "Hotshot"
-#define VR_CMD_AMMO_MODE_HE         3 // speak "High Ex"
-#define VR_CMD_AMMO_MODE_ST         4 // speak "Stun"
-#define VR_CMD_AMMO_MODE_FMJ        5 // speak "Full Metal"
-#define VR_CMD_AMMO_MODE_RAPID      6 // speak "Rapid"
+static const uint8_t VR_CMD_AMMO_MODE_AP     =    0; // speak "Armor Piercing" or just "Armor"
+static const uint8_t VR_CMD_AMMO_MODE_IN     =    1; // speak "Incendiary"
+static const uint8_t VR_CMD_AMMO_MODE_HS     =    2; // speak "Hotshot"
+static const uint8_t VR_CMD_AMMO_MODE_HE     =    3; // speak "High Ex"
+static const uint8_t VR_CMD_AMMO_MODE_ST     =    4; // speak "Stun"
+static const uint8_t VR_CMD_AMMO_MODE_FMJ    =    5; // speak "Full Metal"
+static const uint8_t VR_CMD_AMMO_MODE_RAPID  =    6; // speak "Rapid"
 
 /**
  * Timing Defintions for start up sequence timings
  */
-#define TIMING_STARTUP_LOGO_MS           2000
-#define TIMING_STARTUP_COMM_OK_MS        1000
-#define TIMING_STARTUP_DNA_CHK_MS        1200
-#define TIMING_STARTUP_DNA_PRG_MS        1000
-#define TIMING_STARTUP_ID_OK_MS          2400
-#define TIMING_STARTUP_ID_FAIL_MS        1400
-#define TIMING_STARTUP_ID_NAME_MS        1800
-#define TIMING_PROGRESS_INTERVAL_MS      100
-#define TIMING_LOW_AMMO_WAIT_MS          1000
-#define TIMING_FAST_BLINK_WAIT_MS        350
+static const uint16_t  TIMING_STARTUP_LOGO_MS       =    2000;
+static const uint16_t  TIMING_STARTUP_COMM_OK_MS    =    1000;
+static const uint16_t  TIMING_STARTUP_DNA_CHK_MS    =    1200;
+static const uint16_t  TIMING_STARTUP_DNA_PRG_MS    =    1000;
+static const uint16_t  TIMING_STARTUP_ID_OK_MS      =    2400;
+static const uint16_t  TIMING_STARTUP_ID_FAIL_MS    =    1400;
+static const uint16_t  TIMING_STARTUP_ID_NAME_MS    =    1800;
+static const uint16_t  TIMING_PROGRESS_INTERVAL_MS  =    100;
+static const uint16_t  TIMING_LOW_AMMO_WAIT_MS      =    1000;
+static const uint16_t  TIMING_FAST_BLINK_WAIT_MS    =    350;
 
 
 /**
@@ -132,16 +127,16 @@ static const uint8_t VOICE_CMD_ARR[]    = {VR_CMD_AMMO_MODE_AP, VR_CMD_AMMO_MODE
 /**
  * Defintions for tracking startup sequence. DO NOT CHANGE
  */
-#define LOOP_STATE_START              2  // Startup sequence
-#define LOOP_STATE_MAIN               1  // main loop
-#define LOOP_STATE_FAIL               0  // stop loop
+static const uint8_t  LOOP_STATE_START    =          2;  // Startup sequence
+static const uint8_t  LOOP_STATE_MAIN     =          1;  // main loop
+static const uint8_t  LOOP_STATE_FAIL     =          0;  // stop loop
 
 /**
  * Audio track index for lookup array. DO NOT CHANGE
  */
-#define AMMO_MODE_IDX_FIRE        0  // fire
-#define AMMO_MODE_IDX_EMTY        1  // empty clip
-#define AMMO_MODE_IDX_CHGE        2  // change mode
+static const uint8_t AMMO_MODE_IDX_FIRE  =      0;  // fire
+static const uint8_t AMMO_MODE_IDX_EMTY  =      1;  // empty clip
+static const uint8_t AMMO_MODE_IDX_CHGE  =      2;  // change mode
 
 /**
  * Lookup array for audio tracks based on ammo mode. DO NOT CHANGE
