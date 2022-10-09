@@ -106,7 +106,8 @@ volatile uint8_t activateAmmoDown     = 0;                        // sets main l
 volatile uint8_t activateReload       = 0;                        // sets main loop to reload ammo
 
 void setup() {
-  Serial.begin (115200);
+  //uncomment for debugging
+  //Serial.begin (115200);
   //Serial.println(F("Starting setup"));
 
   // initialize the trigger led and set brightness
@@ -423,7 +424,7 @@ void handleAmmoDown(void) {
   //play the track
   audio.playTrack(getSelectedTrack(AMMO_MODE_IDX_FIRE));
   // activate the led pulse
-  Serial.println(F("handleAmmo - activate leds"));
+  //Serial.println(F("handleAmmo - activate leds"));
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID)
     fireLed.activate(repeatingShot);  // rapid shot - mulitple flashes with fade
   else
@@ -501,31 +502,31 @@ void changeAmmoMode(int mode) {
     // Check for Switching modes
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      Serial.println(F("Armor Piercing Mode selected"));
+      //Serial.println(F("Armor Piercing Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
-      Serial.println(F("Incendiary Mode selected"));
+      //Serial.println(F("Incendiary Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_HE) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
-      Serial.println(F("High Ex Mode selected"));
+      //Serial.println(F("High Ex Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_HS) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      Serial.println(F("Hotshot Mode selected"));
+      //Serial.println(F("Hotshot Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_ST) {
       blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
-      Serial.println(F("Stun Mode selected"));
+      //Serial.println(F("Stun Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_FMJ) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
-      Serial.println(F("FMJ Mode selected"));
+      //Serial.println(F("FMJ Mode selected"));
     }
     if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID) {
       repeatingShot.initialize(fireLed.WHITE, fireLed.BLACK);  // shot - flash with color fade
-      Serial.println(F("Rapid Mode selected"));
+      //Serial.println(F("Rapid Mode selected"));
     }
     // check for low ammo, and set the timer
     if (lowAmmoReached()) {

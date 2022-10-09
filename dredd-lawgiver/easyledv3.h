@@ -28,7 +28,6 @@
  * 
  * REQUIRED LIBRARY: FastLED
  */
-
 template <int LED_COUNT, int LED_PIN_IN>
 class EasyLedv3
 {

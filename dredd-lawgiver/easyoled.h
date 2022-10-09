@@ -18,7 +18,6 @@
  *
  * REQUIRED LIBRARY: U8g2lib
  */
-
 template <int CL_PIN, int DA_PIN, int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED
 {
@@ -37,8 +36,8 @@ class EasyOLED
     }
 
     /**
-       In the setup, initialize the display count and brightness.
-    */
+     *  In the setup, initialize the display count and brightness.
+     */
     void begin(int ammoSelection, uint8_t ammoCounts[]) {
 #ifdef ENABLE_EASY_OLED
       //Serial.println(F("Initializing OLED display"));
@@ -112,7 +111,6 @@ class EasyOLED
     bool _blink = false;          // blink controller
     bool _ammoLow = false;        // ammo low state
     char _buf[10];                // print buffer for ammo counts
-
 
     void drawDisplay(int displayMode, int progress) {
 #ifdef ENABLE_EASY_OLED

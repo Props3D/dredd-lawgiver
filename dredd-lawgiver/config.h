@@ -8,14 +8,6 @@
  * configuration section.
  */
 
-/**
- * Disables features in U8g2 to reduce it's overall size
- */
-#define U8G2_WITHOUT_INTERSECTION
-#define U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
-#define U8G2_WITHOUT_FONT_ROTATION
-#define U8G2_WITHOUT_UNICODE
-
 // Comment out if you want to disable any component
 #define ENABLE_EASY_AUDIO     1 //Enable audio 
 #define ENABLE_EASY_LED       1 //Enable LEDs
@@ -49,10 +41,13 @@
 #define OLED_DC_PIN           11
 #define OLED_CS_PIN           12
 
+
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
 #define FIRE_LED_PIN          13
 #define FIRE_LED_CNT          7
+
+
 
 /**
  *  Common constant definitions - DO NOT CHANGE

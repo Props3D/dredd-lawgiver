@@ -6,21 +6,21 @@
 typedef void (*callback_function)(void); // type for conciseness
 
 /**
- * A set of classes for producing LED patterns.
- * 
- * Each pattern has it's own constructor. Some exmaples:
- *    ezBlasterShot hotshot(CRGB:Red, CRGB::Orange); // red fade to orange
- *    ezBlasterPulse bluepulse(CRGB:Blue, 2);        // 2 pixel blue animation
- *    ezBlasterPulse bluepulse(CRGB:Blue, 2);        // 2 pixel blue animation
+ *  A set of classes for producing LED patterns.
  *
- * A pattern is passed to an EasyLedv3 to control the LED set.
- * e.g. leds.activate(hotshot);
- * 
- * REQUIRED LIBRARY: FastLED
+ *  Each pattern has it's own constructor. Some exmaples:
+ *     ezBlasterShot hotshot(CRGB:Red, CRGB::Orange); // red fade to orange
+ *     ezBlasterPulse bluepulse(CRGB:Blue, 2);        // 2 pixel blue animation
+ *     ezBlasterPulse bluepulse(CRGB:Blue, 2);        // 2 pixel blue animation
+ *
+ *  A pattern is passed to an EasyLedv3 to control the LED set.
+ *  e.g. leds.activate(hotshot);
+ *
+ *  REQUIRED LIBRARY: FastLED
  */
- 
+
 /**
- * Interface for building different LED patterns and behaviours
+ *  Interface for building different LED patterns and behaviours
  */
 class ezPattern {
   protected:
@@ -60,10 +60,10 @@ class ezPattern {
 };
 
 /**
- * Single blaster shot
- * 1. Flash White
- * 2. Starting color with fade to secondary color
- * 3. fade to black to show cooling
+ *  Single blaster shot
+ *  1. Flash White
+ *  2. Starting color with fade to secondary color
+ *  3. fade to black to show cooling
  */
 class ezBlasterShot : public ezPattern
 {
@@ -83,9 +83,11 @@ class ezBlasterShot : public ezPattern
       uint8_t blue = delta(cur.blue, target.blue) / _blendSteps;
       return max(red, max(green, blue));
     }
+
     inline uint8_t delta(uint8_t a, uint8_t b) {
-      return (a < b) ? b-a : a-b;
+      return (a < b) ? b - a : a - b;
     }
+
     // helper functions
     bool checkShotCooled(CRGB *leds, uint8_t count) {
       if ((_activated == 1) && (_currentColor == _coolOffColor)) {
@@ -96,6 +98,7 @@ class ezBlasterShot : public ezPattern
       }
       return false;
     }
+
     bool checkShotBlended(CRGB *leds, uint8_t count) {
       if ((_activated == 2) && (_currentColor == _targetColor)) {
         // on match, we set to target to black to fade out
@@ -105,6 +108,7 @@ class ezBlasterShot : public ezPattern
       }
       return false;
     }
+
     bool coolingShot(CRGB *leds, uint8_t count) {
       if (_activated == 1) {
         fadeTowardColor(_currentColor, _coolOffColor, _blendRate);
@@ -114,6 +118,7 @@ class ezBlasterShot : public ezPattern
       }
       return false;
     }
+
     bool blendingShot(CRGB *leds, uint8_t count) {
       if (_activated == 2) {
         fadeTowardColor(_currentColor, _targetColor, _blendRate);
@@ -123,6 +128,7 @@ class ezBlasterShot : public ezPattern
       }
       return false;
     }
+
     bool checkWhiteFlash(CRGB *leds, uint8_t count) {
       if (_activated == 4) {
         this->whiteflash(leds, count);
@@ -140,11 +146,12 @@ class ezBlasterShot : public ezPattern
       }
       return false;
     }
+
     /**
-     * Blend one CRGB color toward another CRGB color by a given amount.
-     * Blending is linear, and done in the RGB color space.
-     * 
-     * NOTE: This function modifies 'cur' color in place, and returns the same object.
+     *  Blend one CRGB color toward another CRGB color by a given amount.
+     *  Blending is linear, and done in the RGB color space.
+     *
+     *  NOTE: This function modifies 'cur' color in place, and returns the same object.
      */
     CRGB fadeTowardColor( CRGB& cur, const CRGB& target, uint8_t amount) {
       nblendU8TowardU8( cur.red,   target.red,   amount);
@@ -152,13 +159,14 @@ class ezBlasterShot : public ezPattern
       nblendU8TowardU8( cur.blue,  target.blue,  amount);
       return cur;
     }
+
     /**
-     *  Helper function that blends one uint8_t toward another by a given amount
+     *   Helper function that blends one uint8_t toward another by a given amount
      */
     void nblendU8TowardU8( uint8_t& cur, const uint8_t target, uint8_t amount) {
-      if( cur == target) return;
-      
-      if( cur < target ) {
+      if ( cur == target) return;
+
+      if ( cur < target ) {
         uint8_t delta = target - cur;
         if (amount < delta) {
           //delta = scale8_video(delta, amount);
@@ -176,6 +184,7 @@ class ezBlasterShot : public ezPattern
           cur = target;
       }
     }
+
   public:
     ezBlasterShot(CRGB initialColor, CRGB endColor, uint8_t speed = 6, callback_function callback = 0) {
       initialize(initialColor, endColor);
@@ -184,7 +193,7 @@ class ezBlasterShot : public ezPattern
       _blendSteps = max (speed, 1);
     }
     ~ezBlasterShot() {
-        _callbackPtr = 0;
+      _callbackPtr = 0;
     }
 
     void initialize(CRGB initialColor, CRGB endColor) {
@@ -204,7 +213,7 @@ class ezBlasterShot : public ezPattern
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) {
-            //Serial.println(F("BlasterShot - ending blaster shot"));
+          //Serial.println(F("BlasterShot - ending blaster shot"));
         }
         // fade to black
         if (checkShotBlended(leds, count)) {
@@ -224,10 +233,10 @@ class ezBlasterShot : public ezPattern
 };
 
 /**
- * Repeating blaster shot
- * 1. Flash Color
- * 2. Black out and repeat 6 times
- * 3. Fade to black after number of repitions
+ *  Repeating blaster shot
+ *  1. Flash Color
+ *  2. Black out and repeat 6 times
+ *  3. Fade to black after number of repitions
  */
 class ezBlasterRepeatingShot : public ezBlasterShot
 {
@@ -240,7 +249,7 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     bool blendingShot(CRGB *leds, uint8_t count) {
       return false;
     }
-   
+
     bool checkWhiteFlash(CRGB *leds, uint8_t count) {
       if (_activated == 4) {
         this->whiteflash(leds, count);
@@ -274,7 +283,7 @@ class ezBlasterRepeatingShot : public ezBlasterShot
       _frameRate = 5;
     }
     ~ezBlasterRepeatingShot() {
-        _callbackPtr = 0;
+      _callbackPtr = 0;
     }
 
     void activate(CRGB *leds, uint8_t count) {
@@ -290,13 +299,14 @@ class ezBlasterRepeatingShot : public ezBlasterShot
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) return;
-        
+
         // fade to black
         if (coolingShot(leds, count)) return;
 
         // strobe the flash
         checkWhiteFlash(leds, count);
       }
-    }};
+    }
+};
 
 #endif
