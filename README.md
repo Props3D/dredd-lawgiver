@@ -185,6 +185,7 @@ There's are number of libraries that you will need to install using the Arduino 
  2. FastLED
  3. VoiceRecognitionV3
  4. DFPlayerMini_Fast
+ 5. ezButton
 
 ### Installing U8g2 and required modifications
 The U8g2 library has a pretty large program foot print, so we need to make a number of changes to
