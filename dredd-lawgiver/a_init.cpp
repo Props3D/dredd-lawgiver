@@ -107,7 +107,7 @@ volatile uint8_t activateReload       = 0;                        // sets main l
 
 void setup() {
   //uncomment for debugging
-  //Serial.begin (115200);
+  Serial.begin (115200);
   //Serial.println(F("Starting setup"));
 
   // initialize the trigger led and set brightness
@@ -188,10 +188,10 @@ void mainLoop (void) {
   bool audioPlayed = !checkTriggerSwitch(true) ? checkReloadSwitch(true) : true;
   // Update the triggers LEDS in case they were activated. This should always be run in the main loop.
   //if (audioPlayed)   Serial.println(F("main - led update"));
-  fireLed.updateDisplay();
+  bool ledsUpdated = fireLed.updateDisplay();
 
   // check low ammo or voice commands if no audio was played
-  if (!audio.isBusy()) {
+  if (!audio.isBusy() && !ledsUpdated) {
     // check the low-ammo indicator
     if (activateLowAmmo) {
       // small delay so not to collide with ammo playback
