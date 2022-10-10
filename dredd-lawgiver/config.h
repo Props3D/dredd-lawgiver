@@ -19,12 +19,12 @@
 #define DISPLAY_USER_ID       "Dredd"
 
 // Pin configuration for voice recognition module
-#define VOICE_TX_PIN          3
-#define VOICE_RX_PIN          2
+#define VOICE_TX_PIN          2
+#define VOICE_RX_PIN          3
 
 // Pin configuration for MP3 Player
-#define AUDIO_TX_PIN          5
-#define AUDIO_RX_PIN          4
+#define AUDIO_TX_PIN          4
+#define AUDIO_RX_PIN          5
 
 // Pin Configuration for 3mm LEDs
 #define GREEN_LED_PIN         6
