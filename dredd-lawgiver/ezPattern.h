@@ -54,6 +54,9 @@ class ezPattern {
       fadeToBlackBy(leds, count, _fadeRate);
     }
   public:
+    bool isActivated(void) volatile {
+      return _activated > 0;
+    }
     virtual void activate(CRGB *leds, uint8_t count) = 0;
     virtual bool updateDisplay(CRGB *leds, uint8_t count) = 0;
     virtual ~ezPattern() = default;
@@ -317,7 +320,6 @@ class ezBlasterRepeatingShot : public ezBlasterShot
         // strobe the flash
         if (checkWhiteFlash(leds, count)) {
           //Serial.println(F("flash"));
-          return true;
         }
       }
       return _activated > 0;

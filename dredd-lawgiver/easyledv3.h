@@ -95,6 +95,15 @@ class EasyLedv3
     }
 
     /**
+     *
+     */    
+    bool isActivated(void) {
+      if (pattern)
+        return pattern->isActivated();
+      return false;
+    }
+
+    /**
      * Sets the pattern to activate the leds. Expects an instance of ezPattern.
      * See ezPattern for classes.
      */
