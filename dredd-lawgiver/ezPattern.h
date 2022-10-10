@@ -55,7 +55,7 @@ class ezPattern {
     }
   public:
     virtual void activate(CRGB *leds, uint8_t count) = 0;
-    virtual void updateDisplay(CRGB *leds, uint8_t count) = 0;
+    virtual bool updateDisplay(CRGB *leds, uint8_t count) = 0;
     virtual ~ezPattern() = default;
 };
 
@@ -209,26 +209,32 @@ class ezBlasterShot : public ezPattern
       this->whiteflash(leds, count);
     }
 
-    void updateDisplay(CRGB *leds, uint8_t count) {
+    bool updateDisplay(CRGB *leds, uint8_t count) {
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) {
           //Serial.println(F("BlasterShot - ending blaster shot"));
+          return true;
         }
         // fade to black
         if (checkShotBlended(leds, count)) {
           //Serial.println(F("BlasterShot - fade to black on blaster shot"));
+          return true;
         }
         if (coolingShot(leds, count)) {
           //Serial.println(F("BlasterShot - Cooling off blaster shot"));
+          return true;
         }
         if (blendingShot(leds, count)) {
           //Serial.println(F("BlasterShot - blending colors on blaster shot"));
+          return true;
         }
         if (checkWhiteFlash(leds, count)) {
           //Serial.println(F("BlasterShot - checking white flash"));
+          return true;
         }
       }
+      return _activated > 0;
     }
 };
 
@@ -253,7 +259,6 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     bool checkWhiteFlash(CRGB *leds, uint8_t count) {
       if (_activated == 4) {
         this->whiteflash(leds, count);
-        _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
         _activated = 3;   // hold the flash
         return true;
       }
@@ -279,8 +284,8 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     ezBlasterRepeatingShot(uint8_t reps = 8, uint8_t speed = 6, callback_function callback = 0) : ezBlasterRepeatingShot(CRGB::White, reps, speed, callback) {}
     ezBlasterRepeatingShot(CRGB initialColor, uint8_t reps = 8, uint8_t speed = 6, callback_function callback = 0) : _maxRepetitions(reps), ezBlasterShot(initialColor, CRGB::Black, speed, callback) {
       _repetitions = _maxRepetitions;
-      _flashDuration = 25;
-      _frameRate = 5;
+      _flashDuration = 59;
+      _frameRate = 60;
     }
     ~ezBlasterRepeatingShot() {
       _callbackPtr = 0;
@@ -295,17 +300,27 @@ class ezBlasterRepeatingShot : public ezBlasterShot
       _activated = 4;    // start with white flash and hold
     }
 
-    void updateDisplay(CRGB *leds, uint8_t count) {
+    bool updateDisplay(CRGB *leds, uint8_t count) {
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
-        if (checkShotCooled(leds, count)) return;
+        if (checkShotCooled(leds, count)) {
+          //Serial.println(F("cooled"));
+          return true;
+        }
 
         // fade to black
-        if (coolingShot(leds, count)) return;
+        if (coolingShot(leds, count)) {
+          //Serial.println(F("cooling"));
+          return true;
+        }
 
         // strobe the flash
-        checkWhiteFlash(leds, count);
+        if (checkWhiteFlash(leds, count)) {
+          //Serial.println(F("flash"));
+          return true;
+        }
       }
+      return _activated > 0;
     }
 };
 

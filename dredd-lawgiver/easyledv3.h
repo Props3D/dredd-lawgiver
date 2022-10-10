@@ -111,13 +111,14 @@ class EasyLedv3
      * This should be called in the main program loop().
      * The call is a proxy to the ezPattern, if one has been provided.
      */
-    void updateDisplay() {
+    bool updateDisplay() {
 #ifdef ENABLE_EASY_LED
       if(LED_COUNT > 0 && LED_PIN_IN > 0) {
         if (pattern)
-          pattern->updateDisplay(leds, LED_COUNT);
+          return pattern->updateDisplay(leds, LED_COUNT);
       }
 #endif
+      return false;
     }
 };
 

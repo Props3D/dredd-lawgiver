@@ -42,7 +42,7 @@ class EasyOLED
 #ifdef ENABLE_EASY_OLED
       //Serial.println(F("Initializing OLED display"));
       u8g2.begin();
-      //u8g2.setBusClock(8000000);
+      u8g2.setBusClock(8000000);
       _ammoSelection = ammoSelection;
       memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
 #endif
@@ -101,7 +101,7 @@ class EasyOLED
 
     // See the instructions for optimizing the U8g2 lib.
     U8G2_SH1122_256X64_2_4W_SW_SPI u8g2;
-    
+
     String _name;                 // custom badge name to display 
     uint8_t _displayMode = 0;     // tracking display modes during start up
     uint8_t _progressBar = 0;     // tracking progress during startup sequence
