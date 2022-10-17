@@ -405,3 +405,65 @@ plenty of room on the micro SD card.
 * Primary: Brass
 * Primary: Copper (only rings)
 * Top Coat: Satin
+
+# Assemboly Guide.. in pictures!
+
+## Starting point
+
+Frame is glued together, electroincs are all soldered to match pictures above
+
+### Trigger and Slide
+
+![LG_Step1](https://user-images.githubusercontent.com/20442880/196279413-60152049-8a6d-462f-b81f-47b944fbeab5.jpg)
+Electronics should be assembled like this to start with the wires pointed in the right directions.
+
+[Missing Pic]
+
+
+![LG_Step2](https://user-images.githubusercontent.com/20442880/196279475-bf098457-bbd0-4762-a779-ebbfc948f254.jpg)
+
+![LG_Step3](https://user-images.githubusercontent.com/20442880/196279484-70b334ed-8c8d-4809-ba20-10b8ec95b6df.jpg)
+
+![LG_Step4](https://user-images.githubusercontent.com/20442880/196279491-763904b5-ecd6-4eea-91b5-38bd421a6da4.jpg)
+
+![LG_Step5](https://user-images.githubusercontent.com/20442880/196279511-3aed9056-4a88-45d4-b7f4-d97b02eb8757.jpg)
+
+![LG_Step6](https://user-images.githubusercontent.com/20442880/196279520-6bb6bf6a-2743-4e9e-878c-f45238204b80.jpg)
+
+![LG_Step7](https://user-images.githubusercontent.com/20442880/196279597-f21bc211-8902-4b05-b9d2-e8e8d3c06d38.jpg)
+
+![LG_Step8](https://user-images.githubusercontent.com/20442880/196279599-d74576ed-862d-4ba0-9c21-247a0e06c90d.jpg)
+
+![LG_Step9](https://user-images.githubusercontent.com/20442880/196279611-ed20744c-dce2-49d1-99fe-6d80b63c2d11.jpg)
+
+![LG_Step10](https://user-images.githubusercontent.com/20442880/196279623-3a0071e1-c046-467c-90d6-d7fb49cb1fc7.jpg)
+
+### Frame
+
+![LG_Step11](https://user-images.githubusercontent.com/20442880/196279638-08123cd0-4616-40af-b7b6-eb6b7ad3b332.jpg)
+
+![LG_Step12](https://user-images.githubusercontent.com/20442880/196279648-1ea2ebc0-e4eb-4fc1-ab01-7054f0f230ea.jpg)
+
+![LG_Step13](https://user-images.githubusercontent.com/20442880/196279665-d45f6cdb-3d59-4bd4-b277-31d295a04dbb.jpg)
+
+![LG_Step14](https://user-images.githubusercontent.com/20442880/196279677-5009878e-e5ef-4e2d-bd3a-6ba9c0b35423.jpg)
+
+![LG_Step15](https://user-images.githubusercontent.com/20442880/196279692-4c1c08ed-1bc2-40d6-b79a-8ed7f75ce7eb.jpg)
+
+![LG_Step16](https://user-images.githubusercontent.com/20442880/196279837-b7048846-bba5-4a45-8f73-770109802519.jpg)
+
+![LG_Step17](https://user-images.githubusercontent.com/20442880/196279856-de1ef46e-685b-45bb-b61b-611412197852.jpg)
+
+![LG_Step18](https://user-images.githubusercontent.com/20442880/196279880-f39dc6b2-aef1-48db-a718-e30744a5e86d.jpg)
+
+![LG_Step19](https://user-images.githubusercontent.com/20442880/196279891-c8a76552-23bb-484b-8f2a-375f385978e1.jpg)
+
+
+
+
+
+
+
+
+
+
