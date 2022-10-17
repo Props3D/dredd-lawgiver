@@ -452,4 +452,11 @@ Electronics should be assembled like this to start with the wires pointed in the
 
 ![LG_Step16](https://user-images.githubusercontent.com/20442880/196280169-535342fc-f709-4284-8c2f-2c1b5aff847a.jpg)
 
+![LG_Step17](https://user-images.githubusercontent.com/20442880/196280613-0055ba7e-8af7-4963-b0c3-c2fe9102345c.jpg)
 
+
+![LG_Step18](https://user-images.githubusercontent.com/20442880/196280628-aa26e852-b159-4734-8be4-81c38d659c87.jpg)
+
+![LG_Step19](https://user-images.githubusercontent.com/20442880/196280642-757f8cca-5d03-4dbc-be3f-10f44ab87e9c.jpg)
+
+	
