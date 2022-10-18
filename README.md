@@ -417,9 +417,11 @@ Frame is glued together, electroincs are all soldered to match pictures above
 ![LG_Step1](https://user-images.githubusercontent.com/20442880/196564153-5ec250d0-eb9f-47a6-9544-e89d9462d154.jpg)
 
 Attach all the electronics module to the caddy in the following configuration. The MP3 and Amp are attached with double sided tape
-	
+
+![LG_Step2](https://user-images.githubusercontent.com/20442880/196565141-8753ac42-8c2c-46cf-b68f-a2590719912c.jpg)
 
 Screw the two caddy sides together
+
 ![LG_Step3](https://user-images.githubusercontent.com/20442880/196564199-51e519db-85a8-4f7e-8e12-b7436237ec56.jpg)
 
 Insert the 4mm pin in the trigger and the switch as shown
@@ -536,11 +538,6 @@ Trigger and switch are ready to go!
 ![LG_Step37](https://user-images.githubusercontent.com/20442880/196564343-b9353c47-3593-4ab1-8736-55fac854fb98.jpg)
 
 
+![LG_Step38](https://user-images.githubusercontent.com/20442880/196565099-841eaea2-8698-4c2e-b920-a38607931bf6.jpg)
 
-
-
-	
-	
-	
-
-	
+Now go serve some justice!
