@@ -414,37 +414,70 @@ Frame is glued together, electroincs are all soldered to match pictures above
 
 ### Trigger and Slide
 
-a
+![LG_Step1](https://user-images.githubusercontent.com/20442880/196564153-5ec250d0-eb9f-47a6-9544-e89d9462d154.jpg)
+Attach all the electronics module to the caddy in the following configuration. The MP3 and Amp are attached with double sided tape
+	
+![LG_Step2](https://user-images.githubusercontent.com/20442880/196564159-de889056-3ae4-4a0f-bd05-b392053205b9.jpg)
+Screw the two caddy sides together
+![LG_Step3](https://user-images.githubusercontent.com/20442880/196564199-51e519db-85a8-4f7e-8e12-b7436237ec56.jpg)
+Insert the 4mm pin in the trigger and the switch as shown
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+![LG_Step4](https://user-images.githubusercontent.com/20442880/196564203-29632847-f151-4251-b1c7-d1f50001c898.jpg)
+Screw the two haves of the trigger group together
+
+![LG_Step5](https://user-images.githubusercontent.com/20442880/196564206-8b3ed467-11e6-4adc-a2cf-a323d205048e.jpg)
+These are the parts for the slide
+
+![LG_Step6](https://user-images.githubusercontent.com/20442880/196564212-4d36176d-8ce5-41d6-b623-3488231ffb0b.jpg)
+Drill the switch holes out with a 3mm bit
+
+![LG_Step7](https://user-images.githubusercontent.com/20442880/196564219-01b123f6-1fde-4243-b8b3-7f7209f41657.jpg)
+The switch should stick out like this, you may want to give it a teeny bend to make it more clicky
+
+![LG_Step8](https://user-images.githubusercontent.com/20442880/196564222-4f999ad6-aaf3-44b8-94a4-6294cf43f24a.jpg)
+Insert the spring between the two posts, you may have to take some loops off, make sure theres enough tension that the it stays all the way closed when the switch is in
+
+![LG_Step9](https://user-images.githubusercontent.com/20442880/196564232-62a43886-c756-4ae1-9766-3a7762f906c7.jpg)
+Insert the guide rods
+
+![LG_Step10](https://user-images.githubusercontent.com/20442880/196564255-c0b30643-8ce8-4805-ba54-be9a4f1c2760.jpg)
+Trigger and switch are ready to go!
+
 ### Frame
+
+![LG_Step11](https://user-images.githubusercontent.com/20442880/196564260-5beaa1b6-c257-4ca5-bf29-d92c0e69162e.jpg)
+![LG_Step12](https://user-images.githubusercontent.com/20442880/196564263-616b7b00-113e-4b5b-ab02-bd36c8f2605e.jpg)
+![LG_Step13](https://user-images.githubusercontent.com/20442880/196564265-05006993-11f8-423d-9019-9f65ac0833d1.jpg)
+![LG_Step14](https://user-images.githubusercontent.com/20442880/196564269-de4ac069-c725-44fa-ae19-624f80bbf0a8.jpg)
+![LG_Step15](https://user-images.githubusercontent.com/20442880/196564274-22408612-e498-4342-8a33-d5e79714fb6d.jpg)
+![LG_Step16](https://user-images.githubusercontent.com/20442880/196564278-0bb40b84-3432-4f3b-879b-cfacf3010723.jpg)
+![LG_Step17](https://user-images.githubusercontent.com/20442880/196564282-2e95096e-9695-4197-a55d-de4c424da65e.jpg)
+![LG_Step18](https://user-images.githubusercontent.com/20442880/196564285-ccf0bdd9-ca96-436f-ab4b-3017f1cb9437.jpg)
+![LG_Step19](https://user-images.githubusercontent.com/20442880/196564288-53e39f27-9f6b-4efe-8d5e-97c3d727d782.jpg)
+![LG_Step20](https://user-images.githubusercontent.com/20442880/196564293-d903937d-2d7d-4314-9288-b51091454b69.jpg)
+![LG_Step21](https://user-images.githubusercontent.com/20442880/196564298-9fd850ec-77dc-4a9c-89a2-4ff702a8185b.jpg)
+![LG_Step22](https://user-images.githubusercontent.com/20442880/196564306-5b2a807c-1489-41ec-9904-0ec74f85abc9.jpg)
+![LG_Step23](https://user-images.githubusercontent.com/20442880/196564318-0b4c62a4-f322-4aa9-859a-c2db04031d38.jpg)
+![LG_Step24](https://user-images.githubusercontent.com/20442880/196564320-5df52ffe-d69b-4f3f-95da-2ebba460adde.jpg)
+![LG_Step25](https://user-images.githubusercontent.com/20442880/196564321-8779a3f4-80e0-409d-bee6-2af271367c50.jpg)
+![LG_Step26](https://user-images.githubusercontent.com/20442880/196564322-2e080d83-e1b8-41d2-8ab9-d1e46b868c61.jpg)
+![LG_Step27](https://user-images.githubusercontent.com/20442880/196564323-1de1dbba-1256-480b-a71d-9e43f3aeb2d7.jpg)
+![LG_Step28](https://user-images.githubusercontent.com/20442880/196564325-0e41367c-737a-4ed3-ab5c-5373dfaeaa6f.jpg)
+![LG_Step29](https://user-images.githubusercontent.com/20442880/196564327-b67882a7-925a-43cb-8ddf-3703b684bd52.jpg)
+![LG_Step30](https://user-images.githubusercontent.com/20442880/196564329-ceb0f94d-dfe4-4a43-b58a-d835e1df2d4f.jpg)
+![LG_Step31](https://user-images.githubusercontent.com/20442880/196564332-dddbacf1-6372-4f5c-9dde-2650f7906dc3.jpg)
+![LG_Step32](https://user-images.githubusercontent.com/20442880/196564333-baca1f45-2f62-4077-bb66-59db9f5b0d8c.jpg)
+![LG_Step33](https://user-images.githubusercontent.com/20442880/196564336-f23ad3cd-d413-42cb-aa76-398fe242a35b.jpg)
+
+### Magazine
+
+![LG_Step34](https://user-images.githubusercontent.com/20442880/196564337-3badb33b-a166-4ee1-af9e-720dcdc1c8bc.jpg)
+![LG_Step35](https://user-images.githubusercontent.com/20442880/196564339-f074fa33-d669-46df-b713-82617045e031.jpg)
+![LG_Step36](https://user-images.githubusercontent.com/20442880/196564342-d5d5ff95-33c0-4b0a-b3af-babef59327bd.jpg)
+![LG_Step37](https://user-images.githubusercontent.com/20442880/196564343-b9353c47-3593-4ab1-8736-55fac854fb98.jpg)
+![LG_Step38](https://user-images.githubusercontent.com/20442880/196564344-d73c5d94-1cdd-475b-8094-9fc4269b6e8c.jpg)
+
+
 
 
 	
