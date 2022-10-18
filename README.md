@@ -457,86 +457,87 @@ Trigger and switch are ready to go!
 ### Frame
 
 ![LG_Step11](https://user-images.githubusercontent.com/20442880/196564260-5beaa1b6-c257-4ca5-bf29-d92c0e69162e.jpg)
-
+SCrew the LED in, you may have to sand the edge of the LED since some of them have bits that stick out from manufacturing
 
 ![LG_Step12](https://user-images.githubusercontent.com/20442880/196564263-616b7b00-113e-4b5b-ab02-bd36c8f2605e.jpg)
-
+Insert the LEDs like this, make sure they'll clear the channel for the OLED retainer
 
 ![LG_Step13](https://user-images.githubusercontent.com/20442880/196564265-05006993-11f8-423d-9019-9f65ac0833d1.jpg)
-
+You'll have to rock the switch in place to fit, it's very tight for a reason. Insert it from the front and snap it past the two posts, the edges are rounded for this reason. After screw it in place.
 
 ![LG_Step14](https://user-images.githubusercontent.com/20442880/196564269-de4ac069-c725-44fa-ae19-624f80bbf0a8.jpg)
-
+Inser the OLED and the OLED retainer, make sure the wires don't get caught when you slip it in. It's tight!
 
 ![LG_Step15](https://user-images.githubusercontent.com/20442880/196564274-22408612-e498-4342-8a33-d5e79714fb6d.jpg)
-
+View from the other side
 
 ![LG_Step16](https://user-images.githubusercontent.com/20442880/196564278-0bb40b84-3432-4f3b-879b-cfacf3010723.jpg)
-
+Inser the spring and the magazine catch
 
 ![LG_Step17](https://user-images.githubusercontent.com/20442880/196564282-2e95096e-9695-4197-a55d-de4c424da65e.jpg)
-
+Rotate the release pin for the catch and insert the stopper in the hole to prevent the release from getting stuck.
 
 ![LG_Step18](https://user-images.githubusercontent.com/20442880/196564285-ccf0bdd9-ca96-436f-ab4b-3017f1cb9437.jpg)
-
+Inser the 25mm lens into the barrel and the lens holder beside it, make sure the slot lines up
 
 ![LG_Step19](https://user-images.githubusercontent.com/20442880/196564288-53e39f27-9f6b-4efe-8d5e-97c3d727d782.jpg)
-
+Power switch clicks into place, make sure on is forward.
 
 ![LG_Step20](https://user-images.githubusercontent.com/20442880/196564293-d903937d-2d7d-4314-9288-b51091454b69.jpg)
-
+Solder the power to the switch AFTER it's in place, I also put double tape on the buck converter to keep it in place.
 
 ![LG_Step21](https://user-images.githubusercontent.com/20442880/196564298-9fd850ec-77dc-4a9c-89a2-4ff702a8185b.jpg)
-
+Insert the battery this way up, it does go the other way but you won't have easy access to the charge port.
 
 ![LG_Step22](https://user-images.githubusercontent.com/20442880/196564306-5b2a807c-1489-41ec-9904-0ec74f85abc9.jpg)
-
+Easy charge port access, you can screw the heel on now.
 
 ![LG_Step23](https://user-images.githubusercontent.com/20442880/196564318-0b4c62a4-f322-4aa9-859a-c2db04031d38.jpg)
-
+These 4 wires go through teh channel on the cocking mechanism and through this small channel, don't pinch anything! If the cocking mechanism isn't flush you have a pinched wire.
 
 ![LG_Step24](https://user-images.githubusercontent.com/20442880/196564320-5df52ffe-d69b-4f3f-95da-2ebba460adde.jpg)
-
+All flush and snug don't force it unless you like resoldering ripped wires!
 
 ![LG_Step25](https://user-images.githubusercontent.com/20442880/196564321-8779a3f4-80e0-409d-bee6-2af271367c50.jpg)
-
+Take the two havles of the caddy apart to connect the fire LED data wire, put it back together after
 
 ![LG_Step26](https://user-images.githubusercontent.com/20442880/196564322-2e080d83-e1b8-41d2-8ab9-d1e46b868c61.jpg)
-
+Plug all the wires into the distrubution box and give it a whirl. This is your last chance to test it!
 
 ![LG_Step27](https://user-images.githubusercontent.com/20442880/196564323-1de1dbba-1256-480b-a71d-9e43f3aeb2d7.jpg)
-
+The OLED connector goes here, stuffing it anywhere else will jam the top
 
 ![LG_Step28](https://user-images.githubusercontent.com/20442880/196564325-0e41367c-737a-4ed3-ab5c-5373dfaeaa6f.jpg)
-
+See? Nice and snug
 
 ![LG_Step29](https://user-images.githubusercontent.com/20442880/196564327-b67882a7-925a-43cb-8ddf-3703b684bd52.jpg)
-
+Inser the barrel and make sure the holes line up really well
 
 ![LG_Step30](https://user-images.githubusercontent.com/20442880/196564329-ceb0f94d-dfe4-4a43-b58a-d835e1df2d4f.jpg)
-
+Put the front cover on and screw it together
 
 ![LG_Step31](https://user-images.githubusercontent.com/20442880/196564332-dddbacf1-6372-4f5c-9dde-2650f7906dc3.jpg)
-
+Lining this little hole up from the top cover to the frame is important
 
 ![LG_Step32](https://user-images.githubusercontent.com/20442880/196564333-baca1f45-2f62-4077-bb66-59db9f5b0d8c.jpg)
-
+Screw it loosly and slip the rear cover in place.
 
 ![LG_Step33](https://user-images.githubusercontent.com/20442880/196564336-f23ad3cd-d413-42cb-aa76-398fe242a35b.jpg)
+And screw it all down
 
 ### Magazine
 
 ![LG_Step34](https://user-images.githubusercontent.com/20442880/196564337-3badb33b-a166-4ee1-af9e-720dcdc1c8bc.jpg)
-
+I will update this pic later, bullets go the other way up!, but just rest it here lightly to start
 
 ![LG_Step35](https://user-images.githubusercontent.com/20442880/196564339-f074fa33-d669-46df-b713-82617045e031.jpg)
-
+Insert the side panel holder and the side panels then slide them all down as one unit. I had to 'slide it' with a small mallet.
 
 ![LG_Step36](https://user-images.githubusercontent.com/20442880/196564342-d5d5ff95-33c0-4b0a-b3af-babef59327bd.jpg)
-
+Needs to be totally flush on top or the mag won't insert!
 
 ![LG_Step37](https://user-images.githubusercontent.com/20442880/196564343-b9353c47-3593-4ab1-8736-55fac854fb98.jpg)
-
+Pretty!
 
 ![LG_Step38](https://user-images.githubusercontent.com/20442880/196565099-841eaea2-8698-4c2e-b920-a38607931bf6.jpg)
 
