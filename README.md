@@ -414,49 +414,41 @@ Frame is glued together, electroincs are all soldered to match pictures above
 
 ### Trigger and Slide
 
-![LG_Step1](https://user-images.githubusercontent.com/20442880/196279413-60152049-8a6d-462f-b81f-47b944fbeab5.jpg)
-Electronics should be assembled like this to start with the wires pointed in the right directions.
+a
 
-[Missing Pic]
-
-
-![LG_Step2](https://user-images.githubusercontent.com/20442880/196279475-bf098457-bbd0-4762-a779-ebbfc948f254.jpg)
-
-![LG_Step3](https://user-images.githubusercontent.com/20442880/196279484-70b334ed-8c8d-4809-ba20-10b8ec95b6df.jpg)
-
-![LG_Step4](https://user-images.githubusercontent.com/20442880/196279491-763904b5-ecd6-4eea-91b5-38bd421a6da4.jpg)
-
-![LG_Step5](https://user-images.githubusercontent.com/20442880/196279511-3aed9056-4a88-45d4-b7f4-d97b02eb8757.jpg)
-
-![LG_Step6](https://user-images.githubusercontent.com/20442880/196279520-6bb6bf6a-2743-4e9e-878c-f45238204b80.jpg)
-
-![LG_Step7](https://user-images.githubusercontent.com/20442880/196279597-f21bc211-8902-4b05-b9d2-e8e8d3c06d38.jpg)
-
-![LG_Step8](https://user-images.githubusercontent.com/20442880/196279599-d74576ed-862d-4ba0-9c21-247a0e06c90d.jpg)
-
-![LG_Step9](https://user-images.githubusercontent.com/20442880/196279611-ed20744c-dce2-49d1-99fe-6d80b63c2d11.jpg)
-
-![LG_Step10](https://user-images.githubusercontent.com/20442880/196279623-3a0071e1-c046-467c-90d6-d7fb49cb1fc7.jpg)
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 ### Frame
 
-![LG_Step11](https://user-images.githubusercontent.com/20442880/196279638-08123cd0-4616-40af-b7b6-eb6b7ad3b332.jpg)
 
-![LG_Step12](https://user-images.githubusercontent.com/20442880/196279648-1ea2ebc0-e4eb-4fc1-ab01-7054f0f230ea.jpg)
-
-![LG_Step13](https://user-images.githubusercontent.com/20442880/196279665-d45f6cdb-3d59-4bd4-b277-31d295a04dbb.jpg)
-
-![LG_Step14](https://user-images.githubusercontent.com/20442880/196279677-5009878e-e5ef-4e2d-bd3a-6ba9c0b35423.jpg)
-
-![LG_Step15](https://user-images.githubusercontent.com/20442880/196279692-4c1c08ed-1bc2-40d6-b79a-8ed7f75ce7eb.jpg)
-
-![LG_Step16](https://user-images.githubusercontent.com/20442880/196280169-535342fc-f709-4284-8c2f-2c1b5aff847a.jpg)
-
-![LG_Step17](https://user-images.githubusercontent.com/20442880/196280613-0055ba7e-8af7-4963-b0c3-c2fe9102345c.jpg)
-
-
-![LG_Step18](https://user-images.githubusercontent.com/20442880/196280628-aa26e852-b159-4734-8be4-81c38d659c87.jpg)
-
-![LG_Step19](https://user-images.githubusercontent.com/20442880/196280642-757f8cca-5d03-4dbc-be3f-10f44ab87e9c.jpg)
+	
+	
+	
 
 	
