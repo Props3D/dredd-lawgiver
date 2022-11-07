@@ -406,7 +406,7 @@ plenty of room on the micro SD card.
 * Primary: Copper (only rings)
 * Top Coat: Satin
 
-# Assemboly Guide.. in pictures!
+# Assembly Guide.. in pictures!
 
 ## Starting point
 
