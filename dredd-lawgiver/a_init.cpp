@@ -30,10 +30,10 @@ EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> o
 // VR module
 EasyVoice<VOICE_CMD_ARR, VOICE_CMD_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
 // Counters for each firing mode
-EasyCounter apCounter("ap");
-EasyCounter inCounter("in");
-EasyCounter heCounter("he");
-EasyCounter fmjCounter("fmj");
+EasyCounter apCounter;
+EasyCounter inCounter;
+EasyCounter heCounter;
+EasyCounter fmjCounter;
 
 EasyButton trigger(TRIGGER_PIN, true);
 EasyButton reload(RELOAD_PIN, true);
@@ -120,10 +120,10 @@ void setup() {
   initLedIndicators();
 
   // Initialize the ammo counters for different modes
-  apCounter.begin(0, 25, COUNTER_MODE_DOWN);
-  inCounter.begin(0, 25, COUNTER_MODE_DOWN);
-  heCounter.begin(0, 25, COUNTER_MODE_DOWN);
-  fmjCounter.begin(0, 50, COUNTER_MODE_DOWN);
+  apCounter.begin(0, 25, EasyCounter::COUNTER_MODE_DOWN);
+  inCounter.begin(0, 25, EasyCounter::COUNTER_MODE_DOWN);
+  heCounter.begin(0, 25, EasyCounter::COUNTER_MODE_DOWN);
+  fmjCounter.begin(0, 50, EasyCounter::COUNTER_MODE_DOWN);
 
   // init the voice recognition module
   voice.begin();
@@ -222,12 +222,12 @@ bool checkTriggerSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
   // check if a trigger is pressed.
-  if (buttonStateFire == BUTTON_SHORT_PRESS) {
+  if (buttonStateFire == EasyButton::BUTTON_PRESSED) {
     handleAmmoDown();
     return true;
   }
   // Long press for change mode
-  if (buttonStateFire == BUTTON_LONG_PRESS) {
+  if (buttonStateFire == EasyButton::BUTTON_LONG_PRESS) {
     setNextAmmoMode();
     return true;
   }
@@ -242,7 +242,7 @@ bool checkReloadSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = reload.checkState();
   // check if a trigger is pressed.
-  if (buttonStateFire == BUTTON_SHORT_PRESS || buttonStateFire == BUTTON_LONG_PRESS) {
+  if (buttonStateFire == EasyButton::BUTTON_SHORT_PRESS || buttonStateFire == EasyButton::BUTTON_LONG_PRESS) {
     reloadAmmo();
     return true;
   }

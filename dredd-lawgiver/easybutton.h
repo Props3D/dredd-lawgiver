@@ -4,22 +4,15 @@
 #include <Arduino.h>
 #include <ezButton.h>
 
-const static int BUTTON_NOT_PRESSED  = 0;
-const static int BUTTON_SHORT_PRESS  = 1;
-const static int BUTTON_HOLD_PRESS   = 2;
-const static int BUTTON_LONG_PRESS   = 3;
-
-static const uint8_t   SHORT_PRESS_TIME = 200;  // 200 milliseconds
-static const uint16_t  LONG_PRESS_TIME  = 2000; // 2 seconds
-
 /**
  * Use EasyButton to track state on a specific pin.
  * It uses the onboard resistor (INPUT_PULL).
  * Supports tracking following conditions:
  *   BUTTON_NOT_PRESSED - no state change
+ *   BUTTON_PRESSED - initial state change
  *   BUTTON_SHORT_PRESS - Short Press on release
  *   BUTTON_LONG_PRESS - Long Press on release
- *   BUTTON_HOLD_PRESS - Press and Hold
+ *   BUTTON_HOLD_PRESS - Pressed and Hold
  * eg. EasyButton selectorOnPin8(8);
  *
  * Call the begin() function in the setup to initilize the pin mode, and set a debouce value.
@@ -41,7 +34,16 @@ class EasyButton
     bool isLongDetected = false;
 
   public:
-#ifdef ENABLE_EASY_BUTTON
+
+    static const PROGMEM int BUTTON_NOT_PRESSED = 0;
+    static const PROGMEM int BUTTON_PRESSED     = 1;
+    static const PROGMEM int BUTTON_SHORT_PRESS = 2;
+    static const PROGMEM int BUTTON_HOLD_PRESS  = 3;
+    static const PROGMEM int BUTTON_LONG_PRESS  = 4;
+
+    static const PROGMEM uint16_t  LONG_PRESS_TIME PROGMEM  = 2000; // 2 seconds
+
+#if ENABLE_EASY_BUTTON == 1
     EasyButton(uint8_t pin, bool signalOnRelease = true) : button(pin) {
       longPressOnRelease = signalOnRelease;
       button.setDebounceTime(50); // set debounce time to 50 milliseconds
@@ -58,9 +60,10 @@ class EasyButton
     }
 
     int checkState() {
-#ifdef ENABLE_EASY_BUTTON
+#if ENABLE_EASY_BUTTON == 1
       button.loop(); // MUST call the loop() function first
-    
+      // track previous state to capture initial press
+      bool wasPressed = isPressing;
       if(button.isPressed()){
         //Serial.println(F("button pressed"));
         pressedTime = millis();
@@ -105,14 +108,11 @@ class EasyButton
         }
       }
 
-      // held down
+      // initial press or button held down
       if (isPressing) {
-        long pressDuration = millis() - pressedTime;
-        // looping is fast, so release may not be detected
-        if (pressDuration > 500) {
-          //Serial.println(F("Button press held");
-          return BUTTON_HOLD_PRESS;
-        }
+        if (!wasPressed)
+          return BUTTON_PRESSED;
+        return BUTTON_HOLD_PRESS;
       }
 #endif
       // nothing happening
