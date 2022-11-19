@@ -1,7 +1,9 @@
 #ifndef easyoled_h
 #define easyoled_h
 
+#if ENABLE_EASY_OLED == 1
 #include <U8g2lib.h>
+#endif
 
 /**
  * A simple class for managing an LED display. It's mainly based on
@@ -22,16 +24,20 @@ template <int CL_PIN, int DA_PIN, int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED
 {
   public:
-    const static uint8_t DISPLAY_LOGO       = 1;
-    const static uint8_t DISPLAY_COMM_CHK   = 2;
-    const static uint8_t DISPLAY_DNA_CHK    = 3;
-    const static uint8_t DISPLAY_DNA_PRG    = 4;
-    const static uint8_t DISPLAY_ID_OK      = 5;
-    const static uint8_t DISPLAY_ID_NAME    = 6;
-    const static uint8_t DISPLAY_MAIN       = 7;
-    const static uint8_t DISPLAY_ID_FAIL    = 8;
+    static const PROGMEM uint8_t DISPLAY_LOGO       = 1;
+    static const PROGMEM uint8_t DISPLAY_COMM_CHK   = 2;
+    static const PROGMEM uint8_t DISPLAY_DNA_CHK    = 3;
+    static const PROGMEM uint8_t DISPLAY_DNA_PRG    = 4;
+    static const PROGMEM uint8_t DISPLAY_ID_OK      = 5;
+    static const PROGMEM uint8_t DISPLAY_ID_NAME    = 6;
+    static const PROGMEM uint8_t DISPLAY_MAIN       = 7;
+    static const PROGMEM uint8_t DISPLAY_ID_FAIL    = 8;
 
-    EasyOLED(const char *name) : u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+    EasyOLED(const char *name) : 
+#if ENABLE_EASY_OLED == 1
+      u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+      //u8g2(U8G2_R2, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN),
+#endif
       _name(name) {
     }
 
@@ -39,7 +45,7 @@ class EasyOLED
      *  In the setup, initialize the display count and brightness.
      */
     void begin(int ammoSelection, uint8_t ammoCounts[]) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       //Serial.println(F("Initializing OLED display"));
       u8g2.begin();
       u8g2.setBusClock(8000000);
@@ -59,7 +65,7 @@ class EasyOLED
      * This needs to be called separately so the detection can be delayed after the shot.
      */
     void checkAmmoLevels() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       _ammoLow = (ammoCount < 5 && ammoCount > 0);
 #endif
@@ -100,7 +106,11 @@ class EasyOLED
     uint8_t _ammoIdx[8] = {0, 1, 1, 2, 3, 3, 3, 3};
 
     // See the instructions for optimizing the U8g2 lib.
+#if ENABLE_EASY_OLED == 1
     U8G2_SH1122_256X64_2_4W_SW_SPI u8g2;
+    //U8G2_SH1122_256X64_2_4W_HW_SPI u8g2;
+    //U8G2_SH1122_256X64_F_4W_HW_SPI u8g2;
+#endif
 
     String _name;                 // custom badge name to display 
     uint8_t _displayMode = 0;     // tracking display modes during start up
@@ -113,7 +123,7 @@ class EasyOLED
     char _buf[10];                // print buffer for ammo counts
 
     void drawDisplay(int displayMode, int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       u8g2.firstPage();
       do {
         switch (displayMode) {
@@ -152,7 +162,7 @@ class EasyOLED
     }
 
     void drawFiringMode() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       // check if ammo was low but got reset befeore drawing components
       if (_ammoLow) checkAmmoLevels();
       drawGrid();
@@ -163,7 +173,7 @@ class EasyOLED
     }
 
     void drawLogo() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       u8g2.setFont(u8g2_font_helvB18_tr);
       u8g2.setCursor(40, 42);
       u8g2.print(F("Props3D Pro"));
@@ -171,7 +181,7 @@ class EasyOLED
     }
 
     void drawProgress(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       if (progress > 0) {
         u8g2.drawBox(0, 0, progress , 7);
         u8g2.drawDisc(progress, 3, 3);
@@ -180,7 +190,7 @@ class EasyOLED
     }
 
     void drawCommOk(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
@@ -191,7 +201,7 @@ class EasyOLED
     }
 
     void drawDNACheck(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
@@ -202,7 +212,7 @@ class EasyOLED
     }
 
     void drawIDOk(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
@@ -217,7 +227,7 @@ class EasyOLED
     }
 
     void drawIDFail(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
@@ -232,7 +242,7 @@ class EasyOLED
     }
 
     void drawIDName(int progress) {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       drawProgress(progress);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(0, 42);
@@ -243,7 +253,7 @@ class EasyOLED
     }
 
     void drawGrid() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       //Battery-State
       u8g2.drawLine(200, 10, 204, 0);
       u8g2.drawLine(201, 10, 205, 0);
@@ -281,7 +291,7 @@ class EasyOLED
     }
 
     void drawAmmoField() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       // Standard
       u8g2.setFont(u8g2_font_helvB12_tr);
       u8g2.setDrawColor(1);
@@ -340,7 +350,7 @@ class EasyOLED
     }
 
     void drawAmmoMode() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);
       u8g2.setCursor(180, 42);
@@ -380,7 +390,7 @@ class EasyOLED
     }
 
     void drawAmmoName() {
-#ifdef ENABLE_EASY_OLED
+#if ENABLE_EASY_OLED == 1
       int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       u8g2.setDrawColor(1);
       u8g2.setFont(u8g2_font_helvB14_tr);

@@ -31,27 +31,43 @@ class ezPattern {
     unsigned long _flashTimer      = 0;     // time when the white flash started
 
     uint8_t _flashDuration              = 50;    // larger number will hold a white flash longer
-    static const uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
-    static const uint8_t _fadeRate      = 220;   // How fast to fade out tail. [0-255]
+    static const PROGMEM uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
+    static const PROGMEM uint8_t _fadeRate      = 220;   // How fast to fade out tail. [0-255]
 
     // fucntion declartions
     void show() {
+#if ENABLE_EASY_LED == 1
       FastLED.show();
+#endif
     }
     void clear(CRGB *leds, uint8_t count) {
+#if ENABLE_EASY_LED == 1
       fill_solid(leds, count, CRGB::Black);
+#endif
     }
     void completed(struct CRGB *leds, uint8_t count) {
+#if ENABLE_EASY_LED == 1
       clear(leds, count);
       if (_callbackPtr) _callbackPtr();
+#endif
     }
     void whiteflash(CRGB *leds, int count) {
+#if ENABLE_EASY_LED == 1
       _flashTimer = millis(); // capture the time for timing the flash
       fill_solid(leds, count, CRGB::White);
       show();
+#endif
+    }
+    void fill(CRGB *leds, int count, CRGB color) {
+#if ENABLE_EASY_LED == 1
+      fill_solid(leds, count, color);
+      show();
+#endif
     }
     void fadeToBlack(CRGB *leds, int count) {
+#if ENABLE_EASY_LED == 1
       fadeToBlackBy(leds, count, _fadeRate);
+#endif
     }
   public:
     bool isActivated(void) volatile {
@@ -74,7 +90,7 @@ class ezBlasterShot : public ezPattern
     CRGB _currentColor;  // color
     CRGB _startColor;    // starting color
     CRGB _targetColor;   // target color
-    const CRGB _coolOffColor = CRGB::Black;
+    PROGMEM const CRGB _coolOffColor = CRGB::Black;
 
     // processing variables
     uint8_t _blendRate     = 32;  // larger number will be a faster color blend
@@ -115,8 +131,7 @@ class ezBlasterShot : public ezPattern
     bool coolingShot(CRGB *leds, uint8_t count) {
       if (_activated == 1) {
         fadeTowardColor(_currentColor, _coolOffColor, _blendRate);
-        fill_solid(leds, count, _currentColor);
-        this->show();
+        this->fill(leds, count, _currentColor);
         return true;
       }
       return false;
@@ -125,8 +140,7 @@ class ezBlasterShot : public ezPattern
     bool blendingShot(CRGB *leds, uint8_t count) {
       if (_activated == 2) {
         fadeTowardColor(_currentColor, _targetColor, _blendRate);
-        fill_solid(leds, count, _currentColor);
-        this->show();
+        this->fill(leds, count, _currentColor);
         return true;
       }
       return false;

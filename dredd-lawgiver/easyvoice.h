@@ -1,7 +1,9 @@
 #ifndef easyvoice_h
 #define easyvoice_h
 
-#include "VoiceRecognitionV3.h"
+#if ENABLE_EASY_VOICE == 1
+#include <VoiceRecognitionV3.h>
+#endif 
 
 /**
  *  The voice recognition module is from Elechouse.
@@ -53,21 +55,28 @@ template <const uint8_t *RECORDS, const uint8_t RECORD_CNT>
 class EasyVoice
 {
   private:
+#if ENABLE_EASY_VOICE == 1
     VR _myVR;   // 6:RX 7:TX, you can choose your favourite pins.
+#endif
+
     uint8_t *_records = RECORDS;
     uint8_t _recordCnt = RECORD_CNT;
     uint8_t _buf[64];
 
   public:
+#if ENABLE_EASY_VOICE == 1
     EasyVoice(uint8_t rxPin, uint8_t txPin) : _myVR(rxPin, txPin) {
     };
+#else    
+    EasyVoice(uint8_t rxPin, uint8_t txPin) {}
+#endif
 
     /**
      *    Use this to initialize the module. Must be called in setup
      *    and before readComamand() is used.
      */
     void begin(void) {
-#ifdef ENABLE_EASY_VOICE
+#if ENABLE_EASY_VOICE == 1
       //Serial.println(F("setup voice"));
       // This can be changed using VR bridge command: 11 00
       _myVR.begin(9600);
@@ -92,7 +101,7 @@ class EasyVoice
      */
     int readCommand()
     {
-#ifdef ENABLE_EASY_VOICE
+#if ENABLE_EASY_VOICE == 1
       int ret = _myVR.recognize(_buf, 50);
       if (ret > 0) {
         return _buf[1];

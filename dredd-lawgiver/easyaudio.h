@@ -29,14 +29,14 @@ class EasyAudio
   private:
     SoftwareSerial mySerial;
     DFPlayerMini_Fast _player;
-    long lastPlaybackTime            = 0;
+    long lastPlaybackTime             = 0;
     const uint16_t _playbackDelay     = 100;
 
   public:
     EasyAudio(uint8_t rxPin, uint8_t txPin) : mySerial(rxPin, txPin) {};
 
     void begin(uint8_t vol) {
-#ifdef ENABLE_EASY_AUDIO
+#if ENABLE_EASY_AUDIO == 1
       //Serial.println(F("setup audio"));
       mySerial.begin(9600);
       _player.begin(mySerial, 100); //set Serial for DFPlayer-mini mp3 module 
@@ -54,14 +54,14 @@ class EasyAudio
     }
 
     void playTrack(uint8_t track) {
-#ifdef ENABLE_EASY_AUDIO
+#if ENABLE_EASY_AUDIO == 1
       lastPlaybackTime = millis();
       _player.playFromMP3Folder( track );
 #endif
     }
 
     void playTrack(uint8_t track, bool wait) {
-#ifdef ENABLE_EASY_AUDIO
+#if ENABLE_EASY_AUDIO == 1
       lastPlaybackTime = millis();
       _player.playFromMP3Folder( track );
       if (wait) delay(_playbackDelay);

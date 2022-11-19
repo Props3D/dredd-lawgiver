@@ -1,13 +1,6 @@
 #ifndef easycounter_h
 #define easycounter_h
 
-const static uint8_t STATE_ACTIVE      = 0;
-const static uint8_t STATE_EMPTY       = 1;
-const static uint8_t STATE_RESET       = 2;
-
-const static int COUNTER_MODE_UP    =  1;
-const static int COUNTER_MODE_DOWN  = -1;
-
 /**
  * Simple class for tracking counts up or down.
  * Use the constructor to set the min, max, and increment.
@@ -26,7 +19,6 @@ const static int COUNTER_MODE_DOWN  = -1;
 class EasyCounter
 {
   private:
-    String _name;
     int _increment = COUNTER_MODE_DOWN;
     int _low;
     int _high;
@@ -41,7 +33,14 @@ class EasyCounter
     void setCount(int value) { this->_currentCounter = value; }
     void setResetOnEmpty(bool value) { this->_resetOnEmpty = value; }
   public:
-    EasyCounter(const char *label) : _name(label) {}
+    static const PROGMEM uint8_t STATE_ACTIVE PROGMEM     = 0;
+    static const PROGMEM uint8_t STATE_EMPTY PROGMEM      = 1;
+    static const PROGMEM uint8_t STATE_RESET PROGMEM      = 2;
+
+    static const PROGMEM int COUNTER_MODE_UP PROGMEM   =  1;
+    static const PROGMEM int COUNTER_MODE_DOWN PROGMEM = -1;
+  
+    EasyCounter() {}
 
     void begin(int lowNumber, int highNumber, int increment) {
       begin(lowNumber, highNumber, increment, false);
