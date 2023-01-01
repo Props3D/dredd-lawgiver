@@ -4,6 +4,8 @@ Repository for the Fully Interactive 3D Printable Dredd Lawgiver 2012 from https
 
 Download the 3D Models here https://www.thingiverse.com/thing:5199144
 
+Tutorial videos coming soon here: https://www.youtube.com/@Props3D
+
 Licensed under the Creative Commons - Attribution - Non-Commercial - Share Alike license. https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 ***DO NOT SELL OR DISTRIBUTE MODELS OR CODE WITHOUT PERMISSION***
