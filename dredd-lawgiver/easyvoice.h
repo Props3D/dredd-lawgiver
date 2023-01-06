@@ -2,8 +2,10 @@
 #define easyvoice_h
 
 #if ENABLE_EASY_VOICE == 1
-#include <VoiceRecognitionV3.h>
+#include "easyvr.h"
 #endif 
+
+#define VOICE_BAUD_RATE 9600
 
 /**
  *  The voice recognition module is from Elechouse.
@@ -56,7 +58,7 @@ class EasyVoice
 {
   private:
 #if ENABLE_EASY_VOICE == 1
-    VR _myVR;   // 6:RX 7:TX, you can choose your favourite pins.
+    EasyVR _myVR;   // 6:RX 7:TX, you can choose your favourite pins.
 #endif
 
     uint8_t *_records = RECORDS;
@@ -79,7 +81,7 @@ class EasyVoice
 #if ENABLE_EASY_VOICE == 1
       //Serial.println(F("setup voice"));
       // This can be changed using VR bridge command: 11 00
-      _myVR.begin(9600);
+      _myVR.begin(VOICE_BAUD_RATE);
 
       // *** IMPORTANT ***
       // Only uncomment this code if you can't enable the autoload feature on the VR module.
