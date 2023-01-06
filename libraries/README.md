@@ -1,5 +1,5 @@
 ## Arduino Libraries
-We used anumber of open source libraries to make the Dredd Lawgiver come to life. These are packaged here for convenience. YOu could also follow the instructions to install the latest versions, but these are the versions that were used at time of building this prop.
+We used anumber of open source libraries to make the Dredd Lawgiver come to life. These are packaged here for convenience. You could also follow the instructions to install the latest versions, but these are the versions that were used at time of building this prop.
 
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
