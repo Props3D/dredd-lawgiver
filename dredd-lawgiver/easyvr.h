@@ -90,9 +90,9 @@ public:
 
 
   /**
-   * VR class constructor.
-   *   receivePin --> software serial RX
-   *   transmitPin --> software serial TX
+  * VR class constructor.
+  *   receivePin --> software serial RX
+  *   transmitPin --> software serial TX
    */
   EasyVR(uint8_t receivePin, uint8_t transmitPin)
     : SoftwareSerial(receivePin, transmitPin) {

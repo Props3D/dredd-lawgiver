@@ -5,8 +5,6 @@
 #include "easyvr.h"
 #endif 
 
-#define VOICE_BAUD_RATE 9600
-
 /**
  * This is the factory baud rate the module is shipped with.
  * This can be changed using the vr_module_set_baudrate sketch.
