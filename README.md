@@ -183,13 +183,18 @@ Other Parts
 
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
- 1. U8g2
+ 1. U8g2 - modified with the necessary changes
  2. FastLED
+ 3. FastTimer
  3. VoiceRecognitionV3
  4. DFPlayerMini_Fast
  5. ezButton
 
+All of these are included in the libraries directory. Copy each one into your <intall directory>/Arduino/libraries directory, make backups of any you have installed already in case you need to put them back for other projects.
+
 ### Installing U8g2 and required modifications
+If you want to install and use the latest version of the U8G2 library, then follow these instructions.
+
 The U8g2 library has a pretty large program foot print, so we need to make a number of changes to
 minimize the size of the program. See https://github.com/olikraus/u8g2/wiki/u8g2optimization for details.
  1. Open <intall directory>/Arduino/libraries/u8g2/src/clib/u8g2.h
@@ -208,6 +213,8 @@ sheet include the supported commands: https://www.displayfuture.com/Display/data
     - U8X8_CA(0xdc, 0x35) should be U8X8_CA(0xdc, 0x1a)
 
 ### Voice Recognition module
+If you want to install and use the latest version of the VoiceRecognitionV3 library, then follow these instructions.
+
 The voice recognition module is from Elechouse. Their library has to be installed
 manually to the Arduino library, and can be found on Github.
  1. Open https://github.com/elechouse/VoiceRecognitionV3
@@ -225,7 +232,28 @@ a few tips to make you successful:
     - This step is crucual to make the VR module work with this sketch.
 
 #### Training commands
-The voice commands must be trained in the expected slots. This is defined in the config.h file
+There are two options to train the voice recogition commands.
+
+The easiest option is load the vr_module_cmd_training sketch.
+ 1. Open the extras/vr_module_cmd_training sketch
+ 2. Set the correct RX/TX pins numbers to match your wiring.
+ 3. Choose right Arduino board (Tool -> Board, Arduino Nano recommended), Choose right serial port.
+ 4. Click Upload button, wait until Arduino is uploaded.
+ 5. Open Serial Monitor. Set baud rate 115200, set send with Newline or Both NL & CR.
+ 6. Read and follow the instructions
+ 7. The script will prompt you to record each command / phrase - one at a time
+ 8. When ready, press enter to begin recording
+    - When Serial Monitor prints "Speak now", you need speak the command
+    - When Serial Monitor prints "Speak again", you need repeat the command again.
+    - If these two voice commands are matched, Serial Monitor prints "Success", and "record X" is trained
+    - or if are not matched, repeat the process until success.
+ 9. Training will be completed when you record all 7 commands successfully
+ 10. At this point, you can test the training by speaking the commands
+ 11. Follow the next section to enable autoloading of the trained recordings
+ 
+
+The second option is to use the example sketch that is packaged with VoiceRecognitionV3 library.
+The voice commands must be trained in the expected slots. The order is defined in the config.h file
 and should not be changed. For reference, see below:
 ```c++
 /**
@@ -243,7 +271,7 @@ and should not be changed. For reference, see below:
 
 You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](https://github.com/elechouse/VoiceRecognitionV3) page.
  1. Open vr_sample_train (File -> Examples -> VoiceRecognitionV3 -> vr_sample_train)
- 2. Choose right Arduino board (Tool -> Board, UNO recommended), Choose right serial port.
+ 2. Choose right Arduino board (Tool -> Board, Arduino Nano recommended), Choose right serial port.
  3. Click Upload button, wait until Arduino is uploaded.
  4. Open Serial Monitor. Set baud rate 115200, set send with Newline or Both NL & CR.
  5. Check the Voice Recognition Module settings. Input settings
@@ -266,6 +294,17 @@ You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](htt
  11. Follow the next section to enable autoloading of the trained recordings
  
 #### Configuring Autoload feature
+There are two options to enable the autoloading trained commands on startup.
+
+The easiest option is load the vr_module_set_autoload sketch.
+ 1. Open the extras/vr_module_set_autoload sketch
+ 2. Set the correct RX/TX pins numbers to match your wiring
+ 3. Upload the sketch to the Arduino
+ 4. Open the Serial Monitor. Set baud rate 115200
+ 5. Wait until it says Power Down and unplug
+
+
+The second option is to use the example sketch that is packaged with VoiceRecognitionV3 library.
  1. Open the vr_sample_bridge sketch
  2. Set the correct RX/TX pins numbers to match your wiring
  3. Upload the sketch to the Arduino
@@ -280,6 +319,7 @@ You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](htt
 If you can't get the autoload feature configured, you could uncomment code in the EasyVoice.begin() function
 to manually load each record on startup. Recommend avoiding this if possible, it may slow the startup sequence
 or have other unintended problems. That part is untested.
+
 
 ## Setup and Configuration
 The component configurations can be easily customized by updating the values in config.h based on your components,
