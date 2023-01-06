@@ -95,24 +95,24 @@ public:
   } group_t;
 
   /**
-   * VR class constructor.
-   *   receivePin --> software serial RX
-   *   transmitPin --> software serial TX
+	 * VR class constructor.
+	 *   receivePin --> software serial RX
+	 *   transmitPin --> software serial TX
    */
   EasyVR(uint8_t receivePin, uint8_t transmitPin)
     : SoftwareSerial(receivePin, transmitPin) {
   }
 
   /**
-   * Voice recognition routine. Detects when trained command is recognized.
-   *   buf --> return data
-   *   buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
+	 * Voice recognition routine. Detects when trained command is recognized.
+	 *   buf --> return data
+	 *	 buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
    *          buf[1]  -->  number of record which is recognized. 
    *          buf[2]  -->  Recognizer index(position) value of the recognized record.
    *          buf[3]  -->  Signature length
    *          buf[4]~buf[n] --> Signature
-   *   timeout --> wait time for receiving packet.
-   * Returns length of valid data in buf
+	 *	 timeout --> wait time for receiving packet.
+	 * Returns length of valid data in buf
    *   0 means no data received.
    */
   int recognize(uint8_t *buf, int timeout) {
@@ -219,18 +219,18 @@ public:
 
 
   /**
-   * train records, at least one.
-   *   records --> record data buffer pointer.
-   *     len --> number of records.
+	 * train records, at least one.
+	 *   records --> record data buffer pointer.
+	 *	   len --> number of records.
    *        buf --> pointer of return value buffer, optional.
-   *     buf[0]  -->  number of records which are trained successfully.
+	 *	   buf[0]  -->  number of records which are trained successfully.
    *          buf[2i+1]  -->  record number
    *           buf[2i+2]  -->  record train status.
    *              00 --> Trained 
    *              FE --> Train Time Out
    *              FF --> Value out of range"
    *           (i = 0 ~ len-1 )
-   * Returns integer
+	 * Returns integer
    *   '>0' --> length of valid data in buf. 
    *   0 --> success, and no data received.
    *   '<0' --> failed.
@@ -279,18 +279,18 @@ public:
   }
 
   /**
-   * train one record.
-   *   records --> record data buffer pointer.
-   *   len --> number of records.
+	 * train one record.
+	 *   records --> record data buffer pointer.
+	 *   len --> number of records.
    *   buf --> pointer of return value buffer, optional.
-   *   buf[0]  -->  number of records which are trained successfully.
+	 *   buf[0]  -->  number of records which are trained successfully.
    *         buf[2i+1]  -->  record number
    *         buf[2i+2]  -->  record train status.
    *            00 --> Trained 
    *            FE --> Train Time Out
    *            FF --> Value out of range"
    *         (i = 0 ~ len-1 )
-   * Returns integer
+	 * Returns integer
    *   '>0' --> length of valid data in buf. 
    *    0 --> success, and no data received.
    *   '<0' --> failed.

@@ -4,8 +4,7 @@ There's a number of Arduino sketches to help you get up and running once you hav
 Directories:
  1. vr_module_cmd_training - Load this sketch to help train the VR module on the seven commands.
  2. vr_module_set_autoload - Load this sketch after the VR commands are trained to enable the autoload of those commands on startup. This is always required after running a training session.
- 3. vr_module_set_baud - Load this sketch only if you want to modify the baud rate from the factory setting. This should not be needed as our code works from the factory setting. This sketch is for the DIYer that is experimenting.
- 
+
 ### Training commands
 
 The easiest option is load the vr_module_cmd_training sketch.
@@ -25,6 +24,7 @@ The easiest option is load the vr_module_cmd_training sketch.
  10. At this point, you can test the training by speaking the commands
  11. Follow the next section to enable autoloading of the trained recordings
  
+
 ### Configuring Autoload feature
 
 The easiest option is load the vr_module_set_autoload sketch.
@@ -34,7 +34,7 @@ The easiest option is load the vr_module_set_autoload sketch.
  4. Open the Serial Monitor. Set baud rate 115200
  5. Wait until it says Power Down and unplug
 
-### Configuring DF Player Pro module
+### Configuring DF PLayer Pro module
 This is experimental. We are testing new component for the audio module. The DF Player Pro (DF1201S) is a full featured mp3 player that includes a DAC, onboard 128M of memory, and onboard amp (PAM8302). This would replace three components used in the current build.
 
 Out of the box, this module has a voice prompt that needs to be disabled. Run this script to disable the voice prompt.

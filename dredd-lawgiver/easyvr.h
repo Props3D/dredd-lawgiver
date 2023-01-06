@@ -90,25 +90,25 @@ public:
 
 
   /**
-   * VR class constructor.
-   *   receivePin --> software serial RX
-   *   transmitPin --> software serial TX
+	 * VR class constructor.
+	 *   receivePin --> software serial RX
+	 *   transmitPin --> software serial TX
    */
   EasyVR(uint8_t receivePin, uint8_t transmitPin)
     : SoftwareSerial(receivePin, transmitPin) {
   }
 
   /**
-   * Voice recognition routine. Detects when trained command is recognized.
-   *  buf --> return data
-   *    buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
-   *    buf[1]  -->  number of record which is recognized. 
-   *    buf[2]  -->  Recognizer index(position) value of the recognized record.
-   *    buf[3]  -->  Signature length
-   *    buf[4]~buf[n] --> Signature
-   *    timeout --> wait time for receiving packet.
-   *  Returns length of valid data in buf
-   *    0 means no data received.
+	 * Voice recognition routine. Detects when trained command is recognized.
+	 *   buf --> return data
+	 *	 buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
+   *          buf[1]  -->  number of record which is recognized. 
+   *          buf[2]  -->  Recognizer index(position) value of the recognized record.
+   *          buf[3]  -->  Signature length
+   *          buf[4]~buf[n] --> Signature
+	 *	 timeout --> wait time for receiving packet.
+	 * Returns length of valid data in buf
+   *   0 means no data received.
    */
   int recognize(uint8_t *buf, int timeout) {
     int ret, i;
