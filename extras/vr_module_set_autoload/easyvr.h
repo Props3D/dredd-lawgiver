@@ -5,12 +5,22 @@
 #include "wiring_private.h"
 #include "SoftwareSerial.h"
 #include <avr/pgmspace.h>
+//#define DEBUG
 
+#ifdef DEBUG
 #define DBGSTR(message) Serial.print(message)
 #define DBGBUF(buf, len) Serial.write(buf, len)
 #define DBGLN(message) Serial.println(message)
 #define DBGFMT(msg, fmt) Serial.print(msg, fmt)
 #define DBGCHAR(c) Serial.write(c)
+#else
+#define DBG(message)
+#define DBGSTR(message)
+#define DBGBUF(buf, len)
+#define DBGLN(message)
+#define DBGFMT(msg, fmt)
+#define DBGCHAR(c)
+#endif  // DEBUG
 
 #define VR_DEFAULT_TIMEOUT (1000)
 
@@ -95,26 +105,26 @@ public:
   } group_t;
 
   /**
-   * VR class constructor.
-   *   receivePin --> software serial RX
-   *   transmitPin --> software serial TX
-   */
+	@brief VR class constructor.
+	@param receivePin --> software serial RX
+		   transmitPin --> software serial TX
+*/
   EasyVR(uint8_t receivePin, uint8_t transmitPin)
     : SoftwareSerial(receivePin, transmitPin) {
+    //SoftwareSerial::begin(˘);
   }
 
   /**
-   * Voice recognition routine. Detects when trained command is recognized.
-   *   buf --> return data
-   *   buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
-   *          buf[1]  -->  number of record which is recognized. 
-   *          buf[2]  -->  Recognizer index(position) value of the recognized record.
-   *          buf[3]  -->  Signature length
-   *          buf[4]~buf[n] --> Signature
-   *   timeout --> wait time for receiving packet.
-   * Returns length of valid data in buf
-   *   0 means no data received.
-   */
+	@brief VR class constructor.
+	@param buf --> return data .
+			 buf[0]  -->  Group mode(FF: None Group, 0x8n: User, 0x0n:System
+             buf[1]  -->  number of record which is recognized. 
+             buf[2]  -->  Recognizer index(position) value of the recognized record.
+             buf[3]  -->  Signature length
+             buf[4]~buf[n] --> Signature
+		   timeout --> wait time for receiving packet.
+	@retval length of valid data in buf. 0 means no data received.
+*/
   int recognize(uint8_t *buf, int timeout) {
     int ret, i;
     ret = receive_pkt(vr_buf, timeout);
@@ -132,11 +142,11 @@ public:
   }
 
   /**
-   * Set module baud rate.
-   *   br --> module baud rate.(0-9600 1-2400 2-4800 3-9600 4-19200 5-38400)
-   * Returns 0 --> success
-   *         -1 --> failed
-   */
+    @brief set module baud rate.
+    @param br --> module baud rate.(0-9600 1-2400 2-4800 3-9600 4-19200 5-38400)
+    @retval 0 --> success
+            -1 --> failed
+*/
   int setBaudRate(unsigned long br) {
     uint8_t baud_rate;
     int ret;
@@ -175,12 +185,12 @@ public:
   }
 
   /**
-   * set autoload.
-   *   records --> record buffer.
-   *   len --> records length.
-   *  Returns 0 --> success
-   *         -1 --> failed
-   */
+    @brief set autoload.
+    @param records --> record buffer.
+           len --> records length.
+    @retval 0 --> success
+            -1 --> failed
+*/
   int setAutoLoad(uint8_t *records, uint8_t len) {
     int ret;
     uint8_t map;
@@ -207,36 +217,35 @@ public:
   }
 
   /**
-   * disable autoload.
-   *   records --> record buffer.
-   *        len --> records length.
-   *  Returns 0 --> success
-   *         -1 --> failed
-   */
+    @brief disable autoload.
+    @param records --> record buffer.
+           len --> records length.
+    @retval 0 --> success
+            -1 --> failed
+*/
   int disableAutoLoad() {
     return setAutoLoad(0, 0);
   }
 
 
   /**
-   * train records, at least one.
-   *   records --> record data buffer pointer.
-   *     len --> number of records.
-   *        buf --> pointer of return value buffer, optional.
-   *     buf[0]  -->  number of records which are trained successfully.
-   *          buf[2i+1]  -->  record number
-   *           buf[2i+2]  -->  record train status.
-   *              00 --> Trained 
-   *              FE --> Train Time Out
-   *              FF --> Value out of range"
-   *           (i = 0 ~ len-1 )
-   * Returns integer
-   *   '>0' --> length of valid data in buf. 
-   *   0 --> success, and no data received.
-   *   '<0' --> failed.
-   *      -1 --> data format error.
-   *      -2 --> train timeout.
-   */
+	@brief train records, at least one.
+	@param records --> record data buffer pointer.
+		   len --> number of records.
+           buf --> pointer of return value buffer, optional.
+		   buf[0]  -->  number of records which are trained successfully.
+             buf[2i+1]  -->  record number
+             buf[2i+2]  -->  record train status.
+                00 --> Trained 
+                FE --> Train Time Out
+                FF --> Value out of range"
+             (i = 0 ~ len-1 )
+	@retval '>0' --> length of valid data in buf. 
+            0 --> success, and no data received.
+            '<0' --> failed.
+                -1 --> data format error.
+                -2 --> train timeout.
+*/
   int train(uint8_t *records, uint8_t len, uint8_t *buf) {
     int ret;
     unsigned long start_millis;
@@ -279,24 +288,23 @@ public:
   }
 
   /**
-   * train one record.
-   *   records --> record data buffer pointer.
-   *   len --> number of records.
-   *   buf --> pointer of return value buffer, optional.
-   *   buf[0]  -->  number of records which are trained successfully.
-   *         buf[2i+1]  -->  record number
-   *         buf[2i+2]  -->  record train status.
-   *            00 --> Trained 
-   *            FE --> Train Time Out
-   *            FF --> Value out of range"
-   *         (i = 0 ~ len-1 )
-   * Returns integer
-   *   '>0' --> length of valid data in buf. 
-   *    0 --> success, and no data received.
-   *   '<0' --> failed.
-   *      -1 --> data format error.
-   *      -2 --> train timeout.
-   */
+	@brief train one record.
+	@param records --> record data buffer pointer.
+		   len --> number of records.
+           buf --> pointer of return value buffer, optional.
+		   buf[0]  -->  number of records which are trained successfully.
+             buf[2i+1]  -->  record number
+             buf[2i+2]  -->  record train status.
+                00 --> Trained 
+                FE --> Train Time Out
+                FF --> Value out of range"
+             (i = 0 ~ len-1 )
+	@retval '>0' --> length of valid data in buf. 
+            0 --> success, and no data received.
+            '<0' --> failed.
+                -1 --> data format error.
+                -2 --> train timeout.
+*/
   int train(uint8_t record, uint8_t *buf) {
     return train(&record, 1, buf);
   }
@@ -306,12 +314,12 @@ private:
   uint8_t vr_buf[32];
 
   /**
-   * Send data packet in Voice Recognition module protocol format.
-   *   cmd --> command 
-   *   subcmd --> subcommand
-   *   buf --> data area
-   *   len --> length of buf
-   */
+    @brief send data packet in Voice Recognition module protocol format.
+    @param cmd --> command 
+           subcmd --> subcommand
+           buf --> data area
+           len --> length of buf
+*/
   void send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len) {
     while (available()) {
       flush();
@@ -325,11 +333,11 @@ private:
   }
 
   /**
-   * Send data packet in Voice Recognition module protocol format.
-   *   cmd --> command 
-   *   buf --> data area
-   *   len --> length of buf
-   */
+    @brief send data packet in Voice Recognition module protocol format.
+    @param cmd --> command 
+           buf --> data area
+           len --> length of buf
+*/
   void send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len) {
     while (available()) {
       flush();
@@ -342,10 +350,10 @@ private:
   }
 
   /**
-   * send data packet in Voice Recognition module protocol format.
-   *   buf --> data area
-   *   len --> length of buf
-   */
+    @brief send data packet in Voice Recognition module protocol format.
+    @param buf --> data area
+           len --> length of buf
+*/
   void send_pkt(uint8_t *buf, uint8_t len) {
     while (available()) {
       flush();
@@ -358,13 +366,12 @@ private:
 
 
   /**
-   * receive a valid data packet in Voice Recognition module protocol format.
-   *   buf --> return value buffer.
-   *   timeout --> time of reveiving
-   *  Returns integer
-   *    '>0' --> success, packet lenght(length of all data in buf)
-   *    '<0' --> failed
-   */
+    @brief receive a valid data packet in Voice Recognition module protocol format.
+    @param buf --> return value buffer.
+           timeout --> time of reveiving
+    @retval '>0' --> success, packet lenght(length of all data in buf)
+            '<0' --> failed
+*/
   int receive_pkt(uint8_t *buf) {
     return receive_pkt(buf, VR_DEFAULT_TIMEOUT);
   }
@@ -386,17 +393,18 @@ private:
       return -4;
     }
 
+    //	DBGBUF(buf, buf[1]+2);
+
     return buf[1] + 2;
   }
 
   /**
-   * receive data .
-   *   buf --> return value buffer.
-   *   len --> length expect to receive.
-   *   timeout --> time of reveiving
-   *  Returns number of received bytes
-   *    0 means no data received.
-   */
+    @brief receive data .
+    @param buf --> return value buffer.
+           len --> length expect to receive.
+           timeout --> time of reveiving
+    @retval number of received bytes, 0 means no data received.
+*/
   int receive(uint8_t *buf, int len, uint16_t timeout) {
     int read_bytes = 0;
     int ret;
