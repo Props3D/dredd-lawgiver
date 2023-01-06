@@ -6,7 +6,6 @@ There's are number of libraries that you will need to install using the Arduino 
  1. U8g2 - modified with the necessary changes
  2. FastLED
  3. FastTimer
- 3. VoiceRecognitionV3
  4. DFPlayerMini_Fast
  5. ezButton
 
@@ -34,23 +33,12 @@ sheet include the supported commands: https://www.displayfuture.com/Display/data
     - U8X8_CA(0xdc, 0x35) should be U8X8_CA(0xdc, 0x1a)
 
 ### Voice Recognition module
-If you want to install and use the latest version of the VoiceRecognitionV3 library, then follow these instructions.
+We are no longer using the VoiceRecognitionV3 library. Instead, we use a paired down version of
+the library to make it more lightweight, and it's part of the sketch so you don't need to install anything.
 
-The voice recognition module is from Elechouse. Their library has to be installed
-manually to the Arduino library, and can be found on Github.
- 1. Open https://github.com/elechouse/VoiceRecognitionV3
- 2. Download the zip or clone the repo
- 3. Extract contents into the /Arduino Sketch/libraries directory
-
-Once installed, follow the instructions to train the VR module. You can train up to 7
-active voice commands. Train each command using the example sketche that comes with the
-library. You can find detailed instructions in the manual or the
-[VoiceRecognitionV3 github](https://github.com/elechouse/VoiceRecognitionV3) page, but here's
-a few tips to make you successful:
- 1. Make sure to change the RX and TX pin based on how you connected it to the Arduino
- 2. The commands should be trained based on the programs expected order - defined in config.h
- 3. Once all of the commands are trained, update the module to autoload the commands on startup
-    - This step is crucual to make the VR module work with this sketch.
+Once VR module is wired up, follow the instructions to train the VR module. You can train up to 7
+active voice commands. Train each command using a sketch in the extras directory, simply follow
+the instructions in the next section.
 
 #### Training commands
 There are two options to train the voice recogition commands.
@@ -74,8 +62,10 @@ The easiest option is load the vr_module_cmd_training sketch.
  
 
 The second option is to use the example sketch that is packaged with VoiceRecognitionV3 library.
-The voice commands must be trained in the expected slots. The order is defined in the config.h file
-and should not be changed. For reference, see below:
+You'll need to install this library to get these scripts. The voice commands must be trained in
+the expected slots. The order is defined in the config.h file and should not be changed.
+For reference, see below:
+
 ```c++
 /**
  *  Voice Recognition Commands.
