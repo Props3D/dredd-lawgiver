@@ -1,15 +1,9 @@
-## Arduino Scripts and Libraries
-There's a number of Arduino sketches to help you get up and running once you have your electronics ready to go and soldered up.
-
-Directories:
- 1. vr_module_cmd_training - Load this sketch to help train the VR module on the seven commands.
- 2. vr_module_set_autoload - Load this sketch after the VR commands are trained to enable the autoload of those commands on startup. This is always required after running a training session.
- 3. dredd-lawgiver - This is main Arduino code that will turn your prop into working Lawgiver.
- 4. libraries - This folder contains the libraries that are required by the dredd-lawgiver sketch. were used at the time of building the 
+## Arduino Libraries
+We used anumber of open source libraries to make the Dredd Lawgiver come to life. These are packaged here for convenience. YOu could also follow the instructions to install the latest versions, but these are the versions that were used at time of building this prop.
 
 ## Required Libraries
 There's are number of libraries that you will need to install using the Arduino Library Manager:
- 1. U8g2
+ 1. U8g2 - modified with the necessary changes
  2. FastLED
  3. FastTimer
  3. VoiceRecognitionV3
@@ -62,7 +56,7 @@ a few tips to make you successful:
 There are two options to train the voice recogition commands.
 
 The easiest option is load the vr_module_cmd_training sketch.
- 1. Open the vr_module_cmd_training sketch
+ 1. Open the extras/vr_module_cmd_training sketch
  2. Set the correct RX/TX pins numbers to match your wiring.
  3. Choose right Arduino board (Tool -> Board, Arduino Nano recommended), Choose right serial port.
  4. Click Upload button, wait until Arduino is uploaded.
@@ -124,7 +118,7 @@ You can find instructions, with pictures, on the [VoiceRecognitionV3 Github](htt
 There are two options to enable the autoloading trained commands on startup.
 
 The easiest option is load the vr_module_set_autoload sketch.
- 1. Open the vr_module_set_autoload sketch
+ 1. Open the extras/vr_module_set_autoload sketch
  2. Set the correct RX/TX pins numbers to match your wiring
  3. Upload the sketch to the Arduino
  4. Open the Serial Monitor. Set baud rate 115200
