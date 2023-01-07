@@ -10,7 +10,7 @@
 #ifdef ENABLE_EASY_AUDIO_PRO
 #include "dfplayer_pro.h"
 #else
-#include <DFPlayerMini_Fast.h>
+#include "dfplayer_mini.h"
 #endif
 
 /**
