@@ -2,7 +2,7 @@
 #define easyaudio_h
 
 #include <SoftwareSerial.h>
-#include <DFPlayerMini_Fast.h>
+#include "dfplayer_mini.h"
 
 /**
  * EasyAudio is based on DF Player Mini, and provides simple setup, and easy track playback.
@@ -46,7 +46,7 @@ class EasyAudio
 
     /**
      * Poor version of checking playback instead of adding delays.
-     * THe proper solution would be to check whether the component is busy.
+     * The proper solution would be to check whether the component is busy.
      * Our wiring doesn't support it at the moment
      */
     bool isBusy() {
