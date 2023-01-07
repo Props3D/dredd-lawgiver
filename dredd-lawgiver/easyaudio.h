@@ -28,7 +28,7 @@ class EasyAudio
 {
   private:
     SoftwareSerial mySerial;
-    DFPlayerMini_Fast _player;
+    DFPlayerMini _player;
     long lastPlaybackTime             = 0;
     const uint16_t _playbackDelay     = 100;
 
