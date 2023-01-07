@@ -39,7 +39,7 @@ private:
 #ifdef ENABLE_EASY_AUDIO_PRO
   DFPlayerPro _player;
 #else
-  DFPlayerMini_Fast _player;
+  DFPlayerMini _player;
 #endif
 
   long lastPlaybackTime = 0;
