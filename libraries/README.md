@@ -5,9 +5,7 @@ We used anumber of open source libraries to make the Dredd Lawgiver come to life
 There's are number of libraries that you will need to install using the Arduino Library Manager:
  1. U8g2 - modified with the necessary changes
  2. FastLED
- 3. FastTimer
- 4. DFPlayerMini_Fast
- 5. ezButton
+ 3. ezButton
 
 All of these are included in the libraries directory. Copy each one into your <intall directory>/Arduino/libraries directory, make backups of any you have installed already in case you need to put them back for other projects.
 
