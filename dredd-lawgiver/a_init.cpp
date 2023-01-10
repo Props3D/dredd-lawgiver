@@ -27,7 +27,7 @@ EasyLedv3<FIRE_LED_CNT, FIRE_LED_PIN> fireLed;
 ezBlasterShot blasterShot(fireLed.RED, fireLed.ORANGE, 4 /*speed*/);  // initialize colors to starting fire mode
 ezBlasterRepeatingShot repeatingShot(8 /*reps*/, 4 /*speed*/);
 // OLED Display
-EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled(DISPLAY_USER_ID);
+EasyOLED<OLED_SCL_PIN, OLED_SDA_PIN, OLED_CS_PIN, OLED_DC_PIN, OLED_RESET_PIN> oled;
 // VR module
 EasyVoice<VOICE_CMD_ARR, VOICE_CMD_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
 // Counters for each firing mode
@@ -108,14 +108,10 @@ volatile uint8_t activateReload       = 0;                        // sets main l
 
 void setup() {
   //uncomment for debugging
-  //Serial.begin (115200);
-  //DBGLN(F("Starting setup"));
-
-  // initialize the trigger led and set brightness
-  fireLed.begin(75);
-
-  //initializes the audio player and sets the volume
-  audio.begin(28);
+#if ENABLE_DEBUG == 1
+  Serial.begin (115200);
+#endif
+  DBGLN(F("Starting setup"));
 
   // initialize all the leds
   initLedIndicators();
@@ -128,6 +124,12 @@ void setup() {
 
   // select the initial ammo mode
   selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;
+
+  //initializes the audio player and sets the volume
+  audio.begin(25);
+
+  // initialize the trigger led and set brightness
+  fireLed.begin(75);
 
   // init the voice recognition module
   voice.begin();
@@ -264,12 +266,13 @@ bool checkReloadSwitch(bool runNow) {
 void startUpSequence(void) {
   uint8_t _sequenceMode = oled.getDisplayMode();
   if (_sequenceMode == 0) {
-    //DBGLN(F("Startup - Logo"));
+    DBGLN(F("Startup - Logo"));
     oled.updateDisplay(oled.DISPLAY_LOGO, 0);
+    lastDisplayUpdate = millis();
   }
   if (_sequenceMode == oled.DISPLAY_LOGO) {
     if (millis() > TIMING_STARTUP_LOGO_MS + lastDisplayUpdate) {
-      //DBGLN(F("Startup - Comm Ok"));
+      DBGLN(F("Startup - Comm Ok"));
       oled.updateDisplay(oled.DISPLAY_COMM_CHK, 0);
       // Red led on
       toggleLED(RED_LED_PIN);
@@ -282,7 +285,7 @@ void startUpSequence(void) {
       lastDisplayUpdate = millis();
     }
     if (progressBarUpdates > 9) {
-      //DBGLN(F("Startup - DNA Chk"));
+      DBGLN(F("Startup - DNA Chk"));
       oled.updateDisplay(oled.DISPLAY_DNA_CHK, progressBarUpdates);
       lastDisplayUpdate = millis();
     }
@@ -292,12 +295,13 @@ void startUpSequence(void) {
     bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
     if (buttonPressed || millis() > (TIMING_STARTUP_DNA_CHK_MS + lastDisplayUpdate)) {
       if (buttonPressed) {
-        audio.playTrack(AUDIO_TRACK_DNA_CHK);
         oled.updateDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
+        DBGLN(F("Startup - DNA Progress - start audio"));
+        audio.playTrack(AUDIO_TRACK_DNA_CHK);
       } else {
-        //DBGLN(F("Startup - ID FAIL"));
-        audio.playTrack(AUDIO_TRACK_ID_FAIL);
         oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
+        DBGLN(F("Startup - ID FAIL"));
+        audio.playTrack(AUDIO_TRACK_ID_FAIL);
       }
       lastDisplayUpdate = millis();
     }
@@ -307,17 +311,18 @@ void startUpSequence(void) {
       // A trigger press is required to complete the DNA check
       bool buttonPressed = (digitalRead(TRIGGER_PIN) == LOW);
       if (buttonPressed) {
+        DBGLN(F("Startup - DNA Progress - tick"));
         oled.updateDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         progressBarUpdates++;
         lastDisplayUpdate = millis();
       } else {
-        //DBGLN(F("Startup - ID FAIL"));
+        DBGLN(F("Startup - ID FAIL"));
         audio.playTrack(AUDIO_TRACK_ID_FAIL);
         oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
       }
     }
     if (progressBarUpdates > 18) {
-      //DBGLN(F("Startup - ID OK"));
+      DBGLN(F("Startup - ID OK"));
       oled.updateDisplay(oled.DISPLAY_ID_OK, progressBarUpdates);
       // RED LED off
       toggleLED(RED_LED_PIN);
@@ -338,7 +343,7 @@ void startUpSequence(void) {
     }
     // blink the green led three times before moving on
     if (ledBlinks > 2 && millis() > (TIMING_STARTUP_ID_OK_MS + lastDisplayUpdate)) {
-      //DBGLN(F("Startup - ID Name"));
+      DBGLN(F("Startup - ID Name"));
       oled.updateDisplay(oled.DISPLAY_ID_NAME, progressBarUpdates);
       lastDisplayUpdate = millis();
     }
@@ -346,7 +351,7 @@ void startUpSequence(void) {
   // Display ID Name for a fixed duration
   if (_sequenceMode == oled.DISPLAY_ID_NAME) {
     if (millis() > (TIMING_STARTUP_ID_NAME_MS + lastDisplayUpdate)) {
-      //DBGLN(F("Startup - Main loop"));
+      DBGLN(F("Startup - Main loop"));
       audio.playTrack(AUDIO_TRACK_AMMO_LOAD);
       oled.updateDisplay(oled.DISPLAY_MAIN, progressBarUpdates);
       // let's turn off the ammo indicators

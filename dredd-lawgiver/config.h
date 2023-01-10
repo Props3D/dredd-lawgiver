@@ -51,7 +51,6 @@ const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
 #define FIRE_LED_CNT          7
 
 
-
 /**
  *  Common constant definitions - DO NOT CHANGE
  */
@@ -65,28 +64,28 @@ const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
  * 1. Copy the audio file in each slot where you want to use it
  * 2. Change the index values below to match the files on the SD Card
  */
-static const uint8_t  AUDIO_TRACK_DNA_CHK      =   1;
-static const uint8_t  AUDIO_TRACK_ID_OK        =   2;
-static const uint8_t  AUDIO_TRACK_ID_FAIL      =   3;
-static const uint8_t  AUDIO_TRACK_AMMO_LOAD    =   4;
-static const uint8_t  AUDIO_TRACK_AP_FIRE      =   5;
-static const uint8_t  AUDIO_TRACK_IN_FIRE      =   6;
-static const uint8_t  AUDIO_TRACK_HS_FIRE      =   7;
-static const uint8_t  AUDIO_TRACK_HE_FIRE      =   8;
-static const uint8_t  AUDIO_TRACK_ST_FIRE      =   9;
-static const uint8_t  AUDIO_TRACK_FMJ_FIRE     =   10;
-static const uint8_t  AUDIO_TRACK_RAPID_FIRE   =   11;
-static const uint8_t  AUDIO_TRACK_AP_CHANGE    =   12;
-static const uint8_t  AUDIO_TRACK_IN_CHANGE    =   13;
-static const uint8_t  AUDIO_TRACK_HS_CHANGE    =   14;
-static const uint8_t  AUDIO_TRACK_HE_CHANGE    =   15;
-static const uint8_t  AUDIO_TRACK_ST_CHANGE    =   16;
-static const uint8_t  AUDIO_TRACK_FMJ_CHANGE   =   17;
-static const uint8_t  AUDIO_TRACK_RAPID_CHANGE =   18;
-static const uint8_t  AUDIO_TRACK_AMMO_LOW     =   19;
-static const uint8_t  AUDIO_TRACK_AMMO_EMPTY   =   20;
-static const uint8_t  AUDIO_TRACK_AMMO_RELOAD  =   21;
-static const uint8_t  AUDIO_TRACK_THEME        =   22;  // TODO: add feature to playback theme
+static const int  AUDIO_TRACK_DNA_CHK      =   1;
+static const int  AUDIO_TRACK_ID_OK        =   2;
+static const int  AUDIO_TRACK_ID_FAIL      =   3;
+static const int  AUDIO_TRACK_AMMO_LOAD    =   4;
+static const int  AUDIO_TRACK_AP_FIRE      =   5;
+static const int  AUDIO_TRACK_IN_FIRE      =   6;
+static const int  AUDIO_TRACK_HS_FIRE      =   7;
+static const int  AUDIO_TRACK_HE_FIRE      =   8;
+static const int  AUDIO_TRACK_ST_FIRE      =   9;
+static const int  AUDIO_TRACK_FMJ_FIRE     =   10;
+static const int  AUDIO_TRACK_RAPID_FIRE   =   11;
+static const int  AUDIO_TRACK_AP_CHANGE    =   12;
+static const int  AUDIO_TRACK_IN_CHANGE    =   13;
+static const int  AUDIO_TRACK_HS_CHANGE    =   14;
+static const int  AUDIO_TRACK_HE_CHANGE    =   15;
+static const int  AUDIO_TRACK_ST_CHANGE    =   16;
+static const int  AUDIO_TRACK_FMJ_CHANGE   =   17;
+static const int  AUDIO_TRACK_RAPID_CHANGE =   18;
+static const int  AUDIO_TRACK_AMMO_LOW     =   19;
+static const int  AUDIO_TRACK_AMMO_EMPTY   =   20;
+static const int  AUDIO_TRACK_AMMO_RELOAD  =   21;
+static const int  AUDIO_TRACK_THEME        =   22;  // TODO: add feature to playback theme
 
 
 /**

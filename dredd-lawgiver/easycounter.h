@@ -33,12 +33,12 @@ class EasyCounter
     void setCount(int value) { this->_currentCounter = value; }
     void setResetOnEmpty(bool value) { this->_resetOnEmpty = value; }
   public:
-    static const PROGMEM uint8_t STATE_ACTIVE PROGMEM     = 0;
-    static const PROGMEM uint8_t STATE_EMPTY PROGMEM      = 1;
-    static const PROGMEM uint8_t STATE_RESET PROGMEM      = 2;
+    static const uint8_t STATE_ACTIVE     = 0;
+    static const uint8_t STATE_EMPTY      = 1;
+    static const uint8_t STATE_RESET      = 2;
 
-    static const PROGMEM int COUNTER_MODE_UP PROGMEM   =  1;
-    static const PROGMEM int COUNTER_MODE_DOWN PROGMEM = -1;
+    static const int COUNTER_MODE_UP   =  1;
+    static const int COUNTER_MODE_DOWN = -1;
   
     EasyCounter() {}
 

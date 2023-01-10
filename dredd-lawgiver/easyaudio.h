@@ -35,7 +35,7 @@
  */
 class EasyAudio {
 private:
-  SoftwareSerial mySerial;
+  SoftwareSerial _mySerial;
 #ifdef ENABLE_EASY_AUDIO_PRO
   DFPlayerPro _player;
 #else
@@ -47,26 +47,27 @@ private:
 
 public:
   EasyAudio(uint8_t rxPin, uint8_t txPin)
-    : mySerial(rxPin, txPin){};
+    : _mySerial(rxPin, txPin){};
 
   void begin(uint8_t vol) {
 #if ENABLE_EASY_AUDIO == 1
-    //DBGLN(F("setup audio"));
+    DBGLN(F("setup audio"));
 #ifdef ENABLE_EASY_AUDIO_PRO
-    mySerial.begin(PRO_BAUD_RATE);
-    while (!_player.begin(mySerial)) {
+    _mySerial.begin(PRO_BAUD_RATE);
+    while (!_player.begin(_mySerial)) {
       DBGLN(F("DFPlayer failed"));
-      delay(1000);
+      delay(3000);
     }
-    _player.setVolume(vol);                 // initial volume, 30 is max, 25 makes the wife not angry
-    _player.switchFunction(_player.MUSIC);  // Enter music mode
-    _player.setPlayMode(_player.SINGLE);    // Set playback mode to Play single and pause
-    _player.enableAMP();                    // Enable amplifier chip
+    _player.setVolume(vol);    // initial volume, 30 is max, 25 makes the wife not angry
+    _player.musicMode();       // Enter music mode
+    _player.singlePlayMode();  // Set playback mode to Play single and pause
+    _player.enableAMP();       // Enable amplifier chip
 #else
-    mySerial.begin(MINI_BAUD_RATE);
-    _player.begin(mySerial, false);  //set Serial for DFPlayer-mini mp3 module
+    _mySerial.begin(MINI_BAUD_RATE);
+    _player.begin(_mySerial, true);  //set Serial for DFPlayer-mini mp3 module
     _player.volume(vol);             //initial volume, 30 is max, 3 makes the wife not angry
 #endif
+    delay(450);
 #endif
   }
 
@@ -79,7 +80,7 @@ public:
     return millis() < (lastPlaybackTime + _playbackDelay);
   }
 
-  void playTrack(uint8_t track) {
+  void playTrack(int track) {
 #if ENABLE_EASY_AUDIO == 1
     lastPlaybackTime = millis();
 #ifdef ENABLE_EASY_AUDIO_PRO
@@ -90,7 +91,7 @@ public:
 #endif
   }
 
-  void playTrack(uint8_t track, bool wait) {
+  void playTrack(int track, bool wait) {
 #if ENABLE_EASY_AUDIO == 1
     lastPlaybackTime = millis();
 #ifdef ENABLE_EASY_AUDIO_PRO

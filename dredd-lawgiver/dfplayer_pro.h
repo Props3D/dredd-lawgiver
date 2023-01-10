@@ -2,7 +2,16 @@
 #define dfplayerpro_h
 
 #include <Arduino.h>
-#include <string.h>
+
+const static char CMD_AT[] PROGMEM = "AT\r\n";
+const static char CMD_FUNCTION_MUSIC[] PROGMEM = "AT+FUNCTION=1\r\n";
+const static char CMD_PLAYMODE_SINGLE[] PROGMEM = "AT+PLAYMODE=3\r\n";
+const static char CMD_AMP_ON[] PROGMEM = "AT+AMP=ON\r\n";
+const static char CMD_PLAY_NUM[] PROGMEM = "AT+PLAYNUM=";
+const static char CMD_SET_VOLUME[] PROGMEM = "AT+VOL=";
+const static char CMD_END[] PROGMEM = "\r\n";
+const static char CMD_OK[] PROGMEM = "OK\r\n";
+const static char CMD_ERROR[] PROGMEM = "error";
 
 /**
  * Define the basic structure of class DF Player Pro DF1201S, the implementation of basic methods.
@@ -10,16 +19,6 @@
  */
 class DFPlayerPro {
 public:
-  typedef enum {
-    MUSIC = 1,  // Music Mode
-    UFDISK,     // Slave mode
-  } eFunction_t;
-
-  typedef struct {
-    String str;
-    uint8_t length;
-  } sPacket_t;
-
   typedef enum {
     SINGLECYCLE = 1,  // Repeat one song
     ALLCYCLE,         // Repeat all
@@ -41,12 +40,9 @@ public:
    *   true The setting succeeded
    *   false Setting failed
    */
-  bool begin(Stream &s) {
-    sPacket_t cmd;
+  bool begin(Stream& s) {
     _s = &s;
-    cmd = pack();
-
-    writeATCommand(cmd.str, cmd.length);
+    writeATCommand(getString(CMD_AT));
     return readAck();
   }
 
@@ -59,9 +55,13 @@ public:
    *   false Setting failed
   */
   bool setVolume(uint8_t vol) {
-    sPacket_t cmd;
-    cmd = pack("VOL", String(vol));
-    writeATCommand(cmd.str, cmd.length);
+    char* command = getString(CMD_SET_VOLUME);
+    uint8_t data[10];
+
+    itoa(vol, data, 10);
+    strncat(command, data, 39 - strlen(command));
+    strncat_P(command, CMD_END, 39 - strlen(command));
+    writeATCommand(command);
     return readAck();
   }
 
@@ -72,13 +72,10 @@ public:
    *   true The setting succeeded
    *   false Setting failed
    */
-  bool switchFunction(eFunction_t function) {
-    sPacket_t cmd;
-    cmd = pack("FUNCTION", String(function));
-    curFunction = function;
-    writeATCommand(cmd.str, cmd.length);
+  bool musicMode() {
+    writeATCommand(getString(CMD_FUNCTION_MUSIC));
     if (readAck()) {
-      delay(1500);
+      delay(2000);
       return true;
     }
     return false;
@@ -91,11 +88,8 @@ public:
    *   true The setting succeeded
    *   false Setting failed
    */
-  bool setPlayMode(ePlayMode_t mode) {
-    if (curFunction != MUSIC) return false;
-    sPacket_t cmd;
-    cmd = pack("PLAYMODE", String(mode));
-    writeATCommand(cmd.str, cmd.length);
+  bool singlePlayMode() {
+    writeATCommand(getString(CMD_PLAYMODE_SINGLE));
     return readAck();
   }
 
@@ -106,10 +100,7 @@ public:
    *   false Setting failed
    */
   bool enableAMP() {
-    if (curFunction != MUSIC) return false;
-    sPacket_t cmd;
-    cmd = pack("AMP", "ON");
-    writeATCommand(cmd.str, cmd.length);
+    writeATCommand(getString(CMD_AMP_ON));
     return readAck();
   }
 
@@ -122,93 +113,82 @@ public:
    *   false Setting failed
    */
   bool playFileNum(int16_t num) {
-    if (curFunction != MUSIC) return false;
-    sPacket_t cmd;
-    cmd = pack("PLAYNUM", String(num));
-    writeATCommand(cmd.str, cmd.length);
-    return readAck();
+    char* command = getString(CMD_PLAY_NUM);
+
+    uint8_t data[10];
+    itoa(num, data, 10);
+    strncat(command, data, 39 - strlen(command));
+    strncat_P(command, CMD_END, 39 - strlen(command));
+    writeATCommand(command);
+    return true; // do not wait for confirmation
+    //return readAck();
   }
 
 private:
-  Stream *_s = NULL;
-  String atCmd;
-  eFunction_t curFunction;
+  Stream* _s = NULL;
+  char _output[40];
 
-  sPacket_t pack() {
-    return pack(" ", " ");
-  }
-
-  /**
-   * Create packet 
-   */
-  sPacket_t pack(String cmd, String para) {
-    sPacket_t pack;
-    atCmd = "";
-    atCmd += "AT";
-    if (cmd != " ") {
-      atCmd += "+";
-      atCmd += cmd;
-    }
-
-    if (para != " ") {
-      atCmd += "=";
-      atCmd += para;
-    }
-    atCmd += "\r\n";
-    pack.str = atCmd;
-    pack.length = atCmd.length();
-    return pack;
-  }
-
-  void writeATCommand(String command, uint8_t length) {
+  void writeATCommand(char* command) {
+    DBGSTR(F("COMMAND: "));
+    DBGLN(command);
     uint8_t data[40];
     while (_s->available()) {
       _s->read();
     }
+    uint8_t length = strlen(command);
     for (uint8_t i = 0; i < length; i++)
       data[i] = command[i];
     _s->write(data, length);
   }
 
   bool readAck() {
-    if (read(4) == "OK\r\n") {
+    char* response = read(4);
+    DBGSTR(F("RESONSE: "));
+    DBGLN(response);
+
+    if (strcmp_P(response, CMD_OK) == 0) {
       return true;
     }
     return false;
   }
 
-  String read(uint8_t len) {
-    String str = "";
+  char* read(uint8_t len) {
     size_t offset = 0, left = len;
     long long curr = millis();
     if (len == 0) {
       while (1) {
         if (_s->available()) {
-          str += (char)_s->read();
+          _output[offset] = (char)_s->read();
           offset++;
         }
-        if ((str[offset - 1]) == '\n' && (str[offset - 2] == '\r')) break;
+        if ((_output[offset - 1]) == '\n' && (_output[offset - 2] == '\r')) break;
         if (millis() - curr > 1000) {
-          return F("error");
+          return getString(CMD_ERROR);
           break;
         }
       }
     } else {
       while (left) {
         if (_s->available()) {
-          str += (char)_s->read();
+          _output[offset] = (char)_s->read();
           left--;
           offset++;
         }
-        if (str[offset - 1] == '\n' && str[offset - 2] == '\r') break;
+        if (_output[offset - 1] == '\n' && _output[offset - 2] == '\r') break;
         if (millis() - curr > 1000) {
-          return F("error");
+          return getString(CMD_ERROR);
           break;
         }
       }
-      str[len] = 0;
+      _output[len] = 0;
     }
-    return str;
+    return _output;
+  }
+
+  char* getString(const char* str) {
+    memset(_output, 0, sizeof(_output));
+    strncpy_P(_output, (char*)str, 39);
+    return _output;
   }
 };
 #endif

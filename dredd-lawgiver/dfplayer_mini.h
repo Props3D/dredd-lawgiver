@@ -36,6 +36,12 @@ const uint8_t USE_MP3_FOLDER = 0x12;
  */
 class DFPlayerMini {
 public:
+
+  /**
+   * Default constructor
+   */
+  DFPlayerMini() {}
+
   /**
    *  Configure the class.
    *    stream
@@ -116,7 +122,6 @@ private:
 
   Stream* _serial;
   bool _debug;
-
 
   /**
    *  Determine and insert the checksum of a given config/command packet into that same packet struct.

@@ -31,8 +31,8 @@ class ezPattern {
     unsigned long _flashTimer      = 0;     // time when the white flash started
 
     uint8_t _flashDuration              = 50;    // larger number will hold a white flash longer
-    static const PROGMEM uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
-    static const PROGMEM uint8_t _fadeRate      = 220;   // How fast to fade out tail. [0-255]
+    static const uint8_t _delta         = 1;     // Sets forward or backwards direction amount.
+    static const uint8_t _fadeRate      = 220;   // How fast to fade out tail. [0-255]
 
     // fucntion declartions
     void show() {
@@ -90,7 +90,7 @@ class ezBlasterShot : public ezPattern
     CRGB _currentColor;  // color
     CRGB _startColor;    // starting color
     CRGB _targetColor;   // target color
-    PROGMEM const CRGB _coolOffColor = CRGB::Black;
+    const CRGB _coolOffColor = CRGB::Black;
 
     // processing variables
     uint8_t _blendRate     = 32;  // larger number will be a faster color blend
