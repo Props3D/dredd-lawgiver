@@ -34,14 +34,12 @@ class EasyButton
     bool isLongDetected = false;
 
   public:
-
-    static const PROGMEM int BUTTON_NOT_PRESSED = 0;
-    static const PROGMEM int BUTTON_PRESSED     = 1;
-    static const PROGMEM int BUTTON_SHORT_PRESS = 2;
-    static const PROGMEM int BUTTON_HOLD_PRESS  = 3;
-    static const PROGMEM int BUTTON_LONG_PRESS  = 4;
-
-    static const PROGMEM uint16_t  LONG_PRESS_TIME PROGMEM  = 2000; // 2 seconds
+    static const int BUTTON_NOT_PRESSED = 0;
+    static const int BUTTON_PRESSED     = 1;
+    static const int BUTTON_SHORT_PRESS = 2;
+    static const int BUTTON_HOLD_PRESS  = 3;
+    static const int BUTTON_LONG_PRESS  = 4;
+    static const uint16_t LONG_PRESS_TIME  = 2000; // 2 seconds
 
 #if ENABLE_EASY_BUTTON == 1
     EasyButton(uint8_t pin, bool signalOnRelease = true) : button(pin) {
