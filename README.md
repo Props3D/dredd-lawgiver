@@ -141,7 +141,7 @@ Other Parts
 ![7 Power Junction Box](https://user-images.githubusercontent.com/20442880/184990857-5b788776-0133-4732-bf34-bf710d6a2dd5.jpg)
 * Breadboard
 * 2.54 JST 2pin F X6
-* 22 AWG Solid Copper Wire 49mm 44mm
+* 26~30 AWG Solid Copper Wire 49mm 44mm
 
 ### 8 Voice Recognition
 ![8 Voice Recognition](https://user-images.githubusercontent.com/20442880/184990871-c6286a8e-e6a3-48a0-b278-90cdc86a7506.jpg)
