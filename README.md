@@ -66,7 +66,8 @@ Other Parts
 ### 1 OLED
 ![1 OLED](https://user-images.githubusercontent.com/20442880/184989292-28ad2735-731c-40bc-a2e4-f167b7549781.jpg)
 * 1mm Heat Shrink 6mm X7		
-* 2.54 JST M/F 7pin + Pins									
+* 2.54 JST M 7pin + Pins
+* 2.54 JST F 7pin
 * Wire Black 44mm 103mm	
 * Wire Red 41.5mm 81mm	
 * Wire Green 39mm 99mm	
@@ -78,38 +79,35 @@ Other Parts
 ### 2 Action Module
 ![2 Action Module](https://user-images.githubusercontent.com/20442880/184989565-ae0ec016-eeab-46af-b463-64f283933d35.jpg)
 * 7mm momentary switch
-* 2.54 JST 2pin F
+* 2.54 JST 2pin F X2
 * 2.54 JST 2 pin M + Pins
 * Wire White 42mm 50mm	
 * Wire Gray 43mm 99mm
 * Wire Black 120mm 160mm		
-* 1mm Heat Shrink 6mm X4
 * Micro Switch R Lever 16mm
-* 2.54 JST 2pin F
-* 2mm Heat Shrink 8mm X2	
-* 1mm Heat Shrink 6mm X2
+* 2mm Heat Shrink 8mm X2
+* 1mm Heat Shrink 6mm X4	
 
 ### 3 Fire LED
 ![3 Fire LED](https://user-images.githubusercontent.com/20442880/184990745-328f94e9-eae4-4caa-99df-e06618a88422.jpg)
 
 * 7 segment LED round
-* 2.54 JST 3pin M + Pins
 * 2.54 JST 2pin M + Pins
-* 90deg IC Pin
-* 1mm Heat Shrink 6mm X5
-* Wire Yellow 112mm, 25mm
-* Wire Black 65mm,25mm
-* Wire Red 65mm, 25mm
+* 2.54 JST 1pin M + Pin
+* * Wire Yellow 140mm
+* Wire Black 90mm
+* Wire Red 90mm
 
 ### 4 Boot LEDs
 ![4 Boot LEDs](https://user-images.githubusercontent.com/20442880/184990757-6f610c06-b977-40df-9ede-e0e545017bff.jpg)
 * 3mm Red LED
 * 3mm Green LED
-* 2.54 JST 3pin F
-* 1mm Heat Shrink 6mm X7
-* 1mm Heat Shrink 3mm
-* Wire Black 27mm 66mm
-* Wire Red 26mm 65mm
+* 2.54 JST 3pin M + Pins
+* 2.54 JST 3pin F + 3pin F
+* 1mm Heat Shrink 6mm X10
+* Wire Black 66mm, 27mm, 22mm
+* Wire Purple 50mm, 30mm
+* Wire Purple 50mm, 30mm
 
 ### 5 Power
 ![5 Power](https://user-images.githubusercontent.com/20442880/184990781-61e106b8-f74a-45a3-bfd1-771d3d705b59.jpg)
@@ -127,21 +125,21 @@ Other Parts
 * DF Player Mini
 * 64MB+ Micro SD
 * 1k Resister
-* 1mm Heat Shrink 6mm X2
 * Wire Gray 42mm
 * Wire White 43mm 
 * Wire Purple 26mm
 * Wire Blue 26mm
 * Amp PAM8302A
 * 2.54 JST 2pin M + Pins
-* Wire Black 22mm 66mm
-* Wire Red 33mm 67mm
+* Wire Black 22mm, 66mm
+* Wire Red 33mm, 67mm
+* 1mm Heat Shrink 6mm
 	
 ### 7 Power Junction Box
 ![7 Power Junction Box](https://user-images.githubusercontent.com/20442880/184990857-5b788776-0133-4732-bf34-bf710d6a2dd5.jpg)
 * Breadboard
 * 2.54 JST 2pin F X6
-* 26~30 AWG Solid Copper Wire 49mm 44mm
+* 26~30 AWG Solid Copper Wire 44mm, 49mm
 
 ### 8 Voice Recognition
 ![8 Voice Recognition](https://user-images.githubusercontent.com/20442880/184990871-c6286a8e-e6a3-48a0-b278-90cdc86a7506.jpg)
@@ -156,6 +154,7 @@ Other Parts
 ![9 Arduino](https://user-images.githubusercontent.com/20442880/184990887-b98d7ab3-e10c-4255-a280-b22f1a91747c.jpg)
 * Arduino 328p
 * 2.54 JST 2pin M + Pins
+* 90deg IC Pin
 * Wire Black 56mm
 * Wire Red 56mm
 
