@@ -82,7 +82,7 @@ Other Parts
 * 2.54 JST 2 pin M + Pins
 * Wire White 42mm 50mm	
 * Wire Gray 43mm 99mm
-* Wire Black 86mm 123mm		
+* Wire Black 120mm 160mm		
 * 1mm Heat Shrink 6mm X4
 * Micro Switch R Lever 16mm
 * 2.54 JST 2pin F
