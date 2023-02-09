@@ -21,7 +21,7 @@ void setup(void) {
   Serial.println(F("Props3D Preconfiguration for Elechouse Voice Recognition V3 Module."));
 
   // set a new baud rate
-  if (_vr.setBaud(38400) == 0) {
+  if (_vr.setBaudRate(38400) == 0) {
     Serial.println(F("Baud rate changed successfully"));
   } else {
     Serial.println(F("Baud rate update failed"));
