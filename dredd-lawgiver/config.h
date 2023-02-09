@@ -22,8 +22,8 @@ const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
 
 
 // Pin configuration for voice recognition module
-#define VOICE_TX_PIN          2
-#define VOICE_RX_PIN          3
+#define VOICE_RX_PIN          2
+#define VOICE_TX_PIN          3
 
 // Pin configuration for MP3 Player
 #define AUDIO_TX_PIN          4
