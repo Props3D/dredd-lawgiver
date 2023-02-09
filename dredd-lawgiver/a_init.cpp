@@ -297,10 +297,14 @@ void startUpSequence(void) {
       if (buttonPressed) {
         oled.updateDisplay(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         DBGLN(F("Startup - DNA Progress - start audio"));
+        audio.playTrack(AUDIO_TRACK_SPACER);
+        delay(1000);
         audio.playTrack(AUDIO_TRACK_DNA_CHK);
       } else {
         oled.updateDisplay(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         DBGLN(F("Startup - ID FAIL"));
+        audio.playTrack(AUDIO_TRACK_SPACER);
+        delay(1000);
         audio.playTrack(AUDIO_TRACK_ID_FAIL);
       }
       lastDisplayUpdate = millis();
