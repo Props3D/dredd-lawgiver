@@ -48,12 +48,13 @@ public:
    *   false Setting failed
   */
   bool setVolume(uint8_t vol) {
-    char* command = getString(pro_dfplayer::CMD_SET_VOLUME);
-    uint8_t data[10];
-
+    char data[10];
+    memset(data, 0, sizeof(char)*10);
     itoa(vol, data, 10);
-    strncat(command, data, 39 - strlen(command));
-    strncat_P(command, pro_dfplayer::CMD_END, 39 - strlen(command));
+
+    char* command = getString(pro_dfplayer::CMD_SET_VOLUME);
+    strcat(command, data);
+    strcat_P(command, pro_dfplayer::CMD_END);
     writeATCommand(command);
     return readAck();
   }
@@ -106,13 +107,12 @@ public:
    *   false Setting failed
    */
   bool playFileNum(int16_t num, bool waitReply=false) {
-    char* command = getString(pro_dfplayer::CMD_PLAY_NUM);
-
     char data[10];
     memset(data, 0, sizeof(char)*10);
     itoa(num, data, 10);
     // strncat(command, data, 39 - strlen(command));
     // strncat_P(command, pro_dfplayer::CMD_END, 39 - strlen(command));
+    char* command = getString(pro_dfplayer::CMD_PLAY_NUM);
     strcat(command, data);
     strcat_P(command, pro_dfplayer::CMD_END);
     writeATCommand(command);
@@ -127,7 +127,7 @@ private:
 
   void writeATCommand(char* command) {
     DBGSTR(F("COMMAND: "));
-    DBGLLOG(command);
+    DBGLOG(command);
     uint8_t data[40];
     while (_s->available()) {
       _s->read();
@@ -142,7 +142,7 @@ private:
   bool readAck() {
     char* response = read(4);
     DBGSTR(F("RESPONSE: "));
-    DBGLLOG(response);
+    DBGLOG(response);
 
     if (strcmp_P(response, pro_dfplayer::CMD_OK) == 0) {
       return true;

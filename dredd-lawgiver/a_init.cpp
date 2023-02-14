@@ -85,9 +85,9 @@ uint8_t progressBarUpdates  = 0;
 /**
  *Variables for toggling an LED
  */
-int blinkState              = LOW;
-uint8_t ledBlinks           = 0;
-long lastBlinkUpdate        = 0;
+int blinkState         = LOW;
+uint8_t ledBlinks      = 0;
+long lastBlinkUpdate   = 0;
 
 /**
  * Variables for tracking and updating ammo counts on the OLED
@@ -279,6 +279,7 @@ void startUpSequence(void) {
     DBGLN(F("Startup - Logo"));
     oled.updateDisplayMode(oled.DISPLAY_LOGO, 0);
     lastDisplayUpdate = millis();
+    //DBGLN(F("Startup - Logo2"));
   }
   if (_sequenceMode == oled.DISPLAY_LOGO) {
     if (millis() > (TIMING_STARTUP_LOGO_MS + lastDisplayUpdate)) {
@@ -308,16 +309,16 @@ void startUpSequence(void) {
         oled.updateDisplayMode(oled.DISPLAY_DNA_PRG, progressBarUpdates);
         DBGLN(F("Startup - DNA Progress - start audio"));
 #ifndef ENABLE_EASY_AUDIO_PRO
-	// This is a hack around specifically for df mini players
+        // This is a hack around specifically for df mini players
         audio.playTrack(AUDIO_TRACK_SPACER);
         delay(1000);
 #endif
         audio.playTrack(AUDIO_TRACK_DNA_CHK);
       } else {
-        oled.updateDisplayMode(oled.DISPLAY_ID_FAIL, progressBarUpdates);
         DBGLN(F("Startup - ID FAIL"));
+        oled.updateDisplayMode(oled.DISPLAY_ID_FAIL, progressBarUpdates);
 #ifndef ENABLE_EASY_AUDIO_PRO
-	// This is a hack around specifically for df mini players
+        // This is a hack around specifically for df mini players
         audio.playTrack(AUDIO_TRACK_SPACER);
         delay(1000);
 #endif
@@ -385,7 +386,6 @@ void startUpSequence(void) {
   }
   if (_sequenceMode == oled.DISPLAY_ID_FAIL) {
     if (ledBlinks < 4 && blinkNow()) {
-      DBGLN(F("Startup - ID FAIL BLINK NOW"));
       // blink the ID FAIL when the RED LED is on
       oled.updateDisplayMode(oled.DISPLAY_ID_FAIL, progressBarUpdates, blinkState == HIGH);
       // toggle the LED after OLED update
@@ -401,6 +401,9 @@ void startUpSequence(void) {
       loopStage = LOOP_STATE_FAIL;
     }
   }
+  if (_sequenceMode != oled.getDisplayMode())
+    DBGLN(F("Startup - changing modes"));
+
 }
 
 /**
@@ -469,7 +472,7 @@ void handleAmmoDown(void) {
 
 void playSelectedTrack(uint8_t trackIdx) {
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID && trackIdx == AMMO_MODE_IDX_FIRE)
-      audio.playTrack(getSelectedTrack(trackIdx), 200L); // give the rapid fire a little extra time
+    audio.playTrack(getSelectedTrack(trackIdx), 200L); // give the rapid fire a little extra time
   else 
     audio.playTrack(getSelectedTrack(trackIdx));
 }

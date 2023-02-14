@@ -29,7 +29,7 @@ class ezPattern {
 
     uint8_t _frameRate             = 16;    // larger number is a slower fade
     unsigned long _flashTimer      = 0;     // time when the white flash started
-    long _flashDuration            = 50;    // larger number will hold a white flash longer
+    unsigned long _flashDuration   = 50;    // larger number will hold a white flash longer
     static const uint8_t _fadeRate = 220;   // How fast to fade out tail. [0-255]
 
     // fucntion declartions

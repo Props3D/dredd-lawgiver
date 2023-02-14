@@ -22,8 +22,8 @@ const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
 
 
 // Pin configuration for voice recognition module
-#define VOICE_RX_PIN          2
 #define VOICE_TX_PIN          3
+#define VOICE_RX_PIN          2
 
 // Pin configuration for MP3 Player
 #define AUDIO_TX_PIN          5
@@ -86,6 +86,7 @@ static const int  AUDIO_TRACK_AMMO_LOW     =   19;
 static const int  AUDIO_TRACK_AMMO_EMPTY   =   20;
 static const int  AUDIO_TRACK_AMMO_RELOAD  =   21;
 static const int  AUDIO_TRACK_SPACER       =   22;  
+static const int  AUDIO_TRACK_THEME        =   23;  // TODO: add feature to playback theme
 
 
 /**
@@ -153,7 +154,7 @@ static const uint8_t AUDIO_TRACK_AMMO_MODE_ARR[7][3]  =  {
 /**
  * DEBUG Macros
  */
-extern inline void DBGLLOG(const char* message) {
+extern inline void DBGLOG(const char* message) {
 #if ENABLE_DEBUG == 1
    Serial.println(message);
 #endif

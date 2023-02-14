@@ -69,7 +69,7 @@ public:
     u8g2.begin();
     u8g2.setBusClock(8000000);
     _ammoSelection = ammoSelection;
-    memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
+    memcpy(_ammoCounts, ammoCounts, 4*sizeof(_ammoCounts[0]));
 #endif
   }
 
@@ -95,11 +95,21 @@ public:
      * This does not need to be called continuously from the main loop.
      * It's better to only call this when updates are necesary.
      */
+  void updateDisplayMode(int displayMode) {
+    updateDisplayMode(displayMode, 0, false);
+  }
+
+  /**
+     * This function is used only during the start up sequence.
+     * This does not need to be called continuously from the main loop.
+     * It's better to only call this when updates are necesary.
+     */
   void updateDisplayMode(int displayMode, uint8_t progress, bool blink = false) {
     _displayMode = displayMode;
     _progressBar = progress * _progressBarIncrement;
     _blink = blink;
     drawDisplay(_displayMode, _progressBar);
+    //DBGLN(F("OLED - update display mode"));
   }
 
   /**
@@ -114,8 +124,9 @@ public:
       // check switching to ammo that is already low
       checkAmmoLevels();
     }
-    memcpy(_ammoCounts, counters, 4*sizeof(int));
+    memcpy(_ammoCounts, counters, 4*sizeof(_ammoCounts[0]));
     drawDisplay(_displayMode, _progressBar);
+    //DBGLN(F("OLED - update ammo display"));
   }
 
 private:
