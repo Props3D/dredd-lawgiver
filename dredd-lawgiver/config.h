@@ -26,8 +26,8 @@ const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
 #define VOICE_TX_PIN          3
 
 // Pin configuration for MP3 Player
-#define AUDIO_TX_PIN          4
-#define AUDIO_RX_PIN          5
+#define AUDIO_TX_PIN          5
+#define AUDIO_RX_PIN          4
 
 // Pin Configuration for 3mm LEDs
 #define GREEN_LED_PIN         6
@@ -103,16 +103,16 @@ static const uint8_t VR_CMD_AMMO_MODE_RAPID  =    6; // speak "Rapid"
 /**
  * Timing Defintions for start up sequence timings
  */
-static const uint16_t  TIMING_STARTUP_LOGO_MS       =    2000;
-static const uint16_t  TIMING_STARTUP_COMM_OK_MS    =    1000;
-static const uint16_t  TIMING_STARTUP_DNA_CHK_MS    =    1200;
-static const uint16_t  TIMING_STARTUP_DNA_PRG_MS    =    1000;
-static const uint16_t  TIMING_STARTUP_ID_OK_MS      =    2400;
-static const uint16_t  TIMING_STARTUP_ID_FAIL_MS    =    1400;
-static const uint16_t  TIMING_STARTUP_ID_NAME_MS    =    1800;
-static const uint16_t  TIMING_PROGRESS_INTERVAL_MS  =    100;
-static const uint16_t  TIMING_LOW_AMMO_WAIT_MS      =    1000;
-static const uint16_t  TIMING_FAST_BLINK_WAIT_MS    =    350;
+static const long  TIMING_STARTUP_LOGO_MS       =    2000L;
+static const long  TIMING_STARTUP_COMM_OK_MS    =    1000L;
+static const long  TIMING_STARTUP_DNA_CHK_MS    =    1200L;
+static const long  TIMING_STARTUP_DNA_PRG_MS    =    1000L;
+static const long  TIMING_STARTUP_ID_OK_MS      =    2400L;
+static const long  TIMING_STARTUP_ID_FAIL_MS    =    1400L;
+static const long  TIMING_STARTUP_ID_NAME_MS    =    1800L;
+static const long  TIMING_PROGRESS_INTERVAL_MS  =    100L;
+static const long  TIMING_LOW_AMMO_WAIT_MS      =    1000L;
+static const long  TIMING_FAST_BLINK_WAIT_MS    =    350L;
 
 
 /**
@@ -125,6 +125,7 @@ static const uint8_t VOICE_CMD_ARR[]    = {VR_CMD_AMMO_MODE_AP, VR_CMD_AMMO_MODE
 /**
  * Defintions for tracking startup sequence. DO NOT CHANGE
  */
+static const uint8_t  LOOP_STATE_ERROR    =          3;  // Boot Error
 static const uint8_t  LOOP_STATE_START    =          2;  // Startup sequence
 static const uint8_t  LOOP_STATE_MAIN     =          1;  // main loop
 static const uint8_t  LOOP_STATE_FAIL     =          0;  // stop loop
@@ -152,19 +153,20 @@ static const uint8_t AUDIO_TRACK_AMMO_MODE_ARR[7][3]  =  {
 /**
  * DEBUG Macros
  */
+extern inline void DBGLLOG(const char* message) {
 #if ENABLE_DEBUG == 1
-#define DBGSTR(message) Serial.print(message)
-#define DBGBUF(buf, len) Serial.write(buf, len)
-#define DBGLN(message) Serial.println(message)
-#define DBGFMT(msg, fmt) Serial.print(msg, fmt)
-#define DBGCHAR(c) Serial.write(c)
-#else
-#define DBG(message)
-#define DBGSTR(message)
-#define DBGBUF(buf, len)
-#define DBGLN(message)
-#define DBGFMT(msg, fmt)
-#define DBGCHAR(c)
-#endif  // ENABLE_DEBUG
+   Serial.println(message);
+#endif
+}
+extern inline void DBGLN(const __FlashStringHelper* message) {
+#if ENABLE_DEBUG == 1
+   Serial.println(message);
+#endif
+}
+extern inline void DBGSTR(const __FlashStringHelper* message) {
+#if ENABLE_DEBUG == 1
+   Serial.print(message);
+#endif
+}
 
 #endif

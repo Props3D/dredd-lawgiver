@@ -7,7 +7,7 @@
 
 const static char STR_ARMOR_PIERCING[] PROGMEM = "ARMOR PIERCING";
 const static char STR_INCENDIARY[] PROGMEM = "INCENDIARY";
-const static char STR_HOT_SHOT[] PROGMEM = "HIGH SHOT";
+const static char STR_HOT_SHOT[] PROGMEM = "HOT SHOT";
 const static char STR_HIGH_EX[] PROGMEM = "HIGH EX";
 const static char STR_STUN[] PROGMEM = "STUN";
 const static char STR_RAPID[] PROGMEM = "RAPID";
@@ -22,6 +22,8 @@ const static char STR_DNA_CHECK[] PROGMEM = "DNA CHECK";
 const static char STR_COMM_OK[] PROGMEM = "COMM OK";
 const static char STR_ID_OK[] PROGMEM = "I.D. OK";
 const static char STR_ID_FAIL[] PROGMEM = "I.D. FAIL";
+const static char STR_BOOT_ERROR[] PROGMEM = "Boot Error";
+const static char STR_CHK_BAT[] PROGMEM = "Check battery levels";
 
 /**
  * A simple class for managing an LED display. It's mainly based on
@@ -41,18 +43,19 @@ const static char STR_ID_FAIL[] PROGMEM = "I.D. FAIL";
 template<int CL_PIN, int DA_PIN, int CS_PIN, int DC_PIN, int RESET_PIN>
 class EasyOLED {
 public:
-  static const uint8_t DISPLAY_LOGO = 1;
-  static const uint8_t DISPLAY_COMM_CHK = 2;
-  static const uint8_t DISPLAY_DNA_CHK = 3;
-  static const uint8_t DISPLAY_DNA_PRG = 4;
-  static const uint8_t DISPLAY_ID_OK = 5;
-  static const uint8_t DISPLAY_ID_NAME = 6;
-  static const uint8_t DISPLAY_MAIN = 7;
-  static const uint8_t DISPLAY_ID_FAIL = 8;
-
-  EasyOLED() :
+  static const int DISPLAY_LOGO = 1;
+  static const int DISPLAY_COMM_CHK = 2;
+  static const int DISPLAY_DNA_CHK = 3;
+  static const int DISPLAY_DNA_PRG = 4;
+  static const int DISPLAY_ID_OK = 5;
+  static const int DISPLAY_ID_NAME = 6;
+  static const int DISPLAY_MAIN = 7;
+  static const int DISPLAY_ID_FAIL = 8;
+  static const int DISPLAY_BOOT_ERROR = 9;
+ 
+  EasyOLED()
 #if ENABLE_EASY_OLED == 1
-      u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN)
+      : u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN)
       //u8g2(U8G2_R2, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN)
 #endif
       {}
@@ -73,7 +76,7 @@ public:
   /**
      * Return the current display mode
      */
-  uint8_t getDisplayMode() {
+  int getDisplayMode() {
     return _displayMode;
   }
 
@@ -92,7 +95,7 @@ public:
      * This does not need to be called continuously from the main loop.
      * It's better to only call this when updates are necesary.
      */
-  void updateDisplay(uint8_t displayMode, uint8_t progress, bool blink = false) {
+  void updateDisplayMode(int displayMode, uint8_t progress, bool blink = false) {
     _displayMode = displayMode;
     _progressBar = progress * _progressBarIncrement;
     _blink = blink;
@@ -104,14 +107,14 @@ public:
      * This does not need to be called continuously from the main loop.
      * It's better to only call this when updates are necesary.
      */
-  void updateDisplay(int ammoSelection, uint8_t ammoCounts[], bool blink = false) {
+  void updateDisplay(int ammoMode, uint8_t counters[], bool blink = false) {
     _blink = blink;
-    if (_ammoSelection != ammoSelection) {
-      _ammoSelection = ammoSelection;
+    if (_ammoSelection != ammoMode) {
+      _ammoSelection = ammoMode;
       // check switching to ammo that is already low
       checkAmmoLevels();
     }
-    memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
+    memcpy(_ammoCounts, counters, 4*sizeof(int));
     drawDisplay(_displayMode, _progressBar);
   }
 
@@ -119,7 +122,7 @@ private:
   // number eof pixels to move the progress bar on startup
   const uint8_t _progressBarIncrement = 10;
   // index of ammo selections and ammo counters based on the config.h
-  uint8_t _ammoIdx[8] = { 0, 1, 1, 2, 3, 3, 3, 3 };
+  const uint8_t _ammoIdx[8] = { 0, 1, 1, 2, 3, 3, 3, 3 };
 
   // See the instructions for optimizing the U8g2 lib.
 #if ENABLE_EASY_OLED == 1
@@ -127,15 +130,15 @@ private:
   //U8G2_SH1122_256X64_2_4W_HW_SPI u8g2;
   //U8G2_SH1122_256X64_F_4W_HW_SPI u8g2;
 #endif
-  uint8_t _displayMode = 0;  // tracking display modes during start up
-  uint8_t _progressBar = 0;  // tracking progress during startup sequence
+  int _displayMode = 0;  // tracking display modes during start up
+  int _progressBar = 0;  // tracking progress during startup sequence
 
-  uint8_t _ammoSelection = 0;  // ammo selecetor
+  int _ammoSelection = 0;  // ammo selecetor
   uint8_t _ammoCounts[4];      // ammo counts
   bool _blink = false;         // blink controller
   bool _ammoLow = false;       // ammo low state
   char _buf[10];               // print buffer for ammo counts
-  char _output[80];            // print buffer for text
+  char _txtbuf[80];            // print buffer for text
 
   void drawDisplay(int displayMode, int progress) {
 #if ENABLE_EASY_OLED == 1
@@ -170,6 +173,8 @@ private:
           drawIDFail(progress);
           break;
         default:
+          // BOOT Error
+          drawBootError();
           break;
       }
     } while (u8g2.nextPage());
@@ -192,6 +197,16 @@ private:
     u8g2.setFont(u8g2_font_helvB18_tr);
     u8g2.setCursor(40, 42);
     printText(STR_LOGO);
+#endif
+  }
+
+  void drawBootError() {
+#if ENABLE_EASY_OLED == 1
+    u8g2.setFont(u8g2_font_helvB14_tr);
+    u8g2.setCursor(42, 30);
+    printText(STR_BOOT_ERROR);
+    u8g2.setCursor(20, 45);
+    printText(STR_CHK_BAT);
 #endif
   }
 
@@ -446,56 +461,59 @@ private:
 #endif
   }
 
-  void formatInt(int i, int factor, char* _buffer) {
+  void formatInt(int i, int factor, char* strbuf) {
     uint8_t len = 0;
     while ((factor > 1) && (i >= factor)) {
-      _buffer[len++] = ' ';
+      strbuf[len++] = ' ';
       factor /= 10;
     }
-    itoa(i, &_buffer[len], 10);
+    itoa(i, &strbuf[len], 10);
   }
 
-  void formatAmmo(char* _buffer, int idx) {
-    memset(_buffer, 0, sizeof(_buffer));
-    formatInt(_ammoCounts[idx], 10, _buffer);
-    uint8_t len = strlen(_buffer);
+  void formatAmmo(char* strbuf, int idx) {
+    memset(strbuf, 0, sizeof(char)*10);
+
+    formatInt(_ammoCounts[idx], 10, strbuf);
+    uint8_t len = strlen(strbuf);
     switch (idx) {
       case 0:  // armor piercing
-        _buffer[len++] = 'a';
-        _buffer[len++] = 'p';
-        _buffer[len] = '\0';  // NUL-terminate the C string
-        //sprintf (_buffer, "%dap", _ammoCounts[0]);
+        strbuf[len++] = 'a';
+        strbuf[len++] = 'p';
+        strbuf[len] = '\0';  // NUL-terminate the C string
+        //sprintf (strbuf, "%dap", _ammoCounts[0]);
         break;
       case 1:  // incendiary
-        _buffer[len++] = 'i';
-        _buffer[len++] = 'n';
-        _buffer[len] = '\0';  // NUL-terminate the C string
-        //sprintf (_buffer, "%din", _ammoCounts[1]);
+        strbuf[len++] = 'i';
+        strbuf[len++] = 'n';
+        strbuf[len] = '\0';  // NUL-terminate the C string
+        //sprintf (strbuf, "%din", _ammoCounts[1]);
         break;
       case 2:  // highex
-        _buffer[len++] = 'h';
-        _buffer[len++] = 'e';
-        _buffer[len] = '\0';  // NUL-terminate the C string
-        //sprintf (_buffer, "%dhe", _ammoCounts[2]);
+        strbuf[len++] = 'h';
+        strbuf[len++] = 'e';
+        strbuf[len] = '\0';  // NUL-terminate the C string
+        //sprintf (strbuf, "%dhe", _ammoCounts[2]);
         break;
       case 3:  // full metal jacket
-        _buffer[len++] = 'f';
-        _buffer[len++] = 'm';
-        _buffer[len++] = 'j';
-        _buffer[len] = '\0';  // NUL-terminate the C string
-        //sprintf (_buffer, "%dfmj", _ammoCounts[3]);
+        strbuf[len++] = 'f';
+        strbuf[len++] = 'm';
+        strbuf[len++] = 'j';
+        strbuf[len] = '\0';  // NUL-terminate the C string
+        //sprintf (strbuf, "%dfmj", _ammoCounts[3]);
         break;
     }
   }
 
   void printText(const char* str) {
+#if ENABLE_EASY_OLED == 1
     u8g2.print(getString(str));
+#endif
   }
 
   char* getString(const char* str) {
-    memset(_output, 0, sizeof(_output));
-    strcpy_P(_output, (char*)str);
-    return _output;
+    memset(_txtbuf, 0, sizeof(char)*80);
+    strcpy_P(_txtbuf, (char*)str);
+    return _txtbuf;
   }
 };
 

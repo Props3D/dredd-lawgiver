@@ -3,15 +3,17 @@
 
 #include <Arduino.h>
 
-const static char CMD_AT[] PROGMEM = "AT\r\n";
-const static char CMD_FUNCTION_MUSIC[] PROGMEM = "AT+FUNCTION=1\r\n";
-const static char CMD_PLAYMODE_SINGLE[] PROGMEM = "AT+PLAYMODE=3\r\n";
-const static char CMD_AMP_ON[] PROGMEM = "AT+AMP=ON\r\n";
-const static char CMD_PLAY_NUM[] PROGMEM = "AT+PLAYNUM=";
-const static char CMD_SET_VOLUME[] PROGMEM = "AT+VOL=";
-const static char CMD_END[] PROGMEM = "\r\n";
-const static char CMD_OK[] PROGMEM = "OK\r\n";
-const static char CMD_ERROR[] PROGMEM = "error";
+namespace pro_dfplayer {
+static const char CMD_AT[] PROGMEM = "AT\r\n";
+static const char CMD_FUNCTION_MUSIC[] PROGMEM = "AT+FUNCTION=1\r\n";
+static const char CMD_PLAYMODE_SINGLE[] PROGMEM = "AT+PLAYMODE=3\r\n";
+static const char CMD_AMP_ON[] PROGMEM = "AT+AMP=ON\r\n";
+static const char CMD_PLAY_NUM[] PROGMEM = "AT+PLAYNUM=";
+static const char CMD_SET_VOLUME[] PROGMEM = "AT+VOL=";
+static const char CMD_END[] PROGMEM = "\r\n";
+static const char CMD_OK[] PROGMEM = "OK\r\n";
+static const char CMD_ERROR[] PROGMEM = "error";
+}
 
 /**
  * Define the basic structure of class DF Player Pro DF1201S, the implementation of basic methods.
@@ -19,15 +21,6 @@ const static char CMD_ERROR[] PROGMEM = "error";
  */
 class DFPlayerPro {
 public:
-  typedef enum {
-    SINGLECYCLE = 1,  // Repeat one song
-    ALLCYCLE,         // Repeat all
-    SINGLE,           // Play one song only
-    RANDOM,           // Random
-    FOLDER,           // Repeat all songs in folder
-    ERROR,
-  } ePlayMode_t;
-
   /**
    * Class constructor
    */
@@ -42,7 +35,7 @@ public:
    */
   bool begin(Stream& s) {
     _s = &s;
-    writeATCommand(getString(CMD_AT));
+    writeATCommand(getString(pro_dfplayer::CMD_AT));
     return readAck();
   }
 
@@ -55,25 +48,25 @@ public:
    *   false Setting failed
   */
   bool setVolume(uint8_t vol) {
-    char* command = getString(CMD_SET_VOLUME);
+    char* command = getString(pro_dfplayer::CMD_SET_VOLUME);
     uint8_t data[10];
 
     itoa(vol, data, 10);
     strncat(command, data, 39 - strlen(command));
-    strncat_P(command, CMD_END, 39 - strlen(command));
+    strncat_P(command, pro_dfplayer::CMD_END, 39 - strlen(command));
     writeATCommand(command);
     return readAck();
   }
 
   /**
    * Set working mode 
-   *   function eFunction_t:MUSIC,RECORD,UFDISK
+   *   function MUSIC=1,RECORD=2,UFDISK=3
    * Returns Boolean type, the result of seted
    *   true The setting succeeded
    *   false Setting failed
    */
   bool musicMode() {
-    writeATCommand(getString(CMD_FUNCTION_MUSIC));
+    writeATCommand(getString(pro_dfplayer::CMD_FUNCTION_MUSIC));
     if (readAck()) {
       delay(2000);
       return true;
@@ -83,13 +76,13 @@ public:
 
   /**
    * Set playback mode 
-   *   mode ePlayMode_t:SINGLECYCLE,ALLCYCLE,SINGLE,RANDOM,FOLDER
+   *   mode SINGLECYCLE=1,ALLCYCLE=2,SINGLE=3,RANDOM=4,FOLDER=5
    * Returns Boolean type, the result of seted
    *   true The setting succeeded
    *   false Setting failed
    */
   bool singlePlayMode() {
-    writeATCommand(getString(CMD_PLAYMODE_SINGLE));
+    writeATCommand(getString(pro_dfplayer::CMD_PLAYMODE_SINGLE));
     return readAck();
   }
 
@@ -100,7 +93,7 @@ public:
    *   false Setting failed
    */
   bool enableAMP() {
-    writeATCommand(getString(CMD_AMP_ON));
+    writeATCommand(getString(pro_dfplayer::CMD_AMP_ON));
     return readAck();
   }
 
@@ -112,16 +105,20 @@ public:
    *   true The setting succeeded
    *   false Setting failed
    */
-  bool playFileNum(int16_t num) {
-    char* command = getString(CMD_PLAY_NUM);
+  bool playFileNum(int16_t num, bool waitReply=false) {
+    char* command = getString(pro_dfplayer::CMD_PLAY_NUM);
 
-    uint8_t data[10];
+    char data[10];
+    memset(data, 0, sizeof(char)*10);
     itoa(num, data, 10);
-    strncat(command, data, 39 - strlen(command));
-    strncat_P(command, CMD_END, 39 - strlen(command));
+    // strncat(command, data, 39 - strlen(command));
+    // strncat_P(command, pro_dfplayer::CMD_END, 39 - strlen(command));
+    strcat(command, data);
+    strcat_P(command, pro_dfplayer::CMD_END);
     writeATCommand(command);
-    return true; // do not wait for confirmation
-    //return readAck();
+    if (waitReply)
+      return readAck();      
+    return true;
   }
 
 private:
@@ -130,7 +127,7 @@ private:
 
   void writeATCommand(char* command) {
     DBGSTR(F("COMMAND: "));
-    DBGLN(command);
+    DBGLLOG(command);
     uint8_t data[40];
     while (_s->available()) {
       _s->read();
@@ -139,14 +136,15 @@ private:
     for (uint8_t i = 0; i < length; i++)
       data[i] = command[i];
     _s->write(data, length);
+    delay(30);
   }
 
   bool readAck() {
     char* response = read(4);
-    DBGSTR(F("RESONSE: "));
-    DBGLN(response);
+    DBGSTR(F("RESPONSE: "));
+    DBGLLOG(response);
 
-    if (strcmp_P(response, CMD_OK) == 0) {
+    if (strcmp_P(response, pro_dfplayer::CMD_OK) == 0) {
       return true;
     }
     return false;
@@ -154,7 +152,8 @@ private:
 
   char* read(uint8_t len) {
     size_t offset = 0, left = len;
-    long long curr = millis();
+    memset(_output, 0, sizeof(char)*40);
+    long curr = millis();
     if (len == 0) {
       while (1) {
         if (_s->available()) {
@@ -163,8 +162,7 @@ private:
         }
         if ((_output[offset - 1]) == '\n' && (_output[offset - 2] == '\r')) break;
         if (millis() - curr > 1000) {
-          return getString(CMD_ERROR);
-          break;
+          return getString(pro_dfplayer::CMD_ERROR);
         }
       }
     } else {
@@ -176,8 +174,7 @@ private:
         }
         if (_output[offset - 1] == '\n' && _output[offset - 2] == '\r') break;
         if (millis() - curr > 1000) {
-          return getString(CMD_ERROR);
-          break;
+          return getString(pro_dfplayer::CMD_ERROR);
         }
       }
       _output[len] = 0;
@@ -186,8 +183,8 @@ private:
   }
 
   char* getString(const char* str) {
-    memset(_output, 0, sizeof(_output));
-    strncpy_P(_output, (char*)str, 39);
+    memset(_output, 0, sizeof(char)*40);
+    strcpy_P(_output, (char*)str);
     return _output;
   }
 };

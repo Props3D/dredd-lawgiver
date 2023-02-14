@@ -1,6 +1,15 @@
 #ifndef easycounter_h
 #define easycounter_h
 
+namespace easy_counter {
+    static const uint8_t STATE_ACTIVE     = 0;
+    static const uint8_t STATE_EMPTY      = 1;
+    static const uint8_t STATE_RESET      = 2;
+
+    static const int COUNTER_MODE_UP   =  1;
+    static const int COUNTER_MODE_DOWN = -1;
+
+}
 /**
  * Simple class for tracking counts up or down.
  * Use the constructor to set the min, max, and increment.
@@ -19,7 +28,7 @@
 class EasyCounter
 {
   private:
-    int _increment = COUNTER_MODE_DOWN;
+    int _increment = easy_counter::COUNTER_MODE_DOWN;
     int _low;
     int _high;
     bool _resetOnEmpty;
@@ -33,12 +42,6 @@ class EasyCounter
     void setCount(int value) { this->_currentCounter = value; }
     void setResetOnEmpty(bool value) { this->_resetOnEmpty = value; }
   public:
-    static const uint8_t STATE_ACTIVE     = 0;
-    static const uint8_t STATE_EMPTY      = 1;
-    static const uint8_t STATE_RESET      = 2;
-
-    static const int COUNTER_MODE_UP   =  1;
-    static const int COUNTER_MODE_DOWN = -1;
   
     EasyCounter() {}
 
@@ -49,49 +52,49 @@ class EasyCounter
       setLow(lowNumber);
       setHigh(highNumber);
       setIncrement(increment);
-      increment == COUNTER_MODE_UP ? setCount(_low) : setCount(_high);
+      increment == easy_counter::COUNTER_MODE_UP ? setCount(_low) : setCount(_high);
       _resetOnEmpty = resetOnEmpty;
-      _state = STATE_ACTIVE;
+      _state = easy_counter::STATE_ACTIVE;
     }
 
     bool EasyCounter::tick() {
       if (isEmpty()) {
-        _state = STATE_EMPTY;
+        _state = easy_counter::STATE_EMPTY;
         if (_resetOnEmpty) resetCount();
         return false;
       }
-      if (_increment == COUNTER_MODE_UP) {
+      if (_increment == easy_counter::COUNTER_MODE_UP) {
           _currentCounter = _currentCounter + 1;
       } else {
           _currentCounter = _currentCounter - 1;
       }
-      _state = STATE_ACTIVE;
+      _state = easy_counter::STATE_ACTIVE;
       return true;
     }
 
     bool isEmpty() {
-      if (_increment == COUNTER_MODE_UP)
+      if (_increment == easy_counter::COUNTER_MODE_UP)
         return (_currentCounter == _high);
-      if (_increment == COUNTER_MODE_DOWN)
+      if (_increment == easy_counter::COUNTER_MODE_DOWN)
         return (_currentCounter == _low);
       return false;
     }
 
     bool isFull() {
-      if (_increment == COUNTER_MODE_UP)
+      if (_increment == easy_counter::COUNTER_MODE_UP)
         return (_currentCounter == _low);
-      if (_increment == COUNTER_MODE_DOWN)
+      if (_increment == easy_counter::COUNTER_MODE_DOWN)
         return (_currentCounter == _high);
       return false;
     }
 
     // returns the current count
     int resetCount() {
-      if (_increment == COUNTER_MODE_UP)
+      if (_increment == easy_counter::COUNTER_MODE_UP)
         setCount(_low);
-      if (_increment == COUNTER_MODE_DOWN)
+      if (_increment == easy_counter::COUNTER_MODE_DOWN)
         setCount(_high);
-      _state = STATE_RESET;
+      _state = easy_counter::STATE_RESET;
       return this->_currentCounter;
     }
 

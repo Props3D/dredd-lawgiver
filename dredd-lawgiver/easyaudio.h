@@ -14,7 +14,7 @@
 #endif
 
 /**
- * EasyAudio is based on DF Player Mini, and provides simple setup, and easy track playback.
+ * EasyAudio is based on DF Player components that provide simple setup and easy track playback.
  * 
  * Constructor takes rx and tx pins as inputs, but will default to 0 and 1.
  * eg: EasyAudio audio(0, 1);
@@ -39,36 +39,37 @@ private:
 #ifdef ENABLE_EASY_AUDIO_PRO
   DFPlayerPro _player;
 #else
-  DFPlayerMini _player;
+  DFPlayerMini _player; // set to true if you have a chip variant of the DF PlayerMini
 #endif
 
-  long lastPlaybackTime = 0;
-  const uint16_t _playbackDelay = 100;
+  unsigned long _lastPlaybackTime = 0;
+  unsigned long _playbackDelay = 100;
 
 public:
   EasyAudio(uint8_t rxPin, uint8_t txPin)
     : _mySerial(rxPin, txPin){};
 
-  void begin(uint8_t vol) {
+  bool begin(uint8_t vol) {
 #if ENABLE_EASY_AUDIO == 1
     DBGLN(F("setup audio"));
 #ifdef ENABLE_EASY_AUDIO_PRO
     _mySerial.begin(PRO_BAUD_RATE);
-    while (!_player.begin(_mySerial)) {
+    if (!_player.begin(_mySerial)) {
       DBGLN(F("DFPlayer failed"));
-      delay(3000);
+      return false;
     }
-    _player.setVolume(vol);    // initial volume, 30 is max, 25 makes the wife not angry
+    _player.enableAMP();       // Enable amplifier chip
     _player.musicMode();       // Enter music mode
     _player.singlePlayMode();  // Set playback mode to Play single and pause
-    _player.enableAMP();       // Enable amplifier chip
+    _player.setVolume(vol);    // initial volume, 30 is max, 25 makes the wife not angry
 #else
     _mySerial.begin(MINI_BAUD_RATE);
-    _player.begin(_mySerial, true);  //set Serial for DFPlayer-mini mp3 module
-    _player.volume(vol);             //initial volume, 30 is max, 3 makes the wife not angry
+    _player.begin(_mySerial, false, true);  //set Serial for DFPlayer-mini mp3 module
+    _player.volume(vol);                    //initial volume, 30 is max, 3 makes the wife not angry
 #endif
-    delay(450);
+    delay(1000);
 #endif
+    return true;
   }
 
   /**
@@ -77,30 +78,48 @@ public:
    * Our wiring doesn't support it at the moment
    */
   bool isBusy() {
-    return millis() < (lastPlaybackTime + _playbackDelay);
+    if (_playbackDelay > (millis() -_lastPlaybackTime)) {
+        return false;
+    }
+    return true;
   }
 
+  /**
+   * play a track by number.
+   */
   void playTrack(int track) {
+    playTrack(track, 100L);  
+  }
+
+  /**
+   * play a track by number, with a specific busy delay
+   */
+  void playTrack(int track, long busyDelay) {
+    Serial.print("busy: ");Serial.println(busyDelay);
+    _playbackDelay = busyDelay;
+    Serial.print("delay: ");Serial.println(_playbackDelay);
+    
+    _lastPlaybackTime = millis();
 #if ENABLE_EASY_AUDIO == 1
-    lastPlaybackTime = millis();
-#ifdef ENABLE_EASY_AUDIO_PRO
+  #ifdef ENABLE_EASY_AUDIO_PRO
     _player.playFileNum(track);
-#else
+  #else
     _player.playFromMP3Folder(track);
-#endif
+  #endif
 #endif
   }
 
-  void playTrack(int track, bool wait) {
+  void playTrackAndWait(int track) {
+    _lastPlaybackTime = millis();
 #if ENABLE_EASY_AUDIO == 1
-    lastPlaybackTime = millis();
-#ifdef ENABLE_EASY_AUDIO_PRO
-    _player.playFileNum(track);
-#else
+  #ifdef ENABLE_EASY_AUDIO_PRO
+    _player.playFileNum(track, true);
+  #else
     _player.playFromMP3Folder(track);
-#endif
-    if (wait) delay(_playbackDelay);
+  #endif
+    delay(_playbackDelay);
 #endif
   }
+
 };
 #endif

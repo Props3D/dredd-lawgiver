@@ -52,9 +52,10 @@ public:
    *      Number of ms allowed for the MP3 player to respond (timeout) to a query.
    *  Returns True.
    */
-  bool begin(Stream& stream, bool debug = false) {
+  bool begin(Stream& stream, bool variant = false, bool debug = false) {
     _serial = &stream;
     _debug = debug;
+    _variant = variant;
 
     sendStack.start_byte = dfplayer::SB;
     sendStack.version = dfplayer::VER;
@@ -101,7 +102,6 @@ public:
     sendData();
   }
 
-
 private:
   /**
    * Struct to store entire serial datapacket used for MP3 config/control 
@@ -119,9 +119,9 @@ private:
     uint8_t end_byte;
   } sendStack, recStack;
 
-
   Stream* _serial;
   bool _debug;
+  bool _variant;
 
   /**
    *  Determine and insert the checksum of a given config/command packet into that same packet struct.
@@ -149,10 +149,13 @@ private:
     _serial->write(sendStack.feedbackValue);
     _serial->write(sendStack.paramMSB);
     _serial->write(sendStack.paramLSB);
-    _serial->write(sendStack.checksumMSB);
-    _serial->write(sendStack.checksumLSB);
+    if (!_variant) {
+      _serial->write(sendStack.checksumMSB);
+      _serial->write(sendStack.checksumLSB);
+    }
     _serial->write(sendStack.end_byte);
 
+    delay(30);
     if (_debug) {
       Serial.print("Sent ");
       printStack(sendStack);
@@ -182,10 +185,12 @@ private:
     Serial.print(' ');
     Serial.print(_stack.paramLSB, HEX);
     Serial.print(' ');
-    Serial.print(_stack.checksumMSB, HEX);
-    Serial.print(' ');
-    Serial.print(_stack.checksumLSB, HEX);
-    Serial.print(' ');
+    if (!_variant) {
+      Serial.print(_stack.checksumMSB, HEX);
+      Serial.print(' ');
+      Serial.print(_stack.checksumLSB, HEX);
+      Serial.print(' ');
+    }
     Serial.println(_stack.end_byte, HEX);
   }
 };

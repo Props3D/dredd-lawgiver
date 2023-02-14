@@ -23,99 +23,100 @@
  * 
  * REQUIRED LIBRARIES - ezButton
  */
-class EasyButton
-{
-  private:
-    ezButton button;
-    bool longPressOnRelease = true;
-    unsigned long pressedTime  = 0;
-    unsigned long releasedTime = 0;
-    bool isPressing = false;
-    bool isLongDetected = false;
+class EasyButton {
+private:
+  ezButton button;
+  bool longPressOnRelease = true;
+  unsigned long pressedTime = 0;
+  unsigned long releasedTime = 0;
+  bool isPressing = false;
+  bool isLongDetected = false;
 
-  public:
-    static const int BUTTON_NOT_PRESSED = 0;
-    static const int BUTTON_PRESSED     = 1;
-    static const int BUTTON_SHORT_PRESS = 2;
-    static const int BUTTON_HOLD_PRESS  = 3;
-    static const int BUTTON_LONG_PRESS  = 4;
-    static const uint16_t LONG_PRESS_TIME  = 2000; // 2 seconds
+public:
+  static const int BUTTON_NOT_PRESSED = 0;
+  static const int BUTTON_PRESSED = 1;
+  static const int BUTTON_SHORT_PRESS = 2;
+  static const int BUTTON_HOLD_PRESS = 3;
+  static const int BUTTON_LONG_PRESS = 4;
+  static const long LONG_PRESS_TIME = 2000L;  // 2 seconds
 
 #if ENABLE_EASY_BUTTON == 1
-    EasyButton(uint8_t pin, bool signalOnRelease = true) : button(pin) {
-      longPressOnRelease = signalOnRelease;
-      button.setDebounceTime(50); // set debounce time to 50 milliseconds
-    }
+  EasyButton(uint8_t pin, bool signalOnRelease = true)
+    : button(pin) {
+    longPressOnRelease = signalOnRelease;
+    button.setDebounceTime(50);  // set debounce time to 50 milliseconds
+  }
 #else
-    // do not initialize the button on the pin
-    EasyButton(uint8_t pin, bool signalOnRelease = true) : button(-1) {
-      longPressOnRelease = signalOnRelease;
-      button.setDebounceTime(50); // set debounce time to 50 milliseconds
-    }
+  // do not initialize the button on the pin
+  EasyButton(uint8_t pin, bool signalOnRelease = true)
+    : button(-1) {
+    longPressOnRelease = signalOnRelease;
+    button.setDebounceTime(50);  // set debounce time to 50 milliseconds
+  }
 #endif
-    void begin(int debounce) {
-      button.setDebounceTime(debounce);
-    }
+  void begin(int debounce) {
+    button.setDebounceTime(debounce);
+  }
 
-    int checkState() {
+  int checkState() {
 #if ENABLE_EASY_BUTTON == 1
-      button.loop(); // MUST call the loop() function first
-      // track previous state to capture initial press
-      bool wasPressed = isPressing;
-      if(button.isPressed()){
-        //Serial.println(F("button pressed"));
-        pressedTime = millis();
-        isPressing = true;
-        isLongDetected = false;
-      }
-    
-      if(button.isReleased() && isPressing == true) {
-        //Serial.println(F("button released"));
-        releasedTime = millis();
-        long pressDuration = releasedTime - pressedTime;
-        //Serial.println(pressDuration);
-
-        // check if we have a short press
-        if( pressDuration <= LONG_PRESS_TIME ) {
-          isPressing = false;
-          isLongDetected = false;
-          //Serial.println(F("A short press is released"));
-          return BUTTON_SHORT_PRESS;
-        }
-        // when configured, return long press on release
-        if(longPressOnRelease && (pressDuration >= LONG_PRESS_TIME)) {
-          isPressing = false;
-          isLongDetected = true;
-          //Serial.println(F("A long press is released"));
-          return BUTTON_LONG_PRESS;
-        }
-        if(!longPressOnRelease && isLongDetected) {
-          isPressing = false;
-          //Serial.println(F("A long press released"));
-        }
-      }
-
-      // if configured, return long press signal when duration has been reached
-      if((longPressOnRelease == false) && (isPressing == true) && (isLongDetected == false)) {
-        long pressDuration = millis() - pressedTime;
-    
-        if( pressDuration > LONG_PRESS_TIME ) {
-          //Serial.println(F("A long press is detected"));
-          isLongDetected = true;
-          return BUTTON_LONG_PRESS;
-        }
-      }
-
-      // initial press or button held down
-      if (isPressing) {
-        if (!wasPressed)
-          return BUTTON_PRESSED;
-        return BUTTON_HOLD_PRESS;
-      }
-#endif
-      // nothing happening
-      return BUTTON_NOT_PRESSED;
+    button.loop();  // MUST call the loop() function first
+    // track previous state to capture initial press
+    bool wasPressed = isPressing;
+    if (button.isPressed()) {
+      //Serial.println(F("button pressed"));
+      pressedTime = millis();
+      isPressing = true;
+      isLongDetected = false;
     }
+
+    if (button.isReleased() && isPressing == true) {
+      //Serial.println(F("button released"));
+      releasedTime = millis();
+      long pressDuration = releasedTime - pressedTime;
+      //Serial.println(pressDuration);
+
+      // check if we have a short press
+      if (pressDuration <= LONG_PRESS_TIME) {
+        isPressing = false;
+        isLongDetected = false;
+        //Serial.println(F("A short press is released"));
+        return BUTTON_SHORT_PRESS;
+      }
+      // when configured, return long press on release
+      if (longPressOnRelease && (pressDuration >= LONG_PRESS_TIME)) {
+        isPressing = false;
+        isLongDetected = true;
+        //Serial.println(F("A long press is released"));
+        return BUTTON_LONG_PRESS;
+      }
+      if (!longPressOnRelease && isLongDetected) {
+        isPressing = false;
+        //Serial.println(F("A long press released"));
+      }
+    }
+
+    // if configured, return long press signal when duration has been reached
+    if ((longPressOnRelease == false) && (isPressing == true) && (isLongDetected == false)) {
+      long pressDuration = millis() - pressedTime;
+
+      if (pressDuration > LONG_PRESS_TIME) {
+        //Serial.println(F("A long press is detected"));
+        isLongDetected = true;
+        return BUTTON_LONG_PRESS;
+      }
+    }
+
+    // initial press or button held down
+    if (isPressing) {
+      if (!wasPressed)
+        return BUTTON_PRESSED;
+      return BUTTON_HOLD_PRESS;
+    }
+#endif
+    // nothing happening
+    return BUTTON_NOT_PRESSED;
+  }
 };
 
 #endif
