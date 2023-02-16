@@ -1,9 +1,9 @@
-/*
-   name:  Lawgiver 2012
-   Author:  FriskyDingo
-   Date:  2021-11-21
-   Description: Code for Lawgiver setup
-*/
+/**
+ *  name:  Lawgiver 2012
+ *  Author:  Props3D_Craig
+ *  Date:  2021-11-21
+ *  Description: Code for Lawgiver setup
+ */
 #include <Arduino.h>
 #include "config.h"
 #include "easybutton.h"
@@ -74,41 +74,39 @@ void toggleLED(uint8_t pin);
  * - Main loop
  * - Fail / Stop
  */
-uint8_t loopStage           = LOOP_STATE_START;
+uint8_t loopStage = LOOP_STATE_START;
 
 /**
  *Variables for tracking the start up sequence updates
  */
-unsigned long lastDisplayUpdate      = 0;
-uint8_t progressBarUpdates           = 0;
+unsigned long lastDisplayUpdate = 0;
+uint8_t progressBarUpdates.     = 0;
 
 /**
  *Variables for toggling an LED
  */
-int blinkState                  = LOW;
-uint8_t ledBlinks               = 0;
-unsigned long lastBlinkUpdate   = 0;
+int blinkState                = LOW;
+uint8_t ledBlinks             = 0;
+unsigned long lastBlinkUpdate = 0;
 
 /**
  * Variables for tracking and updating ammo counts on the OLED
  */
-uint8_t counters[4] = {25, 25, 25, 50};
-volatile uint8_t screenUpdates            = 0;
-volatile unsigned long lowAmmoChangeTime  = 0;
-volatile uint8_t activateLowAmmo          = 0;
-
+uint8_t counters[4] = { 25, 25, 25, 50 };
+volatile uint8_t screenUpdates           = 0;
+volatile uint8_t activateLowAmmo         = 0;
+volatile unsigned long lowAmmoChangeTime = 0;
 
 /**
  *  Variables for tracking trigger state
  */
-volatile uint8_t selectedTriggerMode  = VR_CMD_AMMO_MODE_FMJ;     // sets the ammo mode to start
-volatile uint8_t activateAmmoDown     = 0;                        // sets main loop to fire a round
-volatile uint8_t activateReload       = 0;                        // sets main loop to reload ammo
+volatile uint8_t selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;  // sets the ammo mode to start
+volatile uint8_t activateAmmoDown    = 0;                     // sets main loop to fire a round
+volatile uint8_t activateReload.     = 0;                     // sets main loop to reload ammo
 
 void setup() {
-  //uncomment for debugging
 #if ENABLE_DEBUG == 1
-  Serial.begin (115200);
+  Serial.begin(115200);
 #endif
   DBGLN(F("Starting setup"));
 
@@ -148,9 +146,9 @@ void setup() {
 }
 
 /**
-   The main loop.
-*/
-void loop () {
+ *  The main loop.
+ */
+void loop() {
   // Shortcut the loop if it's failed
   if (LOOP_STATE_ERROR == loopStage) {
     DBGLN(F("Boot error - check connections and battery level"));
@@ -171,33 +169,33 @@ void loop () {
 }
 
 /**
-   The Main loop Routine
-   1. Check the AmmoDown activation
-     a. Toggles a clip counter
-     b. Checks for an empty clip
-     c. If clip is not empty
-        i. queue audio track for selected fire mode
-       ii. activate front led with blaster shot
-           1. Flash white
-           2. Burn Red to orange, then fade as it cools
-     d. Otherwise queue empty clip track
-   2. Check the ReloadAmmo activation
-     a. Resets all counters
-     b. Queues reload audio track
-     c. Resets the led indicators
-     d. Activates OLED update
-   3. Check if the front leds have been activated
-     a. update the leds following the pattern that has been set
-   4. Check audio queue for playback
-   5. Check low ammo mode has been activated
-     a. Update the led indicators
-     b. playback low ammo track
-   6. Check the recognition module for voice commands
-     a. playback change mode track
-     b. toggle fire mode based on the recognized command
-   7. Refresh or Update the OLED Display
-*/
-void mainLoop (void) {
+ *  The Main loop Routine
+ *  1. Check the AmmoDown activation
+ *    a. Toggles a clip counter
+ *    b. Checks for an empty clip
+ *    c. If clip is not empty
+ *       i. queue audio track for selected fire mode
+ *      ii. activate front led with blaster shot
+ *          1. Flash white
+ *          2. Burn Red to orange, then fade as it cools
+ *    d. Otherwise queue empty clip track
+ *  2. Check the ReloadAmmo activation
+ *    a. Resets all counters
+ *    b. Queues reload audio track
+ *    c. Resets the led indicators
+ *    d. Activates OLED update
+ *  3. Check if the front leds have been activated
+ *    a. update the leds following the pattern that has been set
+ *  4. Check audio queue for playback
+ *  5. Check low ammo mode has been activated
+ *    a. Update the led indicators
+ *    b. playback low ammo track
+ *  6. Check the recognition module for voice commands
+ *    a. playback change mode track
+ *    b. toggle fire mode based on the recognized command
+ *  7. Refresh or Update the OLED Display
+ */
+void mainLoop(void) {
   // always check the triggers first
   bool audioPlayed = !checkTriggerSwitch(true) ? checkReloadSwitch(true) : true;
   // Update the triggers LEDS in case they were activated. This should always be run in the main loop.
@@ -212,8 +210,7 @@ void mainLoop (void) {
       if (millis() > (lowAmmoChangeTime + TIMING_LOW_AMMO_WAIT_MS)) {
         activateLowAmmoIndicators();
       }
-    }
-    else if (screenUpdates) {
+    } else if (screenUpdates) {
       DBGLN(F("main - screen update"));
       oled.updateDisplay(selectedTriggerMode, getCounters());
       screenUpdates--;
@@ -226,10 +223,10 @@ void mainLoop (void) {
 }
 
 /**
-   Checks the fire trigger momentary switch.
-    - Short press should activate the blast sequence.
-    - Long press will change modes
-*/
+ *  Checks the fire trigger momentary switch.
+ *   - Short press should activate the blast sequence.
+ *   - Long press will change modes
+ */
 bool checkTriggerSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
@@ -247,9 +244,9 @@ bool checkTriggerSwitch(bool runNow) {
 }
 
 /**
-   Checks the reload trigger momentary switch.
-   Short press should activate the reload sequence.
-*/
+ *  Checks the reload trigger momentary switch.
+ *  Short press should activate the reload sequence.
+ */
 bool checkReloadSwitch(bool runNow) {
   // check trigger button
   int buttonStateFire = reload.checkState();
@@ -262,16 +259,16 @@ bool checkReloadSwitch(bool runNow) {
 }
 
 /**
-   Routine for the startup sequence. Heavy OLED updates on startup.
-   1. Display Props3D logo - (2000ms)
-   2. Display Comms OK - 90 pixels (900ms)
-   3. Display DNA Check - wait for trigger press (1000ms)
-   4. Display DNA Check - 90 pixels (900ms)
-   5. Display ID FAIL - blink 4 times (1500ms) then solid
-   6. Display ID OK - blink 3 times with LED - 1000ms
-   7. Display Judge ID - wait (1800ms)
-   8. Display Ammo mode
-*/
+ *  Routine for the startup sequence. Heavy OLED updates on startup.
+ *  1. Display Props3D logo - (2000ms)
+ *  2. Display Comms OK - 90 pixels (900ms)
+ *  3. Display DNA Check - wait for trigger press (1000ms)
+ *  4. Display DNA Check - 90 pixels (900ms)
+ *  5. Display ID FAIL - blink 4 times (1500ms) then solid
+ *  6. Display ID OK - blink 3 times with LED - 1000ms
+ *  7. Display Judge ID - wait (1800ms)
+ *  8. Display Ammo mode
+ */
 void startUpSequence(void) {
   int _sequenceMode = oled.getDisplayMode();
 
@@ -403,16 +400,15 @@ void startUpSequence(void) {
   }
   if (_sequenceMode != oled.getDisplayMode())
     DBGLN(F("Startup - changing modes"));
-
 }
 
 /**
-   Routine for resetting the ammo counters
-   1. all counters are reset
-   2. leds are turned off
-   3. queue audio track
-   4. activate oled refresh
-*/
+ *  Routine for resetting the ammo counters
+ *  1. all counters are reset
+ *  2. leds are turned off
+ *  3. queue audio track
+ *  4. activate oled refresh
+ */
 void reloadAmmo(void) {
   activateReload = 0;
   activateLowAmmo = 0;
@@ -431,16 +427,16 @@ void reloadAmmo(void) {
 }
 
 /**
-   Sends a blaster pulse.
-     1. Toggles a clip counter
-     2. Checks for an empty clip
-        a. play empty clip track
-     3. If clip is not empty
-        a. queue audio track
-        b. activate led strip
-        c. activate oled refresh
-        d. Check for low ammo
-*/
+ * Sends a blaster pulse.
+ *   1. Toggles a clip counter
+ *    2. Checks for an empty clip
+ *       a. play empty clip track
+ *    3. If clip is not empty
+ *       a. queue audio track
+ *       b. activate led strip
+ *       c. activate oled refresh
+ *       d. Check for low ammo
+ */
 void handleAmmoDown(void) {
   activateAmmoDown = 0;
   // move the counter
@@ -470,28 +466,30 @@ void handleAmmoDown(void) {
   ++screenUpdates;
 }
 
+/**
+ * Convenience method for playing a track and specifying the wait time (delay)
+ */
 void playSelectedTrack(uint8_t trackIdx) {
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID && trackIdx == AMMO_MODE_IDX_FIRE)
-    audio.playTrack(getSelectedTrack(trackIdx), 200L); // give the rapid fire a little extra time
-  else 
+    audio.playTrack(getSelectedTrack(trackIdx), 200L);  // give the rapid fire a little extra time
+  else
     audio.playTrack(getSelectedTrack(trackIdx));
 }
 /**
-   Convenience method for selecting a track to playback based on the selected
-   trigger mode and a state variable
-*/
+ *  Convenience method for selecting a track to playback based on the selected
+ *  trigger mode and a state variable
+ */
 uint8_t getSelectedTrack(uint8_t trackIdx) {
   return AUDIO_TRACK_AMMO_MODE_ARR[selectedTriggerMode][trackIdx];
 }
 
 /**
-   Routine for getting the selected trigger counter
-*/
+ *  Routine for getting the selected trigger counter
+ */
 EasyCounter& getTriggerCounter(void) {
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP)
     return apCounter;
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN ||
-      selectedTriggerMode == VR_CMD_AMMO_MODE_HS)
+  if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN || selectedTriggerMode == VR_CMD_AMMO_MODE_HS)
     return inCounter;
   if (selectedTriggerMode == VR_CMD_AMMO_MODE_HE)
     return heCounter;
@@ -499,12 +497,12 @@ EasyCounter& getTriggerCounter(void) {
 }
 
 /**
-   Change to the next ammo mode in the cycle
-   1. change the selected ammo mode
-   2. initialize the LED sequence
-   3. queue playback
-   4. set screen refresh
-*/
+ *  Change to the next ammo mode in the cycle
+ *  1. change the selected ammo mode
+ *  2. initialize the LED sequence
+ *  3. queue playback
+ *  4. set screen refresh
+ */
 void setNextAmmoMode(void) {
   // Increment the trigger mode index or reset to 0
   int mode = selectedTriggerMode + 1;
@@ -513,12 +511,12 @@ void setNextAmmoMode(void) {
 }
 
 /**
-   Checks the voice recognition module for new voice commands
-   1. change the selected ammo mode
-   2. initialize the LED sequence
-   3. queue playback
-   4. set screen refresh
-*/
+ *  Checks the voice recognition module for new voice commands
+ *  1. change the selected ammo mode
+ *  2. initialize the LED sequence
+ *  3. queue playback
+ *. 4. set screen refresh
+ */
 void checkVoiceCommands(void) {
   int cmd = voice.readCommand();
 
@@ -528,11 +526,11 @@ void checkVoiceCommands(void) {
 }
 
 /**
-   1. Set the selected ammo mode
-   2. Initialize the LED sequence
-   3. Queue playback
-   4. Set screen refresh
-*/
+ *  1. Set the selected ammo mode
+ *  2. Initialize the LED sequence
+ *  3. Queue playback
+ *  4. Set screen refresh
+ */
 void changeAmmoMode(int mode) {
   if (mode > -1 && mode < 7) {
     selectedTriggerMode = mode;

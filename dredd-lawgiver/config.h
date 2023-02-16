@@ -164,6 +164,16 @@ extern inline void DBGLN(const __FlashStringHelper* message) {
    Serial.println(message);
 #endif
 }
+extern inline void DBGCH(char ch) {
+#if ENABLE_DEBUG == 1
+   Serial.print(ch);
+#endif
+}
+extern inline void DBGHEX(unsigned int ch) {
+#if ENABLE_DEBUG == 1
+   Serial.print(ch, HEX);
+#endif
+}
 extern inline void DBGSTR(const __FlashStringHelper* message) {
 #if ENABLE_DEBUG == 1
    Serial.print(message);

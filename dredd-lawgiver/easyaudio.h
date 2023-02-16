@@ -64,7 +64,7 @@ public:
     _player.setVolume(vol);    // initial volume, 30 is max, 25 makes the wife not angry
 #else
     _mySerial.begin(MINI_BAUD_RATE);
-    _player.begin(_mySerial, false, true);  //set Serial for DFPlayer-mini mp3 module
+    _player.begin(_mySerial, false);  //set Serial for DFPlayer-mini mp3 module
     _player.volume(vol);                    //initial volume, 30 is max, 3 makes the wife not angry
 #endif
     delay(1000);
