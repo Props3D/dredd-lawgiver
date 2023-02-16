@@ -80,7 +80,7 @@ uint8_t loopStage = LOOP_STATE_START;
  *Variables for tracking the start up sequence updates
  */
 unsigned long lastDisplayUpdate = 0;
-uint8_t progressBarUpdates.     = 0;
+uint8_t progressBarUpdates      = 0;
 
 /**
  *Variables for toggling an LED
@@ -102,7 +102,7 @@ volatile unsigned long lowAmmoChangeTime = 0;
  */
 volatile uint8_t selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;  // sets the ammo mode to start
 volatile uint8_t activateAmmoDown    = 0;                     // sets main loop to fire a round
-volatile uint8_t activateReload.     = 0;                     // sets main loop to reload ammo
+volatile uint8_t activateReload      = 0;                     // sets main loop to reload ammo
 
 void setup() {
 #if ENABLE_DEBUG == 1
