@@ -43,7 +43,7 @@ private:
 #endif
 
   unsigned long _lastPlaybackTime = 0;
-  unsigned long _playbackDelay = 100;
+  long _playbackDelay = 100;
 
 public:
   EasyAudio(uint8_t rxPin, uint8_t txPin)
@@ -78,7 +78,7 @@ public:
    * Our wiring doesn't support it at the moment
    */
   bool isBusy() {
-    if (_playbackDelay > (millis() -_lastPlaybackTime)) {
+    if (millis() > (_lastPlaybackTime + _playbackDelay)) {
         return false;
     }
     return true;
@@ -88,17 +88,14 @@ public:
    * play a track by number.
    */
   void playTrack(int track) {
-    playTrack(track, 100L);  
+    playTrack(track, 100);  
   }
 
   /**
    * play a track by number, with a specific busy delay
    */
   void playTrack(int track, long busyDelay) {
-    Serial.print("busy: ");Serial.println(busyDelay);
-    _playbackDelay = busyDelay;
-    Serial.print("delay: ");Serial.println(_playbackDelay);
-    
+    _playbackDelay = busyDelay;    
     _lastPlaybackTime = millis();
 #if ENABLE_EASY_AUDIO == 1
   #ifdef ENABLE_EASY_AUDIO_PRO

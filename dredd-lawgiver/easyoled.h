@@ -5,26 +5,6 @@
 #include <U8g2lib.h>
 #endif
 
-const static char STR_ARMOR_PIERCING[] PROGMEM = "ARMOR PIERCING";
-const static char STR_INCENDIARY[] PROGMEM = "INCENDIARY";
-const static char STR_HOT_SHOT[] PROGMEM = "HOT SHOT";
-const static char STR_HIGH_EX[] PROGMEM = "HIGH EX";
-const static char STR_STUN[] PROGMEM = "STUN";
-const static char STR_RAPID[] PROGMEM = "RAPID";
-const static char STR_SEMI[] PROGMEM = "SEMI";
-const static char STR_EMPTY[] PROGMEM = "EMPTY";
-const static char STR_AMMUNITION_LOW[] PROGMEM = "AMMUNITION LOW";
-const static char STR_DISTANCE[] PROGMEM = "D:0.0";
-const static char STR_CLEAR[] PROGMEM = "";
-
-const static char STR_LOGO[] PROGMEM = "Props3D Pro";
-const static char STR_DNA_CHECK[] PROGMEM = "DNA CHECK";
-const static char STR_COMM_OK[] PROGMEM = "COMM OK";
-const static char STR_ID_OK[] PROGMEM = "I.D. OK";
-const static char STR_ID_FAIL[] PROGMEM = "I.D. FAIL";
-const static char STR_BOOT_ERROR[] PROGMEM = "Boot Error";
-const static char STR_CHK_BAT[] PROGMEM = "Check battery levels";
-
 /**
  * A simple class for managing an LED display. It's mainly based on
  * OLED 2.08 display
@@ -56,7 +36,6 @@ public:
   EasyOLED()
 #if ENABLE_EASY_OLED == 1
       : u8g2(U8G2_R2, /* clock=*/CL_PIN, /* data=*/DA_PIN, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN)
-      //u8g2(U8G2_R2, /* cs=*/CS_PIN, /* dc=*/DC_PIN, /* reset=*/RESET_PIN)
 #endif
       {}
 
@@ -69,7 +48,7 @@ public:
     u8g2.begin();
     u8g2.setBusClock(8000000);
     _ammoSelection = ammoSelection;
-    memcpy(_ammoCounts, ammoCounts, 4*sizeof(_ammoCounts[0]));
+    memcpy(_ammoCounts, ammoCounts, sizeof(_ammoCounts));
 #endif
   }
 
@@ -96,7 +75,8 @@ public:
      * It's better to only call this when updates are necesary.
      */
   void updateDisplayMode(int displayMode) {
-    updateDisplayMode(displayMode, 0, false);
+    _displayMode = displayMode;
+    drawDisplay(_displayMode, _progressBar);
   }
 
   /**
@@ -124,7 +104,7 @@ public:
       // check switching to ammo that is already low
       checkAmmoLevels();
     }
-    memcpy(_ammoCounts, counters, 4*sizeof(_ammoCounts[0]));
+    memcpy(_ammoCounts, counters, sizeof(_ammoCounts));
     drawDisplay(_displayMode, _progressBar);
     //DBGLN(F("OLED - update ammo display"));
   }
@@ -148,8 +128,6 @@ private:
   uint8_t _ammoCounts[4];      // ammo counts
   bool _blink = false;         // blink controller
   bool _ammoLow = false;       // ammo low state
-  char _buf[10];               // print buffer for ammo counts
-  char _txtbuf[80];            // print buffer for text
 
   void drawDisplay(int displayMode, int progress) {
 #if ENABLE_EASY_OLED == 1
@@ -207,7 +185,7 @@ private:
 #if ENABLE_EASY_OLED == 1
     u8g2.setFont(u8g2_font_helvB18_tr);
     u8g2.setCursor(40, 42);
-    printText(STR_LOGO);
+    u8g2.print(F("Props3D Pro"));
 #endif
   }
 
@@ -215,9 +193,9 @@ private:
 #if ENABLE_EASY_OLED == 1
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(42, 30);
-    printText(STR_BOOT_ERROR);
+    u8g2.print(F("BOOT ERROR"));
     u8g2.setCursor(20, 45);
-    printText(STR_CHK_BAT);
+    u8g2.print(F("Check battery levels"));
 #endif
   }
 
@@ -235,7 +213,7 @@ private:
     drawProgress(progress);
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(0, 42);
-    printText(STR_COMM_OK);
+    u8g2.print(F("COMM OK"));
     drawAmmoMode();
     drawGrid();
 #endif
@@ -246,7 +224,7 @@ private:
     drawProgress(progress);
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(0, 42);
-    printText(STR_DNA_CHECK);
+    u8g2.print(F("DNA CHECK"));
     drawAmmoMode();
     drawGrid();
 #endif
@@ -258,9 +236,9 @@ private:
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(0, 42);
     if (_blink) {
-      printText(STR_ID_OK);
+      u8g2.print(F("I.D. OK"));      
     } else {
-      printText(STR_CLEAR);
+      u8g2.print(F(""));
     }
     drawAmmoMode();
     drawGrid();
@@ -273,9 +251,9 @@ private:
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(0, 42);
     if (_blink) {
-      printText(STR_ID_FAIL);
+      u8g2.print(F("I.D. FAIL"));
     } else {
-      printText(STR_CLEAR);
+      u8g2.print(F(""));
     }
     drawAmmoMode();
     drawGrid();
@@ -287,7 +265,7 @@ private:
     drawProgress(progress);
     u8g2.setFont(u8g2_font_helvB14_tr);
     u8g2.setCursor(0, 42);
-    printText(DISPLAY_USER_ID);
+    u8g2.print((__FlashStringHelper*)DISPLAY_USER_ID);
     drawAmmoMode();
     drawGrid();
 #endif
@@ -327,12 +305,15 @@ private:
     //distance field
     u8g2.setFont(u8g2_font_helvB12_tr);
     u8g2.setCursor(0, 61);
-    printText(STR_DISTANCE);
+    //printText(STR_DISTANCE);
+    u8g2.print(F("D:0.0"));    
 #endif
   }
 
   void drawAmmoField() {
 #if ENABLE_EASY_OLED == 1
+    char _buf[10];               // print buffer for ammo counts
+
     // Standard
     u8g2.setFont(u8g2_font_helvB12_tr);
     u8g2.setDrawColor(1);
@@ -397,30 +378,29 @@ private:
     u8g2.setCursor(180, 42);
     if (_displayMode < DISPLAY_MAIN) {
       if (_displayMode == DISPLAY_DNA_CHK)
-        printText(STR_RAPID);
+        u8g2.print(F("RAPID"));
       else
-        printText(STR_SEMI);
+        u8g2.print(F("SEMI"));
     }
 
     if (_displayMode == DISPLAY_MAIN) {
       int ammoCount = _ammoCounts[_ammoIdx[_ammoSelection]];
       if (_ammoLow) {
         // low ammo
-        printText(STR_SEMI);
       } else if (ammoCount == 0) {
         // empty clip
-        printText(STR_SEMI);
+        u8g2.print(F("SEMI"));
       } else {
         switch (_ammoSelection) {
           case 1:  // incendiary
           case 2:  // hotshot
-            printText(STR_CLEAR);
+            u8g2.print(F(""));
             break;
           case 6:  // FMJ
-            printText(STR_RAPID);
+            u8g2.print(F("RAPID"));
             break;
           default:  // armor p / high ex / stun / FMJ
-            printText(STR_SEMI);
+            u8g2.print(F("SEMI"));
             break;
         }
       }
@@ -435,37 +415,37 @@ private:
     u8g2.setFont(u8g2_font_helvB14_tr);
     if (_ammoLow) {
       u8g2.setCursor(0, 42);
-      printText(STR_AMMUNITION_LOW);
+      u8g2.print(F("AMMUNITION LOW"));
     } else if (ammoCount == 0) {
       // Gun Empty - blink
       u8g2.setCursor(0, 42);
-      printText(STR_EMPTY);
+      u8g2.print(F("EMPTY"));
     } else {
       switch (_ammoSelection) {
         case 0:
           u8g2.setCursor(0, 42);
-          printText(STR_ARMOR_PIERCING);
+          u8g2.print(F("ARMOR PIERCING"));
           break;
         case 1:
           u8g2.setCursor(0, 42);
-          printText(STR_INCENDIARY);
+          u8g2.print(F("INCENDIARY"));
           break;
         case 2:
           u8g2.setCursor(0, 42);
-          printText(STR_HOT_SHOT);
+          u8g2.print(F("HOT SHOT"));
           break;
         case 3:
           u8g2.setCursor(0, 42);
-          printText(STR_HIGH_EX);
+          u8g2.print(F("HIGH EX"));
           break;
         case 4:
           u8g2.setCursor(0, 42);
-          printText(STR_STUN);
+          u8g2.print(F("STUN"));
           break;
         default:
           // FMJ / Rapid
           u8g2.setCursor(0, 42);
-          printText(STR_CLEAR);
+          u8g2.print(F(""));
           break;
       }
     }
@@ -482,7 +462,7 @@ private:
   }
 
   void formatAmmo(char* strbuf, int idx) {
-    memset(strbuf, 0, sizeof(char)*10);
+    memset(strbuf, '\0', sizeof(char)*10);
 
     formatInt(_ammoCounts[idx], 10, strbuf);
     uint8_t len = strlen(strbuf);
@@ -491,41 +471,26 @@ private:
         strbuf[len++] = 'a';
         strbuf[len++] = 'p';
         strbuf[len] = '\0';  // NUL-terminate the C string
-        //sprintf (strbuf, "%dap", _ammoCounts[0]);
         break;
       case 1:  // incendiary
         strbuf[len++] = 'i';
         strbuf[len++] = 'n';
         strbuf[len] = '\0';  // NUL-terminate the C string
-        //sprintf (strbuf, "%din", _ammoCounts[1]);
         break;
       case 2:  // highex
         strbuf[len++] = 'h';
         strbuf[len++] = 'e';
         strbuf[len] = '\0';  // NUL-terminate the C string
-        //sprintf (strbuf, "%dhe", _ammoCounts[2]);
         break;
       case 3:  // full metal jacket
         strbuf[len++] = 'f';
         strbuf[len++] = 'm';
         strbuf[len++] = 'j';
         strbuf[len] = '\0';  // NUL-terminate the C string
-        //sprintf (strbuf, "%dfmj", _ammoCounts[3]);
         break;
     }
   }
 
-  void printText(const char* str) {
-#if ENABLE_EASY_OLED == 1
-    u8g2.print(getString(str));
-#endif
-  }
-
-  char* getString(const char* str) {
-    memset(_txtbuf, 0, sizeof(char)*80);
-    strcpy_P(_txtbuf, (char*)str);
-    return _txtbuf;
-  }
 };
 
 #endif

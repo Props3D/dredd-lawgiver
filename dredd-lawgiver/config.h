@@ -18,7 +18,7 @@
 
 
 // Customizable ID badge for DNA Check sequence 
-const char DISPLAY_USER_ID[] PROGMEM =      "Dredd";
+const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 
 
 // Pin configuration for voice recognition module

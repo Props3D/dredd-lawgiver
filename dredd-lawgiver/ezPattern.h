@@ -217,7 +217,7 @@ class ezBlasterShot : public ezPattern
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      //Serial.println(F("BlasterShot - activated"));
+      //DBGLN(F("BlasterShot - activated"));
       _activated = 3;    // start with white flash and color fade
       //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
@@ -228,24 +228,24 @@ class ezBlasterShot : public ezPattern
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) {
-          //Serial.println(F("BlasterShot - ending blaster shot"));
+          //DBGLN(F("BlasterShot - ending blaster shot"));
           return true;
         }
         // fade to black
         if (checkShotBlended(leds, count)) {
-          //Serial.println(F("BlasterShot - fade to black on blaster shot"));
+          //DBGLN(F("BlasterShot - fade to black on blaster shot"));
           return true;
         }
         if (coolingShot(leds, count)) {
-          //Serial.println(F("BlasterShot - Cooling off blaster shot"));
+          //DBGLN(F("BlasterShot - Cooling off blaster shot"));
           return true;
         }
         if (blendingShot(leds, count)) {
-          //Serial.println(F("BlasterShot - blending colors on blaster shot"));
+          //DBGLN(F("BlasterShot - blending colors on blaster shot"));
           return true;
         }
         if (checkWhiteFlash(leds, count)) {
-          //Serial.println(F("BlasterShot - checking white flash"));
+          //DBGLN(F("BlasterShot - checking white flash"));
           return true;
         }
       }
@@ -307,7 +307,7 @@ class ezBlasterRepeatingShot : public ezBlasterShot
     }
 
     void activate(CRGB *leds, uint8_t count) {
-      //Serial.println(F("StrobeShot - activated"));
+      //DBGLN(F("StrobeShot - activated"));
       _repetitions = _maxRepetitions;
       //reset the current color to the start
       _currentColor = CRGB(_startColor.r, _startColor.g, _startColor.b);
@@ -319,19 +319,19 @@ class ezBlasterRepeatingShot : public ezBlasterShot
       EVERY_N_MILLISECONDS(_frameRate) {
         // stop fading and clear
         if (checkShotCooled(leds, count)) {
-          //Serial.println(F("cooled"));
+          //DBGLN(F("cooled"));
           return true;
         }
 
         // fade to black
         if (coolingShot(leds, count)) {
-          //Serial.println(F("cooling"));
+          //DBGLN(F("cooling"));
           return true;
         }
 
         // strobe the flash
         if (checkWhiteFlash(leds, count)) {
-          //Serial.println(F("flash"));
+          //DBGLN(F("flash"));
         }
       }
       return _activated > 0;
