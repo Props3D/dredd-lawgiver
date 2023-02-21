@@ -9,7 +9,7 @@
  */
 
 // To disable any component set value to 0
-#define ENABLE_DEBUG            0 //Enable Debugging
+#define ENABLE_DEBUG            1 //Enable Debugging
 #define ENABLE_EASY_AUDIO       1 //Enable audio
 #define ENABLE_EASY_LED         1 //Enable LEDs
 #define ENABLE_EASY_OLED        1 //Enable OLED Display
@@ -85,7 +85,7 @@ static const int  AUDIO_TRACK_RAPID_CHANGE =   18;
 static const int  AUDIO_TRACK_AMMO_LOW     =   19;
 static const int  AUDIO_TRACK_AMMO_EMPTY   =   20;
 static const int  AUDIO_TRACK_AMMO_RELOAD  =   21;
-static const int  AUDIO_TRACK_SPACER       =   22;  
+static const int  AUDIO_TRACK_SILENCE      =   22;
 static const int  AUDIO_TRACK_THEME        =   23;  // TODO: add feature to playback theme
 
 

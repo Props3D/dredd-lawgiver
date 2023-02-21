@@ -51,8 +51,8 @@ void resetAmmoIndicators(void);
 void handleAmmoDown(void);
 void reloadAmmo(void);
 bool lowAmmoReached(void);
-bool checkTriggerSwitch(bool runNow);
-bool checkReloadSwitch(bool runNow);
+bool checkTriggerSwitch(void);
+bool checkReloadSwitch(void);
 void checkVoiceCommands(void);
 void setNextAmmoMode(void);
 void changeAmmoMode(int mode);
@@ -100,9 +100,10 @@ volatile unsigned long lowAmmoChangeTime = 0;
 /**
  *  Variables for tracking trigger state
  */
-volatile uint8_t selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;  // sets the ammo mode to start
+volatile uint8_t selectedAmmoMode = VR_CMD_AMMO_MODE_FMJ;  // sets the ammo mode to start
 volatile uint8_t activateAmmoDown    = 0;                     // sets main loop to fire a round
 volatile uint8_t activateReload      = 0;                     // sets main loop to reload ammo
+volatile bool    activateThemeTrack  = 0;                     // play theme track
 
 void setup() {
 #if ENABLE_DEBUG == 1
@@ -120,7 +121,7 @@ void setup() {
   fmjCounter.begin(0, 50, EasyCounter::COUNTER_MODE_DOWN);
 
   // select the initial ammo mode
-  selectedTriggerMode = VR_CMD_AMMO_MODE_FMJ;
+  selectedAmmoMode = VR_CMD_AMMO_MODE_FMJ;
 
   //initializes the audio player and sets the volume
   int bootAttempts = 0;
@@ -137,7 +138,7 @@ void setup() {
   voice.begin();
 
   // init the display
-  oled.begin(selectedTriggerMode, getCounters());
+  oled.begin(selectedAmmoMode, getCounters());
 
   // set up all the triggers as pullup inputs
   // set up the fire trigger and the debounce threshold
@@ -197,13 +198,13 @@ void loop() {
  */
 void mainLoop(void) {
   // always check the triggers first
-  bool audioPlayed = !checkTriggerSwitch(true) ? checkReloadSwitch(true) : true;
+  bool audioPlayed = !checkTriggerSwitch() ? checkReloadSwitch() : true;
   // Update the triggers LEDS in case they were activated. This should always be run in the main loop.
   //if (audioPlayed)   DBGLN(F("main - led update"));
   bool ledsUpdated = fireLed.updateDisplay();
 
   // check low ammo or voice commands if no audio was played
-  if (!audio.isBusy() && !ledsUpdated) {
+  if (!activateThemeTrack && !audio.isBusy() && !ledsUpdated) {
     // check the low-ammo indicator
     if (activateLowAmmo) {
       // small delay so not to collide with ammo playback
@@ -212,7 +213,7 @@ void mainLoop(void) {
       }
     } else if (screenUpdates) {
       DBGLN(F("main - screen update"));
-      oled.updateDisplay(selectedTriggerMode, getCounters());
+      oled.updateDisplay(selectedAmmoMode, getCounters());
       screenUpdates--;
     } else {
       // check for new voice commands, only if no audio sounds were triggered
@@ -223,22 +224,35 @@ void mainLoop(void) {
 }
 
 /**
- *  Checks the fire trigger momentary switch.
- *   - Short press should activate the blast sequence.
- *   - Long press will change modes
+ * Checks the fire trigger momentary switch.
+ * - Immediate press should trigger ammo fire
+ * - Press and hold for 6 secs will play theme track
+ * - Long press and release should change ammo modes
  */
-bool checkTriggerSwitch(bool runNow) {
+bool checkTriggerSwitch(void) {
   // check trigger button
   int buttonStateFire = trigger.checkState();
   // check if a trigger is pressed.
   if (buttonStateFire == EasyButton::BUTTON_PRESSED) {
     handleAmmoDown();
+    activateThemeTrack = 0;
     return true;
   }
-  // Long press for change mode
+
+  if (buttonStateFire == EasyButton::BUTTON_HOLD_PRESS) {
+    if (!activateThemeTrack && trigger.pressedLongerThan(6000)) {
+      audio.playTrack(AUDIO_TRACK_THEME);
+      activateThemeTrack = 1;
+      return true;
+    }
+  }
+
   if (buttonStateFire == EasyButton::BUTTON_LONG_PRESS) {
-    setNextAmmoMode();
-    return true;
+    if (!trigger.pressedLongerThan(6000)) {
+      activateThemeTrack = 0;
+      setNextAmmoMode();
+      return true;
+    }
   }
   return false;
 }
@@ -247,7 +261,7 @@ bool checkTriggerSwitch(bool runNow) {
  *  Checks the reload trigger momentary switch.
  *  Short press should activate the reload sequence.
  */
-bool checkReloadSwitch(bool runNow) {
+bool checkReloadSwitch(void) {
   // check trigger button
   int buttonStateFire = reload.checkState();
   // check if a trigger is pressed.
@@ -306,7 +320,7 @@ void startUpSequence(void) {
         oled.updateDisplayMode(oled.DISPLAY_DNA_PRG, progressBarUpdates);
 #ifndef ENABLE_EASY_AUDIO_PRO
         // This is a hack around specifically for df mini players
-        audio.playTrack(AUDIO_TRACK_SPACER);
+        audio.playTrack(AUDIO_TRACK_SILENCE);
         delay(1000);
 #endif
         audio.playTrack(AUDIO_TRACK_DNA_CHK);
@@ -315,7 +329,7 @@ void startUpSequence(void) {
         oled.updateDisplayMode(oled.DISPLAY_ID_FAIL, progressBarUpdates);
 #ifndef ENABLE_EASY_AUDIO_PRO
         // This is a hack around specifically for df mini players
-        audio.playTrack(AUDIO_TRACK_SPACER);
+        audio.playTrack(AUDIO_TRACK_SILENCE);
         delay(1000);
 #endif
         audio.playTrack(AUDIO_TRACK_ID_FAIL);
@@ -451,7 +465,7 @@ void handleAmmoDown(void) {
   playSelectedTrack(AMMO_MODE_IDX_FIRE);
   // activate the led pulse
   //DBGLN(F("handleAmmo - activate leds"));
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID)
+  if (selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)
     fireLed.activate(repeatingShot);  // rapid shot - mulitple flashes with fade
   else
     fireLed.activate(blasterShot);
@@ -470,7 +484,7 @@ void handleAmmoDown(void) {
  * Convenience method for playing a track and specifying the wait time (delay)
  */
 void playSelectedTrack(uint8_t trackIdx) {
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID && trackIdx == AMMO_MODE_IDX_FIRE)
+  if (selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID && trackIdx == AMMO_MODE_IDX_FIRE)
     audio.playTrack(getSelectedTrack(trackIdx), 200L);  // give the rapid fire a little extra time
   else
     audio.playTrack(getSelectedTrack(trackIdx));
@@ -480,18 +494,18 @@ void playSelectedTrack(uint8_t trackIdx) {
  *  trigger mode and a state variable
  */
 uint8_t getSelectedTrack(uint8_t trackIdx) {
-  return AUDIO_TRACK_AMMO_MODE_ARR[selectedTriggerMode][trackIdx];
+  return AUDIO_TRACK_AMMO_MODE_ARR[selectedAmmoMode][trackIdx];
 }
 
 /**
  *  Routine for getting the selected trigger counter
  */
 EasyCounter& getTriggerCounter(void) {
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP)
+  if (selectedAmmoMode == VR_CMD_AMMO_MODE_AP)
     return apCounter;
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN || selectedTriggerMode == VR_CMD_AMMO_MODE_HS)
+  if (selectedAmmoMode == VR_CMD_AMMO_MODE_IN || selectedAmmoMode == VR_CMD_AMMO_MODE_HS)
     return inCounter;
-  if (selectedTriggerMode == VR_CMD_AMMO_MODE_HE)
+  if (selectedAmmoMode == VR_CMD_AMMO_MODE_HE)
     return heCounter;
   return fmjCounter;
 }
@@ -505,7 +519,7 @@ EasyCounter& getTriggerCounter(void) {
  */
 void setNextAmmoMode(void) {
   // Increment the trigger mode index or reset to 0
-  int mode = selectedTriggerMode + 1;
+  int mode = selectedAmmoMode + 1;
   if (mode == 7) mode = 0;
   changeAmmoMode(mode);
 }
@@ -533,33 +547,33 @@ void checkVoiceCommands(void) {
  */
 void changeAmmoMode(int mode) {
   if (mode > -1 && mode < 7) {
-    selectedTriggerMode = mode;
+    selectedAmmoMode = mode;
     // Check for Switching modes
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_AP) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_AP) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       //DBGLN(F("Armor Piercing Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_IN) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_IN) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
       //DBGLN(F("Incendiary Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_HE) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_HE) {
       blasterShot.initialize(fireLed.ORANGE, fireLed.WHITE);  // shot - flash with color fade
       //DBGLN(F("High Ex Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_HS) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_HS) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       //DBGLN(F("Hotshot Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_ST) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_ST) {
       blasterShot.initialize(fireLed.YELLOW, fireLed.WHITE);  // shot - flash with color fade
       //DBGLN(F("Stun Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_FMJ) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ) {
       blasterShot.initialize(fireLed.RED, fireLed.ORANGE);  // shot - flash with color fade
       //DBGLN(F("FMJ Mode selected"));
     }
-    if (selectedTriggerMode == VR_CMD_AMMO_MODE_RAPID) {
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID) {
       repeatingShot.initialize(fireLed.WHITE, fireLed.BLACK);  // shot - flash with color fade
       //DBGLN(F("Rapid Mode selected"));
     }
@@ -612,7 +626,7 @@ void activateLowAmmoIndicators(void) {
   activateLowAmmo = 0;
   // let's make sure the screen redraws to count the low ammo before switching the LEDs
   oled.checkAmmoLevels();
-  oled.updateDisplay(selectedTriggerMode, getCounters());
+  oled.updateDisplay(selectedAmmoMode, getCounters());
   // set the LED
   digitalWrite(RED_LED_PIN, HIGH);
   digitalWrite(GREEN_LED_PIN, LOW);
