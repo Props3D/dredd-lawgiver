@@ -166,8 +166,8 @@ Other Parts
 ## Arduino Pinout
 * D2 Voice Recognition RX
 * D3 Voice Recognition TX
-* D4 DF Player Mini TX
-* D5 DF Player Mini RX
+* D4 DF Player Mini RX
+* D5 DF Player Mini TX
 * D6 3mm LED GREEN
 * D7 3mm LED RED
 * D8 Trigger
