@@ -125,7 +125,7 @@ void setup() {
 
   //initializes the audio player and sets the volume
   int bootAttempts = 0;
-  while (bootAttempts < 3 && !audio.begin(25)) {
+  while (bootAttempts < 3 && !audio.begin(30)) {
     bootAttempts++;
     delay(3000);
   }
