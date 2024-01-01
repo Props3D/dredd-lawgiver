@@ -1,0 +1,104 @@
+# Auto detect text files and perform LF normalization
+*          text=auto
+
+#
+# The above will handle all files NOT found below
+#
+
+# Documents
+*.bibtex   text diff=bibtex
+*.doc      diff=astextplain
+*.DOC      diff=astextplain
+*.docx     diff=astextplain
+*.DOCX     diff=astextplain
+*.dot      diff=astextplain
+*.DOT      diff=astextplain
+*.pdf      diff=astextplain
+*.PDF      diff=astextplain
+*.rtf      diff=astextplain
+*.RTF      diff=astextplain
+*.md       text diff=markdown
+*.mdx      text diff=markdown
+*.tex      text diff=tex
+*.adoc     text
+*.textile  text
+*.mustache text
+*.csv      text eol=crlf
+*.tab      text
+*.tsv      text
+*.txt      text
+*.sql      text
+*.epub     diff=astextplain
+
+# Graphics
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.tif      binary
+*.tiff     binary
+*.ico      binary
+*.eps      binary
+# SVG treated as text by default.
+*.svg      text
+
+# Scripts
+*.bash     text eol=lf
+*.fish     text eol=lf
+*.sh       text eol=lf
+*.zsh      text eol=lf
+# These are explicitly windows files and should use crlf
+*.bat      text eol=crlf
+*.cmd      text eol=crlf
+*.ps1      text eol=crlf
+
+# Serialisation
+*.json     text
+*.toml     text
+*.xml      text
+*.yaml     text
+*.yml      text
+
+# Archives
+*.7z       binary
+*.gz       binary
+*.tar      binary
+*.tgz      binary
+*.zip      binary
+
+# Binaries
+*.uf2      binary
+*.ino.uf2  binary
+
+# Sources
+*.ino   text diff=cpp export-ignore
+*.c     text diff=cpp export-ignore
+*.cc    text diff=cpp export-ignore
+*.cxx   text diff=cpp export-ignore
+*.cpp   text diff=cpp export-ignore
+*.cpi   text diff=cpp export-ignore
+*.c++   text diff=cpp export-ignore
+*.hpp   text diff=cpp export-ignore
+*.h     text diff=cpp export-ignore
+*.h++   text diff=cpp export-ignore
+*.hh    text diff=cpp export-ignore
+
+#
+# Exclude files from exporting
+#
+assets         export-ignore
+boards         export-ignore
+ci             export-ignore
+extras         export-ignore
+libraries      export-ignore
+.gitattributes text export-ignore
+.gitignore     text export-ignore
+.gitkeep       text export-ignore
+.github        text export-ignore
+/README.md     text export-ignore
+*.bin          binary export-ignore
+*.elf          binary export-ignore
+*.map          binary export-ignore
+*.o            binary export-ignore
+*.d            binary export-ignore
+*.a            binary export-ignore
