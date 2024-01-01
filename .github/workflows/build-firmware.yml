@@ -1,0 +1,91 @@
+name: Props3D Dredd Lawgiver CI - Build Firmware
+
+on: 
+  workflow_call:
+
+jobs:
+  build-project:
+    name: Build Firmware
+    runs-on: ubuntu-latest
+    env:
+      CLI_OUTPUT_PATH: build
+      SKETCHES_REPORTS_PATH: sketches-reports
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        board: [mini,pro]
+        # The matrix will produce one job for each configuration
+        # parameter of type `board`, in this case a total of 2.
+        include:
+          - board: mini
+            extra-flags: "-DENABLE_EASY_AUDIO_MINI  -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
+          - board: pro
+            extra-flags: "-DENABLE_EASY_AUDIO_PRO=1 -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
+          - fqbn: arduino:avr:nano
+          - libraries: |
+              - name: ezButton
+              - name: FastLED
+	      - name: U8g2
+
+    # This is the list of steps this job will run.
+    steps:
+    # First of all, we clone the repo using the `checkout` action.
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # We use the `arduino/setup-arduino-cli` action to install and
+    # configure the Arduino CLI on the system.
+    - name: Setup Arduino CLI
+      uses: arduino/setup-arduino-cli@v1
+
+    # We then install the platform, which one will be determined
+    # dynamically by the build matrix.
+    - name: Install platform
+      run: |
+        arduino-cli config init
+        arduino-cli core update-index
+        mkdir ./dredd-lawgiver/${{ env.CLI_OUTPUT_PATH }}
+
+    # Create build directories dynamically by the build matrix.
+    #- name: Create Artifact 
+    #  run: |
+    #    mkdir ./dredd-lawgiver-${{ matrix.board }}/${{ env.CLI_OUTPUT_PATH }}
+
+    - name: Compile firmware
+      uses: arduino/compile-sketches@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        platforms: |
+          ${{ matrix.platforms }}
+        fqbn: ${{ matrix.fqbn }}
+        cli-compile-flags: |
+          - --export-binaries
+          - --build-property
+          - build.project_name=dredd-lawgiver-${{ matrix.board }}-firmware
+          - --build-property
+          - compiler.cpp.extra_flags=${{ matrix.extra-flags }}
+        libraries: |
+          ${{ matrix.libraries }}
+        verbose: 'true'
+        enable-deltas-report: false
+        sketch-paths: dredd-lawgiver
+        sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+    - name: Check artifacts
+      run: |
+        ls -R
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: ./**/dredd-lawgiver-${{ matrix.board }}-firmware.uf2
+        name: dredd-lawgiver-${{ matrix.board }}-firmware
+
+    - name: Upload report artifacts
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        path: ${{ env.SKETCHES_REPORTS_PATH }}
+        name: ${{ env.SKETCHES_REPORTS_PATH }}

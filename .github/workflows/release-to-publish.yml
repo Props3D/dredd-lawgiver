@@ -1,0 +1,22 @@
+name: Props3D Dredd Lawgiver CI - Release Publisher
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-release:
+    name: Publish Release to Discord
+    runs-on: ubuntu-latest
+    steps:
+      - name: Official Release Discord Alert
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          nodetail: true
+          title: 'New Release for Dredd-Lawgiver firmware is now available'
+          color: 0xff91a4
+          description: |
+            `${{ github.ref_name }}` Release
+            Click [Dredd-Lawgiver Mini](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-mini-firmware.uf2) to download!
+            Click [Dredd-Lawgiver Pro](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-pro-firmware.uf2) to download!
