@@ -23,7 +23,9 @@ jobs:
             extra-flags: "-DENABLE_EASY_AUDIO_MINI  -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
           - board: pro
             extra-flags: "-DENABLE_EASY_AUDIO_PRO=1 -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
-          - fqbn: arduino:avr:nano
+          - fqbn: "arduino:avr:nano"
+          - platforms: |
+              - name: arduino:avr
           - libraries: |
               - name: ezButton
               - name: FastLED
