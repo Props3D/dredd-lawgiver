@@ -22,10 +22,9 @@
  * ==================
  * There's are number of libraries that you will need to install using the 
  * Library Manager:
- * 1. U8g2lib
+ * 1. U8g2
  * 2. FastLED
- * 3. VoiceRecognitionV3
- * 4. DFPlayerMini_Fast
+ * 3. ezButton
  * 
  * Installing U8g2lib and required modifications
  * =============================================
