@@ -9,7 +9,7 @@
  */
 
 // To disable any component set value to 0
-#define ENABLE_DEBUG            1 //Enable Debugging
+#define ENABLE_DEBUG            0 //Enable Debugging
 #define ENABLE_EASY_AUDIO       1 //Enable audio
 #define ENABLE_EASY_LED         1 //Enable LEDs
 #define ENABLE_EASY_OLED        1 //Enable OLED Display

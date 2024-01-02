@@ -2,6 +2,11 @@
 #define easyoled_h
 
 #if ENABLE_EASY_OLED == 1
+#define U8G2_WITHOUT_INTERSECTION
+#define U8G2_WITHOUT_CLIP_WINDOW_SUPPORT
+#define U8G2_WITHOUT_FONT_ROTATION
+#define U8G2_WITHOUT_UNICODE
+
 #include <U8g2lib.h>
 #endif
 
