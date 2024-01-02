@@ -20,9 +20,9 @@ jobs:
         # parameter of type `board`, in this case a total of 2.
         include:
           - board: mini
-            extra-flags: "-DENABLE_EASY_AUDIO_MINI=1 -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
+            extra-flags: "-DENABLE_EASY_AUDIO_MINI=1 -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION -DU8G2_WITHOUT_UNICODE"
           - board: pro
-            extra-flags: "-DENABLE_EASY_AUDIO_PRO=1  -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION"
+            extra-flags: "-DENABLE_EASY_AUDIO_PRO=1  -DU8G2_WITHOUT_FONT_ROTATION -DU8G2_WITHOUT_CLIP_WINDOW_SUPPORT -DU8G2_WITHOUT_INTERSECTION -DU8G2_WITHOUT_UNICODE"
           - fqbn: arduino:avr:nano
           - platforms: |
               - name: arduino:avr
