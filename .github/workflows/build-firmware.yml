@@ -82,7 +82,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        path: ./**/dredd-lawgiver-${{ matrix.board }}-firmware.uf2
+        path: ./**/dredd-lawgiver-${{ matrix.board }}-firmware.hex
         name: dredd-lawgiver-${{ matrix.board }}-firmware
 
     - name: Upload report artifacts

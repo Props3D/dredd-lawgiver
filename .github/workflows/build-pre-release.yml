@@ -52,7 +52,7 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            firmware-builds/**/*.uf2
+            firmware-builds/**/*.hex
 
       - name: Pre-Release Discord Alert
         uses: sarisia/actions-status-discord@v1
@@ -64,6 +64,6 @@ jobs:
           color: 0xff91a4
           description: |
             Version `latest`
-            Click [Dredd-Lawgiver Mini](https://github.com/Props3D/dredd-lawgiver/releases/download/latest/dredd-lawgiver-mini-firmware.uf2) to download!
-            Click [Dredd-Lawgiver Pro](https://github.com/Props3D/dredd-lawgiver/releases/download/latest/dredd-lawgiver-pro-firmware.uf2) to download!
+            Click [Dredd-Lawgiver Mini](https://github.com/Props3D/dredd-lawgiver/releases/download/latest/dredd-lawgiver-mini-firmware.hex) to download!
+            Click [Dredd-Lawgiver Pro](https://github.com/Props3D/dredd-lawgiver/releases/download/latest/dredd-lawgiver-pro-firmware.hex) to download!
 

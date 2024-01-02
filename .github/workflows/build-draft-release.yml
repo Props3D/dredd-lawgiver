@@ -43,4 +43,4 @@ jobs:
           prerelease: true
           title: "${{ github.ref_name }} Release"
           files: |
-            firmware-builds/**/*.uf2
+            firmware-builds/**/*.hex

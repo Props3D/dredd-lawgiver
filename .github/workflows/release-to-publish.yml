@@ -18,5 +18,5 @@ jobs:
           color: 0xff91a4
           description: |
             `${{ github.ref_name }}` Release
-            Click [Dredd-Lawgiver Mini](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-mini-firmware.uf2) to download!
-            Click [Dredd-Lawgiver Pro](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-pro-firmware.uf2) to download!
+            Click [Dredd-Lawgiver Mini](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-mini-firmware.hex) to download!
+            Click [Dredd-Lawgiver Pro](https://github.com/Props3D/dredd-lawgiver/releases/download/${{ github.ref_name }}/dredd-lawgiver-pro-firmware.hex) to download!
