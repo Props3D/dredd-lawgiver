@@ -321,48 +321,48 @@ The component configurations can be easily customized by updating the values in 
 wiring, and audio tracks.
 
 ```c++
- /** 
- * Enable debug logging by uncommenting this line
- */
-//#define ENABLE_DEBUG          1
 
-// Comment out if you want to disable any component
-#define ENABLE_EASY_AUDIO     1 //Enable audio 
-#define ENABLE_EASY_LED       1 //Enable LEDs
-#define ENABLE_EASY_OLED      1 //Enable OLED Display
-#define ENABLE_EASY_VOICE     1 //Enable Voice Recognition Display
+// To disable any component set value to 0
+#define ENABLE_DEBUG            0 //Enable Debugging
+#define ENABLE_EASY_AUDIO       1 //Enable audio
+#define ENABLE_EASY_LED         1 //Enable LEDs
+#define ENABLE_EASY_OLED        1 //Enable OLED Display
+#define ENABLE_EASY_VOICE       1 //Enable Voice Recognition
+#define ENABLE_EASY_BUTTON      1 //Enable triggers
+
 
 // Customizable ID badge for DNA Check sequence 
-#define DISPLAY_USER_ID       "Dredd"
+const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 
-// Pin configuration for all momentary triggers
-#define TRIGGER_PIN           2
-#define RELOAD_PIN            3
+
+// Pin configuration for voice recognition module
+#define VOICE_RX_PIN          2
+#define VOICE_TX_PIN          3
 
 // Pin configuration for MP3 Player
 #define AUDIO_RX_PIN          4
 #define AUDIO_TX_PIN          5
 
-// Pin configuration for MP3 Player
-#define VOICE_RX_PIN          6
-#define VOICE_TX_PIN          7
+// Pin Configuration for 3mm LEDs
+#define GREEN_LED_PIN         6
+#define RED_LED_PIN           7
+
+// Pin configuration for all momentary triggers
+#define TRIGGER_PIN           8
+#define RELOAD_PIN            9
 
 // Pin configuration for oled display
-#define OLED_SCL_PIN          13
-#define OLED_SDA_PIN          11
-#define OLED_RESET_PIN        9
-#define OLED_DC_PIN           10
-#define OLED_CS_PIN           8
+#define OLED_SCL_PIN          A5
+#define OLED_SDA_PIN          A4
+#define OLED_RESET_PIN        10
+#define OLED_DC_PIN           11
+#define OLED_CS_PIN           12
+
 
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
-#define FIRE_LED_PIN          12
+#define FIRE_LED_PIN          13
 #define FIRE_LED_CNT          7
-
-// Pin Configuration for 3mm LEDs
-#define RED_LED_PIN           14
-#define GREEN_LED_PIN         15
-
 ```
 
 
@@ -388,28 +388,29 @@ plenty of room on the micro SD card.
 /**
  * Audio tracks by file index - upload these to the SD card in the correct order.
  */
-#define AUDIO_TRACK_DNA_CHK         1
-#define AUDIO_TRACK_ID_OK           2
-#define AUDIO_TRACK_ID_FAIL         3
-#define AUDIO_TRACK_AMMO_LOAD       4
-#define AUDIO_TRACK_AP_FIRE         5
-#define AUDIO_TRACK_IN_FIRE         6
-#define AUDIO_TRACK_HS_FIRE         7
-#define AUDIO_TRACK_HE_FIRE         8
-#define AUDIO_TRACK_ST_FIRE         9
-#define AUDIO_TRACK_FMJ_FIRE        10
-#define AUDIO_TRACK_RAPID_FIRE      11
-#define AUDIO_TRACK_AP_CHANGE       12
-#define AUDIO_TRACK_IN_CHANGE       13
-#define AUDIO_TRACK_HS_CHANGE       14
-#define AUDIO_TRACK_HE_CHANGE       15
-#define AUDIO_TRACK_ST_CHANGE       16
-#define AUDIO_TRACK_FMJ_CHANGE      17
-#define AUDIO_TRACK_RAPID_CHANGE    18
-#define AUDIO_TRACK_AMMO_LOW        19
-#define AUDIO_TRACK_AMMO_EMPTY      20
-#define AUDIO_TRACK_AMMO_RELOAD     21
-#define AUDIO_TRACK_THEME           22  // TODO: add feature to playback theme
+static const int  AUDIO_TRACK_DNA_CHK      =   1;
+static const int  AUDIO_TRACK_ID_OK        =   2;
+static const int  AUDIO_TRACK_ID_FAIL      =   3;
+static const int  AUDIO_TRACK_AMMO_LOAD    =   4;
+static const int  AUDIO_TRACK_AP_FIRE      =   5;
+static const int  AUDIO_TRACK_IN_FIRE      =   6;
+static const int  AUDIO_TRACK_HS_FIRE      =   7;
+static const int  AUDIO_TRACK_HE_FIRE      =   8;
+static const int  AUDIO_TRACK_ST_FIRE      =   9;
+static const int  AUDIO_TRACK_FMJ_FIRE     =   10;
+static const int  AUDIO_TRACK_RAPID_FIRE   =   11;
+static const int  AUDIO_TRACK_AP_CHANGE    =   12;
+static const int  AUDIO_TRACK_IN_CHANGE    =   13;
+static const int  AUDIO_TRACK_HS_CHANGE    =   14;
+static const int  AUDIO_TRACK_HE_CHANGE    =   15;
+static const int  AUDIO_TRACK_ST_CHANGE    =   16;
+static const int  AUDIO_TRACK_FMJ_CHANGE   =   17;
+static const int  AUDIO_TRACK_RAPID_CHANGE =   18;
+static const int  AUDIO_TRACK_AMMO_LOW     =   19;
+static const int  AUDIO_TRACK_AMMO_EMPTY   =   20;
+static const int  AUDIO_TRACK_AMMO_RELOAD  =   21;
+static const int  AUDIO_TRACK_SILENCE      =   22;
+static const int  AUDIO_TRACK_THEME        =   23;  // TODO: add feature to playback theme
 ```
 
 ## Example Wiring Diagram:
