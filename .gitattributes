@@ -71,31 +71,25 @@
 *.ino.uf2  binary
 
 # Sources
-*.ino   text diff=cpp export-ignore
-*.c     text diff=cpp export-ignore
-*.cc    text diff=cpp export-ignore
-*.cxx   text diff=cpp export-ignore
-*.cpp   text diff=cpp export-ignore
-*.cpi   text diff=cpp export-ignore
-*.c++   text diff=cpp export-ignore
-*.hpp   text diff=cpp export-ignore
-*.h     text diff=cpp export-ignore
-*.h++   text diff=cpp export-ignore
-*.hh    text diff=cpp export-ignore
+*.ino   text diff=cpp
+*.c     text diff=cpp
+*.cc    text diff=cpp
+*.cxx   text diff=cpp
+*.cpp   text diff=cpp
+*.cpi   text diff=cpp
+*.c++   text diff=cpp
+*.hpp   text diff=cpp
+*.h     text diff=cpp
+*.h++   text diff=cpp
+*.hh    text diff=cpp
 
 #
 # Exclude files from exporting
 #
-assets         export-ignore
-boards         export-ignore
-ci             export-ignore
-extras         export-ignore
-libraries      export-ignore
 .gitattributes text export-ignore
 .gitignore     text export-ignore
 .gitkeep       text export-ignore
 .github        text export-ignore
-/README.md     text export-ignore
 *.bin          binary export-ignore
 *.elf          binary export-ignore
 *.map          binary export-ignore
