@@ -101,6 +101,7 @@ Other Parts
 ![4 Boot LEDs](https://user-images.githubusercontent.com/20442880/184990757-6f610c06-b977-40df-9ede-e0e545017bff.jpg)
 * 3mm Red LED
 * 3mm Green LED
+* 2x 25 Ohm resister
 * 2.54 JST 3pin M + Pins
 * 2.54 JST 3pin F
 * * Wire Black 22mm, 27mm, 66mm
