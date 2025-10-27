@@ -80,14 +80,14 @@ jobs:
         ls -R
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ./**/dredd-lawgiver-${{ matrix.board }}-firmware.hex
         name: dredd-lawgiver-${{ matrix.board }}-firmware
 
     - name: Upload report artifacts
       if: github.event_name == 'pull_request'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.SKETCHES_REPORTS_PATH }}
         name: ${{ env.SKETCHES_REPORTS_PATH }}
