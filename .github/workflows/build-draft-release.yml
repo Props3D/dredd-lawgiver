@@ -21,6 +21,9 @@ jobs:
     name: Create Draft Release
     needs: build-firmware
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    permissions:
+      contents: write       # create tags/releases and upload assets
+      pull-requests: read   # changelog lookup of PRs associated with commits
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
